@@ -45,7 +45,10 @@ public final class Beetle {
 	 */
 	public static void main(final String[] args) {
 		
-		// TODO Parse any command line arguments
+		// Parse any command line arguments
+		if ((new ArgumentParser(args)).exit()) {
+			return;
+		}
 		
 		// Start the application
 		new Beetle().start();
