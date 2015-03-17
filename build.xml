@@ -25,9 +25,9 @@
 
   <!-- Compile the source code (in 'src') and store in 'classes' -->
   <target name="compile" depends="prepare" description="Compile the source code">
-    <javac srcdir="${src.dir}" destdir="${deploy.home}" target="1.6"
+    <javac srcdir="${src.dir}" destdir="${deploy.home}"
            debug="on" optimize="on" deprecation="off" 
-           includeantruntime="false" source="1.6">
+           includeantruntime="false">
       <classpath>
         <pathelement path="${deploy.home}"/>
         <pathelement path="libs/jline2.jar"/>
