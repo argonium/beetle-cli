@@ -1,5 +1,7 @@
 package io.miti.beetle.app;
 
+import io.miti.beetle.util.Utility;
+
 /**
  * The main class for the application.
  * 
@@ -16,12 +18,23 @@ public final class Beetle {
 	
 	
 	private void start() {
+		// Store whether we're in a jar or not
+		checkInputFileSource();
 		
-		// TODO Start the H2 database
+		// TODO Start the H2 database (build the DB if it doesn't exist)
 		
 		// TODO Start the cache manager
 		
 		// TODO Start the console
+	}
+  
+  
+	/**
+	 * Check how the application is run.
+	 */
+	private void checkInputFileSource() {
+		final java.net.URL url = getClass().getResource("/initdb.sql");
+		Utility.readFilesAsStream(url != null);
 	}
 	
 	

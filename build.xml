@@ -40,6 +40,7 @@
     <jar destfile="./${dist.jar}">
       <zipgroupfileset dir="libs" includes="*.jar" /> 
       <fileset dir="${deploy.home}"/>
+      <fileset dir="data"/>
       <manifest>
         <attribute name="Built-By" value="Mike Wallace"/>
         <attribute name="Main-Class" value="io.miti.beetle.app.Beetle"/>
@@ -55,6 +56,6 @@
   <!-- Zip up the source code -->
   <target name="zipsource" description="Create a zip file of the source code">
     <zip basedir="." destfile="./${app.name}-src.zip"
-     includes="build.xml, ${src.dir}/**" />
+     includes="build.xml, ${src.dir}/**, data/**" />
   </target>
 </project>
