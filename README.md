@@ -1,2 +1,2 @@
-# beetle-cli
-ETL for the command line
+# Beetle CLI
+ETL for the command line.  Project is just getting started.
