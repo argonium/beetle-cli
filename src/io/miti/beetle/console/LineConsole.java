@@ -23,10 +23,13 @@ import java.util.Set;
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
-
 import io.miti.beetle.app.ArgumentParser;
+import io.miti.beetle.util.ConnManager;
 import io.miti.beetle.util.Content;
+import io.miti.beetle.util.Database;
+import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
+import io.miti.beetle.util.TimeSpan;
 import io.miti.beetle.util.Utility;
 
 public final class LineConsole {
@@ -220,10 +223,6 @@ public final class LineConsole {
 			catFile(cmds.get(1));
 		} else if (validateCommand(cmds, 2, "head")) {
 			headFile(cmds.get(1));
-		} else if (line.equals("dir")) {
-			printDirPath(".", false);
-		} else if (validateCommand(cmds, 2, "dir")) {
-			printDirPath(cmds.get(1), false);
 		} else if (line.equals("version")) {
 			ver();
 		} else if (line.startsWith("connect ")) {
@@ -544,60 +543,6 @@ public final class LineConsole {
 			}
 		}
 	}
-	  
-	  
-	/**
-	 * Get a directory listing.
-	 * 
-	 * @param path the directory path
-	 */
-	public void printDirPath(final String path, final boolean useLongPath)
-	{
-		final File dir = new File(path);
-		final File[] files = dir.listFiles();
-		if ((files == null) || (files.length < 1)) {
-			System.out.println("No files found in the directory");
-			return;
-		}
-		
-		// Convert the list into another list, for better formatting
-		List<FileEntry> listing = new ArrayList<FileEntry>(files.length);
-		for (File file : files) {
-			final boolean isDir = file.isDirectory();
-			final String fname = getFileName(file, useLongPath);
-			listing.add(new FileEntry(isDir, fname,
-					(isDir) ? 0 : file.length(), file.lastModified()));
-		}
-		
-		// Print the table
-		final String table = new ListFormatter().getTable(listing,
-			new String[] {"name", "len", "lastModified"},
-			new String[] {"Name", "Size", "Last Modified"});
-		System.out.print(table);
-	}
-	
-	
-	/**
-	 * Get the canonical version of a file name.
-	 * 
-	 * @param file the file
-	 * @param useLongPath whether to get the full path of the file
-	 * @return the file name
-	 */
-	private static String getFileName(final File file, final boolean useLongPath) {
-		if (!useLongPath) {
-			return file.getName();
-		}
-		
-		String name = null;
-		try {
-		name = file.getCanonicalPath();
-		} catch (IOException e) {
-		e.printStackTrace();
-		}
-		  
-		return name;
-	}
 	
 	
 	private void selectConnection(final ConsoleReader console) {
@@ -814,9 +759,9 @@ public final class LineConsole {
 		
 		// If requested by the user at startup, load the appropriate class
 		// name based on the URL
-		if (loadClassNames) {
-			JdbcManager.get().loadClassByUrl(url);
-		}
+//		if (loadClassNames) {
+//			JdbcManager.get().loadClassByUrl(url);
+//		}
 		
 		ConnManager.get().create();
 //		if (!result) {

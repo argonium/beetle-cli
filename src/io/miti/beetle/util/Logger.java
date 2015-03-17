@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Encapsulate the logging functionality.
+ * Encapsulate the database functionality.
  * 
  * @author mwallace
  * @version 1.0
@@ -44,6 +44,11 @@ public final class Logger
   private static final Logger logger = new Logger();
   
   /**
+   * The default depth to print for exception stack traces.
+   */
+  private static final int DEFAULT_EXCEP_DEPTH = 10;
+  
+  /**
    * Default constructor.
    */
   private Logger()
@@ -71,7 +76,7 @@ public final class Logger
                                 final boolean bLogOverwrite)
   {
     // Bound the log level to 0-5
-    logger.logLevel = Math.max(0, Math.min(5, nLogLevel));
+    updateLogLevel(Math.max(0, Math.min(5, nLogLevel)));
     logger.logFile = sLogFile;
     logger.logOverwrite = bLogOverwrite;
     
@@ -99,6 +104,23 @@ public final class Logger
       // Send messages to the specified filename
       logger.logFileMode = 2;
     }
+  }
+  
+  
+  /**
+   * Update the log level.
+   * 
+   * @param nLevel the new log level
+   */
+  public static void updateLogLevel(final int nLevel)
+  {
+    logger.logLevel = nLevel;
+  }
+  
+  
+  public static int getLogLevel()
+  {
+	  return logger.logLevel;
   }
   
   
@@ -152,6 +174,18 @@ public final class Logger
   
   
   /**
+   * Write an exception to the log, if we're in info level (1) or higher.
+   * 
+   * @param ex the exception
+   * @param depth the stack trace depth
+   */
+  public static void info(final Exception ex, final int depth)
+  {
+    writeMsg(ex, 1, depth);
+  }
+  
+  
+  /**
    * Write a message to the log, if we're in debug level (2) or higher.
    * 
    * @param msg the output string
@@ -170,6 +204,18 @@ public final class Logger
   public static void debug(final Exception ex)
   {
     writeMsg(ex, 2);
+  }
+  
+  
+  /**
+   * Write an exception to the log, if we're in debug level (2) or higher.
+   * 
+   * @param ex the exception
+   * @param depth the stack trace depth
+   */
+  public static void debug(final Exception ex, final int depth)
+  {
+    writeMsg(ex, 2, depth);
   }
   
   
@@ -196,6 +242,18 @@ public final class Logger
   
   
   /**
+   * Write an exception to the log, if we're in warn level (3) or higher.
+   * 
+   * @param ex the exception
+   * @param depth the stack trace depth
+   */
+  public static void warn(final Exception ex, final int depth)
+  {
+    writeMsg(ex, 3, depth);
+  }
+  
+  
+  /**
    * Write a message to the log, if we're in error level (4) or higher.
    * 
    * @param msg the output string
@@ -214,6 +272,18 @@ public final class Logger
   public static void error(final Exception ex)
   {
     writeMsg(ex, 4);
+  }
+  
+  
+  /**
+   * Write an exception to the log, if we're in error level (4) or higher.
+   * 
+   * @param ex the exception
+   * @param depth the stack trace depth
+   */
+  public static void error(final Exception ex, final int depth)
+  {
+    writeMsg(ex, 4, depth);
   }
   
   
@@ -240,6 +310,18 @@ public final class Logger
   
   
   /**
+   * Write an exception to the log, if we're in fatal level (5) or higher.
+   * 
+   * @param ex the exception
+   * @param depth the stack trace depth
+   */
+  public static void fatal(final Exception ex, final int depth)
+  {
+    writeMsg(ex, 5, depth);
+  }
+  
+  
+  /**
    * Write out the specified exception.
    * 
    * @param ex the exception to write
@@ -247,6 +329,21 @@ public final class Logger
    */
   private static void writeMsg(final Exception ex,
                                final int levelBound)
+  {
+    writeMsg(ex, levelBound, DEFAULT_EXCEP_DEPTH);
+  }
+  
+  
+  /**
+   * Write out the specified exception.
+   * 
+   * @param ex the exception to write
+   * @param levelBound the requested level to write out the exception
+   * @param depth the depth of the stack trace to print
+   */
+  private static void writeMsg(final Exception ex,
+                               final int levelBound,
+                               final int depth)
   {
     // Check if any messages should be written
     if ((logger.logLevel < 1) || (logger.logFileMode < 0) ||
@@ -271,7 +368,7 @@ public final class Logger
       sb.append(Utility.getLineSeparator()).append("  ").append(elements[0]);
       
       // Don't write out more than the first few elements of the stack trace
-      int lastElement = Math.min(elements.length, 10);
+      int lastElement = (depth < 0) ? elements.length : Math.min(elements.length, depth);
       for (int i = 1; i < lastElement; ++i)
       {
         sb.append(Utility.getLineSeparator()).append("    ").append(elements[i]);
@@ -300,8 +397,9 @@ public final class Logger
       return;
     }
     
-    // Prepend the date/time
-    String s = Utility.getDateTimeString() + ": " + msg;
+    // Prepend the date/time and level description
+    String s = Utility.getDateTimeString() + " " +
+               getLogLevelDesc(logger.logLevel) + ": " + msg;
     
     // Write out the string, based on the file mode
     if (logger.logFileMode == 0)
@@ -366,5 +464,17 @@ public final class Logger
     // We've written data to the output file, so no need to overwrite
     // the output stream with future data (everything else gets appended)
     logger.dataWritten = true;
+  }
+  
+  
+  private static String getLogLevelDesc(final int level) {
+    switch (level) {
+      case 1: return "INFO";
+      case 2: return "DEBUG";
+      case 3: return "WARN";
+      case 4: return "ERROR";
+      case 5: return "FATAL";
+      default: return "UNKN";
+	}
   }
 }
