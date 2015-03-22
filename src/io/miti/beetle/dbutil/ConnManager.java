@@ -1,4 +1,4 @@
-package io.miti.beetle.util;
+package io.miti.beetle.dbutil;
 
 import java.io.BufferedReader;
 import java.io.File;

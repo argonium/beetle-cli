@@ -1,4 +1,4 @@
-package io.miti.beetle.util;
+package io.miti.beetle.dbutil;
 
 /**
  * Encapsulate a database column.

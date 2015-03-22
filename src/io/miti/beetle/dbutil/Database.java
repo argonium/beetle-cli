@@ -1,4 +1,6 @@
-package io.miti.beetle.util;
+package io.miti.beetle.dbutil;
+
+import io.miti.beetle.util.Logger;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

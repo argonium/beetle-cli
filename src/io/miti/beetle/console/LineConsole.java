@@ -24,9 +24,9 @@ import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
 import io.miti.beetle.app.ArgumentParser;
-import io.miti.beetle.util.ConnManager;
+import io.miti.beetle.dbutil.ConnManager;
+import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.util.Content;
-import io.miti.beetle.util.Database;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.TimeSpan;
@@ -36,7 +36,6 @@ public final class LineConsole {
 	
 	private static List<String> supportedCommands = null;
 	private static final boolean useSmartREPL = true;
-	private boolean loadClassNames = false;
 	
 	static {
 		populateSupportedCommands();
@@ -48,10 +47,7 @@ public final class LineConsole {
 	}
 	
 	
-	public void start(final boolean bLoadClassNames) {
-		
-		// Save whether to load a class when connecting to a database
-		loadClassNames = bLoadClassNames;
+	public void start() {
 		
 		// Run a REPL
 		if (useSmartREPL) {

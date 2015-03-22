@@ -1,5 +1,9 @@
 package io.miti.beetle.app;
 
+import io.miti.beetle.console.LineConsole;
+import io.miti.beetle.prefs.DatabaseValidator;
+import io.miti.beetle.prefs.PrefsDatabase;
+import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.Utility;
 
 /**
@@ -18,14 +22,31 @@ public final class Beetle {
 	
 	
 	private void start() {
+		
 		// Store whether we're in a jar or not
 		checkInputFileSource();
 		
-		// TODO Start the H2 database (build the DB if it doesn't exist)
-		
+	    // Initialize the database
+	    boolean result = PrefsDatabase.initializeDatabase();
+	    
+	    // Check the database connection
+	    if (!result)
+	    {
+		  System.out.println("Unable to start preferences database.  " +
+				  			 "Another copy may be running.  Exiting.");
+		  return;
+	    }
+	    
+	    // Check that the database version is up-to-date
+	    if (!DatabaseValidator.checkDatabase(null))
+	    {
+	      return;
+	    }
+	    
 		// TODO Start the cache manager
 		
-		// TODO Start the console
+		// Start the console
+	    new LineConsole().start();
 	}
   
   
@@ -44,6 +65,9 @@ public final class Beetle {
 	 * @param args arguments to the application
 	 */
 	public static void main(final String[] args) {
+		
+		// Initialize our logger
+		Logger.initialize(3, "stdout", false);
 		
 		// Parse any command line arguments
 		if ((new ArgumentParser(args)).exit()) {
