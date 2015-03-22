@@ -94,7 +94,7 @@ public final class Config implements FetchDatabaseRecords
     
     // Build our query
     StringBuilder buf = new StringBuilder(100);
-    buf.append("select DB_VERSION from DM_CONFIG");
+    buf.append("select DB_VERSION from config");
     
     // Get the data from the database
     PrefsDatabase.executeSelect(buf.toString(), null, new Config());
@@ -151,7 +151,7 @@ public final class Config implements FetchDatabaseRecords
     
     // Build the UPDATE string
     StringBuilder sb = new StringBuilder(100);
-    sb.append("update DM_CONFIG set DB_VERSION = ")
+    sb.append("update config set DB_VERSION = ")
       .append(Integer.toString(dbVersion));
     
     // Update the table
