@@ -383,7 +383,7 @@ public final class Content
     
     try
     {
-      // Get the name of this jar file (usually 'diver.jar')
+      // Get the name of this jar file (usually 'beetle.jar')
       String jarPath = Content.class.getProtectionDomain().getCodeSource()
                               .getLocation().toURI().getPath();
       

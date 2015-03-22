@@ -38,7 +38,7 @@ public final class Beetle {
 	    }
 	    
 	    // Check that the database version is up-to-date
-	    if (!DatabaseValidator.checkDatabase(null))
+	    if (!DatabaseValidator.checkDatabase())
 	    {
 	      return;
 	    }
