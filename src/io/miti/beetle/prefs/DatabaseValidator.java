@@ -14,9 +14,6 @@ import io.miti.beetle.util.Content;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.Utility;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 /**
  * Verify that the database is the correct version.
  * 
@@ -37,10 +34,9 @@ public final class DatabaseValidator
   /**
    * Check the required and current database versions.
    * 
-   * @param frame the parent frame
    * @return the result of the comparison
    */
-  public static boolean checkDatabase(final JFrame frame)
+  public static boolean checkDatabase()
   {
     // Get the two versions
     final int currDB = Config.getDBVersion();
@@ -56,7 +52,7 @@ public final class DatabaseValidator
     else if (currDB < reqdDB)
     {
       // We need to update the database
-      return updateDatabase(frame, currDB, reqdDB);
+      return updateDatabase(currDB, reqdDB);
     }
     else
     {
@@ -68,8 +64,7 @@ public final class DatabaseValidator
         .append("\nof the database (").append(Integer.toString(currDB))
         .append(") than it requires (").append(Integer.toString(reqdDB))
         .append(").  Exiting.");
-      JOptionPane.showMessageDialog(frame, sb.toString(), "Error",
-                                    JOptionPane.ERROR_MESSAGE);
+      System.out.println(sb.toString());
     }
     
     return false;
@@ -79,13 +74,11 @@ public final class DatabaseValidator
   /**
    * Update the database to the latest available version.
    * 
-   * @param frame the parent frame
    * @param startingVer the starting (current) version of the database
    * @param requiredVer the required version of the database for this software
    * @return whether to continue running the software (DB update was successful)
    */
-  private static boolean updateDatabase(final JFrame frame,
-                                        final int startingVer,
+  private static boolean updateDatabase(final int startingVer,
                                         final int requiredVer)
   {
     // This is used to show messages to the user
@@ -96,43 +89,44 @@ public final class DatabaseValidator
       DatabaseUpdateData.updatesAvailable(startingVer, requiredVer);
     if (!updatesAvailable)
     {
-      // Build the error message
-      sb.setLength(0);
-      sb.append("This software installation requires a later version")
-        .append(" of the\ndatabase (").append(Integer.toString(requiredVer))
-        .append(") than is currently installed (").append(Integer.toString(startingVer))
-        .append(").  Do you\nwant to delete your current database?  The ")
-        .append("software\nwill close after it is finished.");
-      
-      // Get the user's input
-      int result = JOptionPane.showConfirmDialog(frame, sb.toString(),
-                          "Error", JOptionPane.YES_NO_OPTION);
-      if (result == JOptionPane.YES_OPTION)
-      {
-        PrefsDatabase.dropDatabase();
-      }
+    	System.out.println("This installation requires a later version of the database than is available.  Exiting.");
+//      // Build the error message
+//      sb.setLength(0);
+//      sb.append("This software installation requires a later version")
+//        .append(" of the\ndatabase (").append(Integer.toString(requiredVer))
+//        .append(") than is currently installed (").append(Integer.toString(startingVer))
+//        .append(").  Do you\nwant to delete your current database?  The ")
+//        .append("software\nwill close after it is finished.");
+//      
+//      // Get the user's input
+//      int result = JOptionPane.showConfirmDialog(frame, sb.toString(),
+//                          "Error", JOptionPane.YES_NO_OPTION);
+//      if (result == JOptionPane.YES_OPTION)
+//      {
+//        PrefsDatabase.dropDatabase();
+//      }
       
       // We want to exit the app now, so return false
       return false;
     }
     
     // See if the user wants to update the database
-    sb.setLength(0);
-    sb.append("This software installation requires a later version")
-      .append(" of the\ndatabase (").append(Integer.toString(requiredVer))
-      .append(") than is currently installed (").append(Integer.toString(startingVer))
-      .append(").  Do you\nwant to update your database?");
-    int result = JOptionPane.showConfirmDialog(frame, sb.toString(),
-                        "Update Required", JOptionPane.YES_NO_OPTION);
-    if (result == JOptionPane.NO_OPTION)
-    {
-      // The user does not want to update the database.  Exit.
-      sb.setLength(0);
-      sb.append("The database update will not be performed.  Exiting.");
-      JOptionPane.showMessageDialog(frame, sb.toString(), "Exiting",
-                                    JOptionPane.INFORMATION_MESSAGE);
-      return false;
-    }
+    System.out.println("Updating the database from version " + startingVer + " to " + requiredVer);
+//    sb.setLength(0);
+//    sb.append("This software installation requires a later version")
+//      .append(" of the\ndatabase (").append(Integer.toString(requiredVer))
+//      .append(") than is currently installed (").append(Integer.toString(startingVer))
+//      .append(").  Do you\nwant to update your database?");
+//    int result = JOptionPane.showConfirmDialog(frame, sb.toString(),
+//                        "Update Required", JOptionPane.YES_NO_OPTION);
+//    if (result == JOptionPane.NO_OPTION)
+//    {
+//      // The user does not want to update the database.  Exit.
+//      sb.setLength(0);
+//      sb.append("The database update will not be performed.  Exiting.");
+//      System.out.println(sb.toString());
+//      return false;
+//    }
     
     // Get the highest update for this version
     int currVer = startingVer;
@@ -148,8 +142,7 @@ public final class DatabaseValidator
         sb.setLength(0);
         sb.append("The update is null for version ").append(Integer.toString(currVer))
           .append(".  Exiting.");
-        JOptionPane.showMessageDialog(frame, sb.toString(), "Error",
-            JOptionPane.ERROR_MESSAGE);
+        System.out.println(sb.toString());
         return false;
       }
       
@@ -165,8 +158,7 @@ public final class DatabaseValidator
         sb.append("An error occurred updating the database from version ")
           .append(Integer.toString(currVer)).append(" to version ")
           .append(update.getTargetVersion()).append(".  Exiting.");
-        JOptionPane.showMessageDialog(frame, sb.toString(), "Error",
-                                      JOptionPane.ERROR_MESSAGE);
+        System.out.println(sb.toString());
         return false;
       }
       else
@@ -202,19 +194,16 @@ public final class DatabaseValidator
         .append(".  Additional updates are\nrequired to reach version ")
         .append(Integer.toString(requiredVer))
         .append(" but no more updates were found.  Exiting.");
-      JOptionPane.showMessageDialog(frame, sb.toString(), "Incomplete Update",
-          JOptionPane.ERROR_MESSAGE);
+      System.out.println(sb.toString());
       return false;
     }
     
     // Show a success message
     sb.setLength(0);
-    sb.setLength(0);
     sb.append("The database has been updated to version ")
       .append(Integer.toString(currVer))
       .append(".");
-    JOptionPane.showMessageDialog(frame, sb.toString(), "Update Complete",
-        JOptionPane.INFORMATION_MESSAGE);
+    System.out.println(sb.toString());
     
     // If we reached this point, the update was successful
     return true;

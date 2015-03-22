@@ -1178,7 +1178,7 @@ public final class PrefsDatabase
        */
       public boolean accept(final File dir, final String name)
       {
-        if ((name.startsWith("uddc.")) && (name.endsWith(".db")))
+        if ((name.startsWith("btl.")) && (name.endsWith(".db")))
         {
           // This is a DB file, so return true
           return true;
