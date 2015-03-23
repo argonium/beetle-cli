@@ -12,18 +12,30 @@ public final class DBTypeCache {
 	/** The list of objects in the cache. */
 	private List<DbType> list = null;
 	
+	/** Instatiate the cache. */
 	static {
 		cache = new DBTypeCache();
 	}
 	
+	/**
+	 * Private default constructor.
+	 */
 	private DBTypeCache() {
 		super();
 	}
 	
+	/**
+	 * Get the cache.
+	 * 
+	 * @return the data cache
+	 */
 	public static DBTypeCache get() {
 		return cache;
 	}
 	
+	/**
+	 * Load the cache.
+	 */
 	public void loadCache() {
 		if (list != null) {
 			return;
@@ -32,6 +44,9 @@ public final class DBTypeCache {
 		list = DbType.getList();
 	}
 	
+	/**
+	 * Print the list of objects in the cache.
+	 */
 	public void printList() {
 		if (list == null) {
 			System.out.println("(List is null)");
