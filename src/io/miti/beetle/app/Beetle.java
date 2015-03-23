@@ -1,5 +1,6 @@
 package io.miti.beetle.app;
 
+import io.miti.beetle.cache.CacheManager;
 import io.miti.beetle.console.LineConsole;
 import io.miti.beetle.prefs.DatabaseValidator;
 import io.miti.beetle.prefs.PrefsDatabase;
@@ -43,7 +44,8 @@ public final class Beetle {
 	      return;
 	    }
 	    
-		// TODO Start the cache manager
+		// Start the cache manager
+	    CacheManager.loadCache();
 		
 		// Start the console
 	    new LineConsole().start();
