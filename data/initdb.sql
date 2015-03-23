@@ -14,7 +14,7 @@ create table if not exists app_property (
 );
 
 -- Instances of databases (db_type data)
-create table if not exists db (
+create table if not exists user_db (
 	id int auto_increment not null,
 	db_name varchar2(100) not null,
 	url varchar2(200) not null,
@@ -87,6 +87,7 @@ insert into data_type (id, name) values (3, 'Hadoop');
 insert into data_type (id, name) values (4, 'CSV');
 insert into data_type (id, name) values (5, 'JSON');
 insert into data_type (id, name) values (6, 'YAML');
+insert into data_type (id, name) values (7, 'Text');
 
 -- Add the supported database vendors
 insert into db_type (name, ref, driver) values
