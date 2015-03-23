@@ -8,7 +8,10 @@ public final class CacheManager {
 	
 	public static void loadCache() {
 		
-		// TODO
 		DBTypeCache.get().loadCache();
+		UserDBCache.get().loadCache();
+		HadoopCache.get().loadCache();
+		SessionCache.get().loadCache();
+		DataTypeCache.get().loadCache();
 	}
 }
