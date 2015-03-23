@@ -12,7 +12,7 @@ public final class DBTypeCache {
 	/** The list of objects in the cache. */
 	private List<DbType> list = null;
 	
-	/** Instatiate the cache. */
+	/** Instantiate the cache. */
 	static {
 		cache = new DBTypeCache();
 	}
