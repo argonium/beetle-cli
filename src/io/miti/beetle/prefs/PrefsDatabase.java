@@ -57,7 +57,7 @@ public final class PrefsDatabase
   /**
    * Declare the URL for our database.
    */
-  private static final String DB_URL = "jdbc:h2:./btl";
+  private static final String DB_URL = "jdbc:h2:./btl;MV_STORE=FALSE";
   
   
   /**
