@@ -116,7 +116,7 @@ public final class DbType implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, NAME, REF, DRIVER, JAR_NAME ")
-       .append("from DB_TYPE");
+       .append("from DB_TYPE order by id");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new DbType());
@@ -240,4 +240,11 @@ public final class DbType implements FetchDatabaseRecords
   {
     jarName = pJarName;
   }
+
+
+	@Override
+	public String toString() {
+		return "DbType [id=" + id + ", name=" + name + ", ref=" + ref + ", driver="
+				+ driver + ", jarName=" + jarName + "]";
+	}
 }

@@ -128,4 +128,10 @@ public final class Config implements FetchDatabaseRecords
   {
     dbVersion = pDbVersion;
   }
+
+
+	@Override
+	public String toString() {
+		return "Config [dbVersion=" + dbVersion + "]";
+	}
 }

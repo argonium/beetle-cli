@@ -122,7 +122,7 @@ public final class UserDb implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, DB_NAME, URL, USER_ID, USER_PW, DB_TYPE_ID ")
-       .append("from USER_DB");
+       .append("from USER_DB order by id");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new UserDb());
@@ -268,4 +268,12 @@ public final class UserDb implements FetchDatabaseRecords
   {
     dbTypeId = pDbTypeId;
   }
+
+
+	@Override
+	public String toString() {
+		return "UserDb [id=" + id + ", dbName=" + dbName + ", url=" + url
+				+ ", userId=" + userId + ", userPw=" + userPw + ", dbTypeId="
+				+ dbTypeId + "]";
+	}
 }

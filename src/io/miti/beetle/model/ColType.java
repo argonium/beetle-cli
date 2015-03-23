@@ -122,7 +122,7 @@ public final class ColType implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, IS_STR, IS_NUM, IS_BOOL, IS_DATE, TYPE_NAME ")
-       .append("from COL_TYPE");
+       .append("from COL_TYPE order by id");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new ColType());
@@ -268,4 +268,12 @@ public final class ColType implements FetchDatabaseRecords
   {
     typeName = pTypeName;
   }
+
+
+	@Override
+	public String toString() {
+		return "ColType [id=" + id + ", isStr=" + isStr + ", isNum=" + isNum
+				+ ", isBool=" + isBool + ", isDate=" + isDate + ", typeName="
+				+ typeName + "]";
+	}
 }

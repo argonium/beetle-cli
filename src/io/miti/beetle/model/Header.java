@@ -116,7 +116,7 @@ public final class Header implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, SESSION_ID, COL_NAME, COL_TYPE_ID, DATE_FORMAT ")
-       .append("from HEADER");
+       .append("from HEADER order by ID");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new Header());
@@ -240,4 +240,12 @@ public final class Header implements FetchDatabaseRecords
   {
     dateFormat = pDateFormat;
   }
+
+
+	@Override
+	public String toString() {
+		return "Header [id=" + id + ", sessionId=" + sessionId + ", colName="
+				+ colName + ", colTypeId=" + colTypeId + ", dateFormat="
+				+ dateFormat + "]";
+	}
 }

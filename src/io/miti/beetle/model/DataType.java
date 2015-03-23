@@ -98,7 +98,7 @@ public final class DataType implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, NAME ")
-       .append("from DATA_TYPE");
+       .append("from DATA_TYPE order by id");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new DataType());
@@ -156,4 +156,10 @@ public final class DataType implements FetchDatabaseRecords
   {
     name = pName;
   }
+
+
+	@Override
+	public String toString() {
+		return "DataType [id=" + id + ", name=" + name + "]";
+	}
 }

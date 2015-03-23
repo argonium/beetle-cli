@@ -98,7 +98,7 @@ public final class AppProperty implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select KEY, VALUE ")
-       .append("from APP_PROPERTY");
+       .append("from APP_PROPERTY order by key");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new AppProperty());
@@ -156,4 +156,10 @@ public final class AppProperty implements FetchDatabaseRecords
   {
     value = pValue;
   }
+
+
+	@Override
+	public String toString() {
+		return "AppProperty [key=" + key + ", value=" + value + "]";
+	}
 }

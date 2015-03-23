@@ -116,7 +116,7 @@ public final class Session implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, TARGET_DELIM ")
-       .append("from SESSION");
+       .append("from SESSION order by ID");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new Session());
@@ -240,4 +240,12 @@ public final class Session implements FetchDatabaseRecords
   {
     targetDelim = pTargetDelim;
   }
+
+
+	@Override
+	public String toString() {
+		return "Session [id=" + id + ", sourceTypeId=" + sourceTypeId
+				+ ", targetTypeId=" + targetTypeId + ", sourceDelim=" + sourceDelim
+				+ ", targetDelim=" + targetDelim + "]";
+	}
 }

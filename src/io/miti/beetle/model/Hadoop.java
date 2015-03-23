@@ -110,7 +110,7 @@ public final class Hadoop implements FetchDatabaseRecords
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("select ID, LABEL, NAME, URL ")
-       .append("from HADOOP");
+       .append("from HADOOP order by ID");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new Hadoop());
@@ -212,4 +212,11 @@ public final class Hadoop implements FetchDatabaseRecords
   {
     url = pUrl;
   }
+
+
+	@Override
+	public String toString() {
+		return "Hadoop [id=" + id + ", label=" + label + ", name=" + name
+				+ ", url=" + url + "]";
+	}
 }
