@@ -115,13 +115,13 @@ insert into db_type (name, ref, driver) values
 insert into db_type (name, ref, driver) values
 	('MongoDB', 'mongo', 'mongodb.jdbc.MongoDriver');
 insert into db_type (name, ref, driver) values
-	('HBase (Phoenix)', 'phoenix', 'org.apache.phoenix.jdbc.PhoenixDriver');
+	('HBase', 'phoenix', 'org.apache.phoenix.jdbc.PhoenixDriver');
 insert into db_type (name, ref, driver) values
-	('MS SQL Server', 'sqlserver', 'com.microsoft.sqlserver.jdbc.SQLServerDriver');
+	('SQL Server', 'sqlserver', 'com.microsoft.sqlserver.jdbc.SQLServerDriver');
 insert into db_type (name, ref, driver) values
 	('SQLite', 'sqlite', 'org.sqlite.JDBC');
 insert into db_type (name, ref, driver) values
-	('Sybase (jTDS)', 'jtds', 'net.sourceforge.jtds.jdbc.Driver');
+	('Sybase', 'jtds', 'net.sourceforge.jtds.jdbc.Driver');
 
 -- Set the database version number
 insert into config (db_version) values (1);
