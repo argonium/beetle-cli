@@ -44,6 +44,10 @@ public final class DBTypeCache {
 		list = DbType.getList();
 	}
 	
+	public List<DbType> getList() {
+		return list;
+	}
+	
 	/**
 	 * Print the list of objects in the cache.
 	 */

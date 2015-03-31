@@ -1,5 +1,6 @@
 package io.miti.beetle.dbutil;
 
+import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.util.Logger;
 
 import java.sql.Connection;
@@ -162,6 +163,75 @@ public final class Database {
 
 		return tableNames;
 	}
+	  
+	  
+	  /**
+	   * Execute an Update against a database table.
+	   * 
+	   * @param sql the SQL command to run
+	   * @param updater the object used to set the data fields in the SQL command
+	   * @return the result of the operation
+	   */
+	  public static boolean update(final String sql, final IUpdateable updater)
+	  {
+	    // The return value
+	    boolean bResult = false;
+	    
+	    // Check the query
+	    if ((sql == null) || (sql.length() < 1))
+	    {
+	      return bResult;
+	    }
+	    
+	    // Log this event, if debugging
+	    Logger.info("DB Update: " + sql);
+	    
+	    PreparedStatement ps = null;
+	    try
+	    {
+	      // Execute the statement
+	      Connection conn = ConnManager.get().getConn();
+	      ps = conn.prepareStatement(sql);
+	      
+	      // If the IUpdateable object is not null, call its method
+	      if (updater != null)
+	      {
+	        updater.setUpdateFields(ps);
+	      }
+	      
+	      // Execute the update statement
+	      ps.executeUpdate();
+	      
+	      // We reached this point, so it must have succeeded
+	      bResult = true;
+	      
+	      // Close the statement
+	      ps.close();
+	      ps = null;
+	    }
+	    catch (SQLException e)
+	    {
+	      Logger.error(e);
+	    }
+	    finally
+	    {
+	      // Close the Statement if it's not null
+	      try
+	      {
+	        if (ps != null)
+	        {
+	          ps.close();
+	          ps = null;
+	        }
+	      }
+	      catch (SQLException sqle)
+	      {
+	        Logger.error(sqle);
+	      }
+	    }
+	    
+	    return bResult;
+	  }
 	  
 	  
 	  /**
