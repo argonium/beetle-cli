@@ -24,13 +24,16 @@ import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
 import io.miti.beetle.app.ArgumentParser;
+import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.dbutil.ConnManager;
 import io.miti.beetle.dbutil.Database;
+import io.miti.beetle.model.DbType;
 import io.miti.beetle.util.Content;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.TimeSpan;
 import io.miti.beetle.util.Utility;
+import io.miti.beetle.util.FileEntry;
 
 public final class LineConsole {
 	
@@ -165,7 +168,7 @@ public final class LineConsole {
 		
 		// Process the command entered by the user
 		final String line = input.trim();
-		if (line.equals("quit")) {
+		if (line.equals("quit") || line.equals("exit")) {
 			ConnManager.get().close();
 			System.out.println("Shutting down");
 			System.exit(0);
@@ -184,6 +187,12 @@ public final class LineConsole {
 			printHelp(line.substring(5).trim());
 		} else if (validateCommand(cmds, 2, "close", "database")) {
 			ConnManager.get().close();
+		} else if (validateCommand(cmds, 2, "list", "dbtypes")) {
+			listDatabaseTypes();
+		} else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
+			setDBTypeJar(cmds.get(2), cmds.get(4));
+		} else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
+			clearDBTypeJar(cmds.get(2));
 		} else if (validateCommand(cmds, 3, "export", "data")) {
 			exportTableData(cmds.get(2), null);
 		} else if (validateCommand(cmds, 4, "export", "data")) {
@@ -199,6 +208,10 @@ public final class LineConsole {
 			describeTable(cmds.get(2));
 		} else if (validateCommand(cmds, 2, "list", "tables")) {
 			printTables();
+		} else if (line.equals("dir")) {
+			printDirPath(".", false);
+		} else if (validateCommand(cmds, 2, "dir")) {
+			printDirPath(cmds.get(1), false);
 		} else if (validateCommand(cmds, 2, "list", "schemas")) {
 			printSchemas();
 		} else if (line.equals("time")) {
@@ -236,6 +249,97 @@ public final class LineConsole {
 	}
 	
 	
+	private void clearDBTypeJar(final String sTypeID) {
+		// Get the numeric ID
+		int id = Utility.getStringAsInteger(sTypeID, -1, -1);
+		if (id < 0) {
+			System.err.println("Error: Invalid ID specified");
+			return;
+		}
+		
+		List<DbType> list = DBTypeCache.get().getList();
+		if (list == null) {
+			System.out.println("No database supported");
+		} else {
+			// Find the object matching on ID
+			boolean found = false;
+			for (DbType dbt : list) {
+				if (dbt.getId() == id) {
+					dbt.setJarName(null);
+					boolean updateRow = dbt.updateRow();
+					if (!updateRow) {
+						System.err.println("Error updating the table");
+					}
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				System.out.println("DBType row updated");
+			} else {
+				System.err.println("No matching DBType found");
+			}
+		}
+	}
+
+
+	private void setDBTypeJar(final String sTypeID, final String jarName) {
+		// Get the numeric ID
+		int id = Utility.getStringAsInteger(sTypeID, -1, -1);
+		if (id < 0) {
+			System.err.println("Error: Invalid ID specified");
+			return;
+		}
+		
+		// Check the file
+		File file = new File(jarName);
+		if (file.isDirectory() || !file.exists()) {
+			System.err.println("Error: The JAR file was not found");
+			return;
+		}
+		
+		List<DbType> list = DBTypeCache.get().getList();
+		if (list == null) {
+			System.out.println("No database supported");
+		} else {
+			// Find the object matching on ID
+			boolean found = false;
+			for (DbType dbt : list) {
+				if (dbt.getId() == id) {
+					dbt.setJarName(jarName);
+					boolean updateRow = dbt.updateRow();
+					if (!updateRow) {
+						System.err.println("Error updating the table");
+					}
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				System.out.println("DBType row updated");
+			} else {
+				System.err.println("No matching DBType found");
+			}
+		}
+	}
+	
+	
+	private void listDatabaseTypes() {
+		List<DbType> list = DBTypeCache.get().getList();
+		if ((list == null) || list.isEmpty()) {
+			System.out.println("No database supported");
+		} else {
+			// Print the list
+			String table = new ListFormatter().getTable(list, 3,
+					new String[] {"id", "name", "driver", "jarName"},
+					new String[] {"ID", "Name", "Class", "Jar File"});
+			System.out.print(table);
+		}
+	}
+
+
 	private void timeCommand(final String cmdToTime, final ConsoleReader console) {
 		// Record the starting time
 		final long start = System.currentTimeMillis();
@@ -647,6 +751,60 @@ public final class LineConsole {
 	}
 	
 	
+	/**
+	 * Get a directory listing.
+	 * 
+	 * @param path the directory path
+	 */
+	public void printDirPath(final String path, final boolean useLongPath)
+	{
+		final File dir = new File(path);
+		final File[] files = dir.listFiles();
+		if ((files == null) || (files.length < 1)) {
+			System.out.println("No files found in the directory");
+			return;
+		}
+		
+		// Convert the list into another list, for better formatting
+		List<FileEntry> listing = new ArrayList<FileEntry>(files.length);
+		for (File file : files) {
+			final boolean isDir = file.isDirectory();
+			final String fname = getFileName(file, useLongPath);
+			listing.add(new FileEntry(isDir, fname,
+					(isDir) ? 0 : file.length(), file.lastModified()));
+		}
+		
+		// Print the table
+		final String table = new ListFormatter().getTable(listing,
+			new String[] {"name", "len", "lastModified"},
+			new String[] {"Name", "Size", "Last Modified"});
+		System.out.print(table);
+	}
+	
+	
+	/**
+	 * Get the canonical version of a file name.
+	 * 
+	 * @param file the file
+	 * @param useLongPath whether to get the full path of the file
+	 * @return the file name
+	 */
+	private static String getFileName(final File file, final boolean useLongPath) {
+		if (!useLongPath) {
+			return file.getName();
+		}
+		
+		String name = null;
+		try {
+		name = file.getCanonicalPath();
+		} catch (IOException e) {
+		e.printStackTrace();
+		}
+		  
+		return name;
+	}
+	
+	
 	// Get the list of database schemas
 	private void printSchemas() {
 		
@@ -875,9 +1033,11 @@ public final class LineConsole {
 		
 		boolean result = true;
 		for (int i = 0; i < numFields; ++i) {
-			if ((cmds.get(i) == null) || (fields[i] == null)) {
+			if (cmds.get(i) == null) {
 				result = false;
 				break;
+			} else if (fields[i] == null) {
+				continue;
 			}
 			
 			if (!cmds.get(i).equals(fields[i])) {
@@ -921,8 +1081,8 @@ public final class LineConsole {
 				"help", "quit", "gc", "mem", "time", "version",
 				"count tables", "export data <table name> [<where-clause>]",
 				"cat <file>", "head <file>", "dir [<path>]",
-				"time <command>",
-				"count rows <table>", "dbinfo", "list schemas",
+				"time <command>", "list dbtypes", "set dbtype <id> jar <filename>",
+				"count rows <table>", "dbinfo", "list schemas", "clear dbtype <id> jar",
 				"check database", "list tables", "connections",
 				"select connection", "describe table", "export schema <filename>",
 				"connect <URL> [<user> [<pw>]]", "close database",
