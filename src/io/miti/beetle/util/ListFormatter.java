@@ -173,9 +173,16 @@ public final class ListFormatter
    */
   public String getTable(final List<?> objects, final String[] columns, final String[] titles)
   {
+	return getTable(objects, 5, columns, titles);
+  }
+  
+  
+  public String getTable(final List<?> objects, final int width,
+		  				 final String[] columns, final String[] titles)
+  {
     List<List<String>> list = buildListList(objects, columns, titles);
     init(list);
-    List<String> fmtd = format(5, list);
+    List<String> fmtd = format(width, list);
     return getTextLine(fmtd);
   }
   

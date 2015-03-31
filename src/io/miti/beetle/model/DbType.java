@@ -6,9 +6,12 @@
 package io.miti.beetle.model;
 
 import io.miti.beetle.dbutil.FetchDatabaseRecords;
+import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.prefs.PrefsDatabase;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +20,7 @@ import java.util.List;
  *
  * @version 1.0
  */
-public final class DbType implements FetchDatabaseRecords
+public final class DbType implements FetchDatabaseRecords, IUpdateable
 {
   /**
    * The table column ID.
@@ -246,5 +249,23 @@ public final class DbType implements FetchDatabaseRecords
 	public String toString() {
 		return "DbType [id=" + id + ", name=" + name + ", ref=" + ref + ", driver="
 				+ driver + ", jarName=" + jarName + "]";
+	}
+	
+	public boolean updateRow() {
+		
+		final StringBuilder sql = new StringBuilder(100);
+		sql.append("update db_type set name = ?, ref = ?, driver = ?, ")
+		   .append("jar_name = ? where id = ").append(Integer.valueOf(id));
+		final boolean result = PrefsDatabase.update(sql.toString(), this);
+		return result;
+	}
+
+
+	@Override
+	public void setUpdateFields(PreparedStatement ps) throws SQLException {
+		ps.setString(1, name);
+		ps.setString(2, ref);
+		ps.setString(3, driver);
+		ps.setString(4, jarName);
 	}
 }
