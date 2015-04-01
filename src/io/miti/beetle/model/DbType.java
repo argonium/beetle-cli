@@ -6,6 +6,7 @@
 package io.miti.beetle.model;
 
 import io.miti.beetle.dbutil.FetchDatabaseRecords;
+import io.miti.beetle.prefs.IInsertable;
 import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.prefs.PrefsDatabase;
 
@@ -20,7 +21,7 @@ import java.util.List;
  *
  * @version 1.0
  */
-public final class DbType implements FetchDatabaseRecords, IUpdateable
+public final class DbType implements FetchDatabaseRecords, IUpdateable, IInsertable
 {
   /**
    * The table column ID.
@@ -113,13 +114,34 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable
    */
   public static List<DbType> getList()
   {
+    return getList(null);
+  }
+  
+  
+  /**
+   * Get all objects from the database.
+   * 
+   * @param whereClause the where clause for the select statement
+   * @return a list of all objects in the database
+   */
+  public static List<DbType> getList(final String whereClause)
+  {
     // This will hold the list that gets returned
     List<DbType> listData = new ArrayList<DbType>(100);
     
     // Build our query
     StringBuffer buf = new StringBuffer(100);
-    buf.append("select ID, NAME, REF, DRIVER, JAR_NAME ")
-       .append("from DB_TYPE order by id");
+    buf.append("SELECT ID, NAME, REF, DRIVER, ");
+    buf.append("JAR_NAME");
+    buf.append(" from DB_TYPE");
+    
+    // Check if there's a where clause to append
+    if (whereClause != null)
+    {
+      buf.append(" ").append(whereClause);
+    }
+    
+    buf.append(" order by id");
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new DbType());
@@ -132,6 +154,85 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable
     
     // Return the list
     return listData;
+  }
+  
+  
+  /**
+   * Insert a record into the database.
+   */
+  public void insert()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("INSERT into DB_TYPE (");
+    sb.append("ID, NAME, ");
+    sb.append("REF, DRIVER, ");
+    sb.append("JAR_NAME");
+    sb.append(") values (");
+    sb.append("?, ?, ?, ?, ?");
+    sb.append(")");
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setInsertFields(final PreparedStatement ps)
+    throws SQLException
+  {
+    ps.setInt(1, id);
+    ps.setString(2, name);
+    ps.setString(3, ref);
+    ps.setString(4, driver);
+    ps.setString(5, jarName);
+  }
+  
+  
+  /**
+   * Update a record in the database.
+   */
+  public boolean update()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("UPDATE DB_TYPE set ");
+    sb.append("NAME = ?, REF = ?, ");
+    sb.append("DRIVER = ?, JAR_NAME = ? ");
+    sb.append("where id = ?");
+    boolean rc = PrefsDatabase.update(sb.toString(), this);
+    return rc;
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setUpdateFields(final PreparedStatement ps)
+    throws SQLException
+  {
+	ps.setString(1, name);
+	ps.setString(2, ref);
+	ps.setString(3, driver);
+	ps.setString(4, jarName);
+	ps.setInt(5, id);
+  }
+  
+  
+  /**
+   * Delete the record in the database.
+   */
+  public void delete()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("DELETE from DB_TYPE where id = ");
+    sb.append(id);
+    PrefsDatabase.delete(sb.toString());
   }
   
   
@@ -249,23 +350,5 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable
 	public String toString() {
 		return "DbType [id=" + id + ", name=" + name + ", ref=" + ref + ", driver="
 				+ driver + ", jarName=" + jarName + "]";
-	}
-	
-	public boolean updateRow() {
-		
-		final StringBuilder sql = new StringBuilder(100);
-		sql.append("update db_type set name = ?, ref = ?, driver = ?, ")
-		   .append("jar_name = ? where id = ").append(Integer.valueOf(id));
-		final boolean result = PrefsDatabase.update(sql.toString(), this);
-		return result;
-	}
-
-
-	@Override
-	public void setUpdateFields(PreparedStatement ps) throws SQLException {
-		ps.setString(1, name);
-		ps.setString(2, ref);
-		ps.setString(3, driver);
-		ps.setString(4, jarName);
 	}
 }

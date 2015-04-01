@@ -266,7 +266,7 @@ public final class LineConsole {
 			for (DbType dbt : list) {
 				if (dbt.getId() == id) {
 					dbt.setJarName(null);
-					boolean updateRow = dbt.updateRow();
+					boolean updateRow = dbt.update();
 					if (!updateRow) {
 						System.err.println("Error updating the table");
 					}
@@ -308,7 +308,7 @@ public final class LineConsole {
 			for (DbType dbt : list) {
 				if (dbt.getId() == id) {
 					dbt.setJarName(jarName);
-					boolean updateRow = dbt.updateRow();
+					boolean updateRow = dbt.update();
 					if (!updateRow) {
 						System.err.println("Error updating the table");
 					}
