@@ -1,23 +1,26 @@
 /*
  * Java class for the USER_DB database table.
- * Generated on 22 Mar 2015 19:44:10 by DB2Java.
+ * Generated on 01 Apr 2015 11:59:30 by DB2Java.
  */
 
 package io.miti.beetle.model;
 
-import io.miti.beetle.dbutil.FetchDatabaseRecords;
-import io.miti.beetle.prefs.PrefsDatabase;
-
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.miti.beetle.prefs.*;
+import io.miti.beetle.dbutil.*;
 
 /**
  * Java class to encapsulate the USER_DB table.
  *
  * @version 1.0
  */
-public final class UserDb implements FetchDatabaseRecords
+public final class UserDb
+  implements FetchDatabaseRecords, IInsertable, IUpdateable
 {
   /**
    * The table column ID.
@@ -66,7 +69,8 @@ public final class UserDb implements FetchDatabaseRecords
    * @param listRecords the list of data to add to
    * @return the success of the operation
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @Override
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public boolean getFields(final ResultSet rs,
                            final List listRecords)
   {
@@ -116,13 +120,32 @@ public final class UserDb implements FetchDatabaseRecords
    */
   public static List<UserDb> getList()
   {
+    return getList(null);
+  }
+  
+  
+  /**
+   * Get all objects from the database.
+   * 
+   * @param whereClause the where clause for the select statement
+   * @return a list of all objects in the database
+   */
+  public static List<UserDb> getList(final String whereClause)
+  {
     // This will hold the list that gets returned
     List<UserDb> listData = new ArrayList<UserDb>(100);
     
     // Build our query
     StringBuffer buf = new StringBuffer(100);
-    buf.append("select ID, DB_NAME, URL, USER_ID, USER_PW, DB_TYPE_ID ")
-       .append("from USER_DB order by id");
+    buf.append("SELECT ID, DB_NAME, URL, USER_ID, ");
+    buf.append("USER_PW, DB_TYPE_ID");
+    buf.append(" from USER_DB");
+    
+    // Check if there's a where clause to append
+    if (whereClause != null)
+    {
+      buf.append(" ").append(whereClause);
+    }
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new UserDb());
@@ -135,6 +158,82 @@ public final class UserDb implements FetchDatabaseRecords
     
     // Return the list
     return listData;
+  }
+  
+  
+  /**
+   * Insert a record into the database.
+   */
+  public void insert()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("INSERT into USER_DB (");
+    sb.append("ID, DB_NAME, ");
+    sb.append("URL, USER_ID, ");
+    sb.append("USER_PW, DB_TYPE_ID");
+    sb.append(") values (");
+    sb.append("?, ?, ?, ?, ?, ?");
+    sb.append(")");
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setInsertFields(final PreparedStatement ps)
+    throws SQLException
+  {
+    ps.setInt(1, id);
+    ps.setString(2, dbName);
+    ps.setString(3, url);
+    ps.setString(4, userId);
+    ps.setString(5, userPw);
+    ps.setInt(6, dbTypeId);
+  }
+  
+  
+  /**
+   * Update a record in the database.
+   */
+  public void update()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("UPDATE USER_DB set ");
+    sb.append("DB_NAME = ?, URL = ?, ");
+    sb.append("USER_ID = ?, USER_PW = ?, ");
+    sb.append("DB_TYPE_ID = ? ");
+    sb.append("where null = ?");
+    PrefsDatabase.update(sb.toString(), this);
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setUpdateFields(final PreparedStatement ps)
+    throws SQLException
+  {
+	  // TODO
+  }
+  
+  
+  /**
+   * Delete the record in the database.
+   */
+  public void delete()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("DELETE from USER_DB where id = ");
+    sb.append(id);
+    PrefsDatabase.delete(sb.toString());
   }
   
   
@@ -268,12 +367,4 @@ public final class UserDb implements FetchDatabaseRecords
   {
     dbTypeId = pDbTypeId;
   }
-
-
-	@Override
-	public String toString() {
-		return "UserDb [id=" + id + ", dbName=" + dbName + ", url=" + url
-				+ ", userId=" + userId + ", userPw=" + userPw + ", dbTypeId="
-				+ dbTypeId + "]";
-	}
 }

@@ -1,23 +1,26 @@
 /*
  * Java class for the APP_PROPERTY database table.
- * Generated on 22 Mar 2015 19:44:10 by DB2Java.
+ * Generated on 01 Apr 2015 11:59:30 by DB2Java.
  */
 
 package io.miti.beetle.model;
 
-import io.miti.beetle.dbutil.FetchDatabaseRecords;
-import io.miti.beetle.prefs.PrefsDatabase;
-
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.miti.beetle.prefs.*;
+import io.miti.beetle.dbutil.*;
 
 /**
  * Java class to encapsulate the APP_PROPERTY table.
  *
  * @version 1.0
  */
-public final class AppProperty implements FetchDatabaseRecords
+public final class AppProperty
+  implements FetchDatabaseRecords, IInsertable, IUpdateable
 {
   /**
    * The table column KEY.
@@ -46,7 +49,8 @@ public final class AppProperty implements FetchDatabaseRecords
    * @param listRecords the list of data to add to
    * @return the success of the operation
    */
-  @SuppressWarnings({ "rawtypes", "unchecked" })
+  @Override
+  @SuppressWarnings({ "unchecked", "rawtypes" })
   public boolean getFields(final ResultSet rs,
                            final List listRecords)
   {
@@ -92,13 +96,31 @@ public final class AppProperty implements FetchDatabaseRecords
    */
   public static List<AppProperty> getList()
   {
+    return getList(null);
+  }
+  
+  
+  /**
+   * Get all objects from the database.
+   * 
+   * @param whereClause the where clause for the select statement
+   * @return a list of all objects in the database
+   */
+  public static List<AppProperty> getList(final String whereClause)
+  {
     // This will hold the list that gets returned
     List<AppProperty> listData = new ArrayList<AppProperty>(100);
     
     // Build our query
     StringBuffer buf = new StringBuffer(100);
-    buf.append("select KEY, VALUE ")
-       .append("from APP_PROPERTY order by key");
+    buf.append("SELECT KEY, VALUE");
+    buf.append(" from APP_PROPERTY");
+    
+    // Check if there's a where clause to append
+    if (whereClause != null)
+    {
+      buf.append(" ").append(whereClause);
+    }
     
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new AppProperty());
@@ -111,6 +133,74 @@ public final class AppProperty implements FetchDatabaseRecords
     
     // Return the list
     return listData;
+  }
+  
+  
+  /**
+   * Insert a record into the database.
+   */
+  public void insert()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("INSERT into APP_PROPERTY (");
+    sb.append("KEY, VALUE");
+    sb.append(") values (");
+    sb.append("?, ?");
+    sb.append(")");
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setInsertFields(final PreparedStatement ps)
+    throws SQLException
+  {
+    ps.setString(1, key);
+    ps.setString(2, value);
+  }
+  
+  
+  /**
+   * Update a record in the database.
+   */
+  public void update()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("UPDATE APP_PROPERTY set ");
+    sb.append("VALUE = ? ");
+    sb.append("where null = ?");
+    PrefsDatabase.update(sb.toString(), this);
+  }
+  
+  
+  /**
+   * Set the parameter values in the INSERT statement.
+   * 
+   * @param ps the prepared statement
+   * @throws java.sql.SQLException a database exception
+   */
+  @Override
+  public void setUpdateFields(final PreparedStatement ps)
+    throws SQLException
+  {
+	  // TODO
+  }
+  
+  
+  /**
+   * Delete the record in the database.
+   */
+  public void delete()
+  {
+    StringBuilder sb = new StringBuilder(200);
+    sb.append("DELETE from APP_PROPERTY where key = '");
+    sb.append(key).append("'");
+    PrefsDatabase.delete(sb.toString());
   }
   
   
@@ -156,10 +246,4 @@ public final class AppProperty implements FetchDatabaseRecords
   {
     value = pValue;
   }
-
-
-	@Override
-	public String toString() {
-		return "AppProperty [key=" + key + ", value=" + value + "]";
-	}
 }
