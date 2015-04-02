@@ -165,7 +165,7 @@ public final class Config
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE CONFIG set ");
-    sb.append("where null = ?");
+    sb.append("DB_VERSION = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

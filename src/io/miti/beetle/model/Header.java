@@ -198,7 +198,7 @@ public final class Header
     sb.append("UPDATE HEADER set ");
     sb.append("SESSION_ID = ?, COL_NAME = ?, ");
     sb.append("COL_TYPE_ID = ?, DATE_FORMAT = ? ");
-    sb.append("where null = ?");
+    sb.append("where id = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

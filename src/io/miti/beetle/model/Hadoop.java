@@ -189,7 +189,7 @@ public final class Hadoop
     sb.append("UPDATE HADOOP set ");
     sb.append("LABEL = ?, NAME = ?, ");
     sb.append("URL = ? ");
-    sb.append("where null = ?");
+    sb.append("where ID = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

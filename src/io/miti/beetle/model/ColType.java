@@ -206,7 +206,7 @@ public final class ColType
     sb.append("IS_STR = ?, IS_NUM = ?, ");
     sb.append("IS_BOOL = ?, IS_DATE = ?, ");
     sb.append("TYPE_NAME = ? ");
-    sb.append("where null = ?");
+    sb.append("where ID = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

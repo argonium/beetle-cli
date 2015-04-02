@@ -174,7 +174,7 @@ public final class AppProperty
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE APP_PROPERTY set ");
     sb.append("VALUE = ? ");
-    sb.append("where null = ?");
+    sb.append("where key = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

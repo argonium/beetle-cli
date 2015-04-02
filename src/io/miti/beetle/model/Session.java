@@ -198,7 +198,7 @@ public final class Session
     sb.append("UPDATE SESSION set ");
     sb.append("SOURCE_TYPE_ID = ?, TARGET_TYPE_ID = ?, ");
     sb.append("SOURCE_DELIM = ?, TARGET_DELIM = ? ");
-    sb.append("where null = ?");
+    sb.append("where id = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

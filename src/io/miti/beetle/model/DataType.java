@@ -173,7 +173,7 @@ public final class DataType
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE DATA_TYPE set ");
     sb.append("NAME = ? ");
-    sb.append("where null = ?");
+    sb.append("where ID = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   

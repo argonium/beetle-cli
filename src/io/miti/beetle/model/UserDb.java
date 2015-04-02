@@ -206,7 +206,7 @@ public final class UserDb
     sb.append("DB_NAME = ?, URL = ?, ");
     sb.append("USER_ID = ?, USER_PW = ?, ");
     sb.append("DB_TYPE_ID = ? ");
-    sb.append("where null = ?");
+    sb.append("where id = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
   
