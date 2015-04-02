@@ -136,7 +136,28 @@ public final class Utility
     // Return the value
     return value;
   }
-  
+	
+	
+	/**
+	 * Compare two strings, handling nulls.
+	 * 
+	 * @param str1 the first string to compare
+	 * @param str2 the second string to compare
+	 * @return the numeric value of comparing str1 to str2
+	 */
+	public static int compareTwoStrings(final String str1, final String str2)
+	{
+		if ((str1 == null) && (str2 == null)) {
+			return 0;
+		} else if (str1 == null) {
+			return -1;
+		} else if (str2 == null) {
+			return 1;
+		}
+		
+		return str1.compareTo(str2);
+	}
+
   
   /**
    * Convert a string into a floating point number.
