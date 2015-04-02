@@ -41,7 +41,7 @@ public final class DBTypeCache {
 			return;
 		}
 		
-		list = DbType.getList();
+		list = DbType.getList("order by ID");
 	}
 	
 	public List<DbType> getList() {

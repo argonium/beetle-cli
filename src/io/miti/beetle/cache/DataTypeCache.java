@@ -41,7 +41,7 @@ public final class DataTypeCache {
 			return;
 		}
 		
-		list = DataType.getList();
+		list = DataType.getList("order by ID");
 	}
 	
 	/**

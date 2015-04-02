@@ -41,7 +41,7 @@ public final class SessionCache {
 			return;
 		}
 		
-		list = Session.getList();
+		list = Session.getList("order by ID");
 	}
 	
 	/**

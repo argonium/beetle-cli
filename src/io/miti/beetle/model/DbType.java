@@ -142,8 +142,6 @@ public final class DbType
       buf.append(" ").append(whereClause);
     }
     
-    buf.append(" order by id");
-    
     // Get all of the objects from the database
     boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new DbType());
     if (!bResult)

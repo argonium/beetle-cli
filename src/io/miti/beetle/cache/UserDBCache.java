@@ -41,7 +41,7 @@ public final class UserDBCache {
 			return;
 		}
 		
-		list = UserDb.getList();
+		list = UserDb.getList("order by ID");
 	}
 	
 	/**

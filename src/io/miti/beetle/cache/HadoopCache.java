@@ -41,7 +41,7 @@ public final class HadoopCache {
 			return;
 		}
 		
-		list = Hadoop.getList();
+		list = Hadoop.getList("order by ID");
 	}
 	
 	/**
