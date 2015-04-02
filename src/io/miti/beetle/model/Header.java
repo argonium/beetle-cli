@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class Header
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<Header>
 {
   /**
    * The table column ID.
@@ -337,4 +337,18 @@ public final class Header
   {
     dateFormat = pDateFormat;
   }
+
+
+	@Override
+	public int compareTo(final Header o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "Header [id=" + id + ", sessionId=" + sessionId + ", colName="
+				+ colName + ", colTypeId=" + colTypeId + ", dateFormat="
+				+ dateFormat + "]";
+	}
 }

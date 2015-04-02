@@ -21,7 +21,8 @@ import java.util.List;
  *
  * @version 1.0
  */
-public final class DbType implements FetchDatabaseRecords, IUpdateable, IInsertable
+public final class DbType
+	implements FetchDatabaseRecords, IUpdateable, IInsertable, Comparable<DbType>
 {
   /**
    * The table column ID.
@@ -350,5 +351,11 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable, IInserta
 	public String toString() {
 		return "DbType [id=" + id + ", name=" + name + ", ref=" + ref + ", driver="
 				+ driver + ", jarName=" + jarName + "]";
+	}
+
+
+	@Override
+	public int compareTo(final DbType o) {
+		return Integer.compare(id, o.id);
 	}
 }

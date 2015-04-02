@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class ColType
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<ColType>
 {
   /**
    * The table column ID.
@@ -367,4 +367,18 @@ public final class ColType
   {
     typeName = pTypeName;
   }
+
+
+	@Override
+	public int compareTo(final ColType o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "ColType [id=" + id + ", isStr=" + isStr + ", isNum=" + isNum
+				+ ", isBool=" + isBool + ", isDate=" + isDate + ", typeName="
+				+ typeName + "]";
+	}
 }

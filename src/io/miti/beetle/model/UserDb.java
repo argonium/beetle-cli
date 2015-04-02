@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class UserDb
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<UserDb>
 {
   /**
    * The table column ID.
@@ -367,4 +367,17 @@ public final class UserDb
   {
     dbTypeId = pDbTypeId;
   }
+
+
+	@Override
+	public int compareTo(final UserDb o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "UserDb [id=" + id + ", dbName=" + dbName + ", url=" + url
+				+ ", userId=" + userId + ", dbTypeId=" + dbTypeId + "]";
+	}
 }

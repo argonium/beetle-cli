@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class DataType
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<DataType>
 {
   /**
    * The table column ID.
@@ -246,4 +246,16 @@ public final class DataType
   {
     name = pName;
   }
+
+
+	@Override
+	public int compareTo(final DataType o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "DataType [id=" + id + ", name=" + name + "]";
+	}
 }

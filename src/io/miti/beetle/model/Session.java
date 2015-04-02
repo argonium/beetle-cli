@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class Session
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<Session>
 {
   /**
    * The table column ID.
@@ -337,4 +337,18 @@ public final class Session
   {
     targetDelim = pTargetDelim;
   }
+
+
+	@Override
+	public int compareTo(final Session o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "Session [id=" + id + ", sourceTypeId=" + sourceTypeId
+				+ ", targetTypeId=" + targetTypeId + ", sourceDelim="
+				+ sourceDelim + ", targetDelim=" + targetDelim + "]";
+	}
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.miti.beetle.prefs.*;
+import io.miti.beetle.util.Utility;
 import io.miti.beetle.dbutil.*;
 
 /**
@@ -20,7 +21,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class AppProperty
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<AppProperty>
 {
   /**
    * The table column KEY.
@@ -246,4 +247,16 @@ public final class AppProperty
   {
     value = pValue;
   }
+	
+	
+	@Override
+	public int compareTo(final AppProperty o) {
+		return Utility.compareTwoStrings(key, o.key);
+	}
+
+
+	@Override
+	public String toString() {
+		return "AppProperty [key=" + key + ", value=" + value + "]";
+	}
 }

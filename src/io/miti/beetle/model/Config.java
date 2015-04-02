@@ -204,4 +204,10 @@ public final class Config
   {
     dbVersion = pDbVersion;
   }
+
+
+	@Override
+	public String toString() {
+		return "Config [dbVersion=" + dbVersion + "]";
+	}
 }

@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class Hadoop
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<Hadoop>
 {
   /**
    * The table column ID.
@@ -306,4 +306,17 @@ public final class Hadoop
   {
     url = pUrl;
   }
+
+
+	@Override
+	public int compareTo(final Hadoop o) {
+		return Integer.compare(id, o.id);
+	}
+
+
+	@Override
+	public String toString() {
+		return "Hadoop [id=" + id + ", label=" + label + ", name=" + name
+				+ ", url=" + url + "]";
+	}
 }
