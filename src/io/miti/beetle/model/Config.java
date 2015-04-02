@@ -180,7 +180,7 @@ public final class Config
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setInt(1, dbVersion);
   }
   
   

@@ -213,7 +213,11 @@ public final class Session
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setInt(1, sourceTypeId);
+	  ps.setInt(2, targetTypeId);
+	  ps.setString(3, sourceDelim);
+	  ps.setString(4, targetDelim);
+	  ps.setInt(5, id);
   }
   
   

@@ -221,7 +221,12 @@ public final class UserDb
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setString(1, dbName);
+	  ps.setString(2, url);
+	  ps.setString(3, userId);
+	  ps.setString(4, userPw);
+	  ps.setInt(5, dbTypeId);
+	  ps.setInt(6, id);
   }
   
   

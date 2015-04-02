@@ -189,7 +189,8 @@ public final class AppProperty
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setString(1, value);
+	  ps.setString(2, key);
   }
   
   

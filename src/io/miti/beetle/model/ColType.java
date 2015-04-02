@@ -221,7 +221,12 @@ public final class ColType
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setBoolean(1, isStr);
+	  ps.setBoolean(2, isNum);
+	  ps.setBoolean(3, isBool);
+	  ps.setBoolean(4, isDate);
+	  ps.setString(5, typeName);
+	  ps.setInt(6, id);
   }
   
   

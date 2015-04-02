@@ -188,7 +188,8 @@ public final class DataType
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setString(1, name);
+	  ps.setInt(2, id);
   }
   
   

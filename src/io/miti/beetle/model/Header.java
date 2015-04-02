@@ -213,7 +213,11 @@ public final class Header
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setInt(1, sessionId);
+	  ps.setString(2, colName);
+	  ps.setInt(3, colTypeId);
+	  ps.setString(4, dateFormat);
+	  ps.setInt(5, id);
   }
   
   

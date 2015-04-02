@@ -204,7 +204,10 @@ public final class Hadoop
   public void setUpdateFields(final PreparedStatement ps)
     throws SQLException
   {
-	  // TODO
+	  ps.setString(1, label);
+	  ps.setString(2, name);
+	  ps.setString(3, url);
+	  ps.setInt(4, id);
   }
   
   
