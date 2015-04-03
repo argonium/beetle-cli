@@ -155,11 +155,12 @@ public final class Hadoop
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into HADOOP (");
-    sb.append("ID, LABEL, ");
-    sb.append("NAME, URL");
+    sb.append("LABEL, NAME, URL");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?");
+    sb.append("?, ?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -173,10 +174,9 @@ public final class Hadoop
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setString(2, label);
-    ps.setString(3, name);
-    ps.setString(4, url);
+    ps.setString(1, label);
+    ps.setString(2, name);
+    ps.setString(3, url);
   }
   
   

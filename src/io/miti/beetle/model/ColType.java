@@ -168,12 +168,13 @@ public final class ColType
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into COL_TYPE (");
-    sb.append("ID, IS_STR, ");
-    sb.append("IS_NUM, IS_BOOL, ");
+    sb.append("IS_STR, IS_NUM, IS_BOOL, ");
     sb.append("IS_DATE, TYPE_NAME");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?, ?, ?");
+    sb.append("?, ?, ?, ?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -187,12 +188,11 @@ public final class ColType
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setBoolean(2, isStr);
-    ps.setBoolean(3, isNum);
-    ps.setBoolean(4, isBool);
-    ps.setBoolean(5, isDate);
-    ps.setString(6, typeName);
+    ps.setBoolean(1, isStr);
+    ps.setBoolean(2, isNum);
+    ps.setBoolean(3, isBool);
+    ps.setBoolean(4, isDate);
+    ps.setString(5, typeName);
   }
   
   

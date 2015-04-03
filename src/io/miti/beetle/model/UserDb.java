@@ -168,12 +168,13 @@ public final class UserDb
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into USER_DB (");
-    sb.append("ID, DB_NAME, ");
-    sb.append("URL, USER_ID, ");
+    sb.append("DB_NAME, URL, USER_ID, ");
     sb.append("USER_PW, DB_TYPE_ID");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?, ?, ?");
+    sb.append("?, ?, ?, ?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -187,12 +188,11 @@ public final class UserDb
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setString(2, dbName);
-    ps.setString(3, url);
-    ps.setString(4, userId);
-    ps.setString(5, userPw);
-    ps.setInt(6, dbTypeId);
+    ps.setString(1, dbName);
+    ps.setString(2, url);
+    ps.setString(3, userId);
+    ps.setString(4, userPw);
+    ps.setInt(5, dbTypeId);
   }
   
   

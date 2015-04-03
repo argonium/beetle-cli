@@ -164,12 +164,10 @@ public final class DbType
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into DB_TYPE (");
-    sb.append("ID, NAME, ");
-    sb.append("REF, DRIVER, ");
-    sb.append("JAR_NAME");
-    sb.append(") values (");
-    sb.append("?, ?, ?, ?, ?");
-    sb.append(")");
+    sb.append("NAME, REF, DRIVER, JAR_NAME");
+    sb.append(") values (?, ?, ?, ?)");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -183,11 +181,10 @@ public final class DbType
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setString(2, name);
-    ps.setString(3, ref);
-    ps.setString(4, driver);
-    ps.setString(5, jarName);
+    ps.setString(1, name);
+    ps.setString(2, ref);
+    ps.setString(3, driver);
+    ps.setString(4, jarName);
   }
   
   

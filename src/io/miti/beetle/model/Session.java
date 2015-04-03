@@ -162,12 +162,13 @@ public final class Session
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into SESSION (");
-    sb.append("ID, SOURCE_TYPE_ID, ");
-    sb.append("TARGET_TYPE_ID, SOURCE_DELIM, ");
+    sb.append("SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
     sb.append("TARGET_DELIM");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?, ?");
+    sb.append("?, ?, ?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -181,11 +182,10 @@ public final class Session
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setInt(2, sourceTypeId);
-    ps.setInt(3, targetTypeId);
-    ps.setString(4, sourceDelim);
-    ps.setString(5, targetDelim);
+    ps.setInt(1, sourceTypeId);
+    ps.setInt(2, targetTypeId);
+    ps.setString(3, sourceDelim);
+    ps.setString(4, targetDelim);
   }
   
   

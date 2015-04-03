@@ -162,12 +162,13 @@ public final class Header
   {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into HEADER (");
-    sb.append("ID, SESSION_ID, ");
-    sb.append("COL_NAME, COL_TYPE_ID, ");
+    sb.append("SESSION_ID, COL_NAME, COL_TYPE_ID, ");
     sb.append("DATE_FORMAT");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?, ?");
+    sb.append("?, ?, ?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this, this);
   }
   
   
@@ -181,11 +182,10 @@ public final class Header
   public void setInsertFields(final PreparedStatement ps)
     throws SQLException
   {
-    ps.setInt(1, id);
-    ps.setInt(2, sessionId);
-    ps.setString(3, colName);
-    ps.setInt(4, colTypeId);
-    ps.setString(5, dateFormat);
+    ps.setInt(1, sessionId);
+    ps.setString(2, colName);
+    ps.setInt(3, colTypeId);
+    ps.setString(4, dateFormat);
   }
   
   
