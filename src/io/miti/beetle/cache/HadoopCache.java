@@ -44,6 +44,10 @@ public final class HadoopCache {
 		list = Hadoop.getList("order by ID");
 	}
 	
+	public List<Hadoop> getList() {
+		return list;
+	}
+	
 	/**
 	 * Print the list of objects in the cache.
 	 */

@@ -33,6 +33,10 @@ public final class DataTypeCache {
 		return cache;
 	}
 	
+	public List<DataType> getList() {
+		return list;
+	}
+	
 	/**
 	 * Load the cache.
 	 */

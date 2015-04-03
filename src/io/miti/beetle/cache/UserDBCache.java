@@ -33,6 +33,10 @@ public final class UserDBCache {
 		return cache;
 	}
 	
+	public List<UserDb> getList() {
+		return list;
+	}
+	
 	/**
 	 * Load the cache.
 	 */

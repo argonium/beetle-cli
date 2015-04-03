@@ -44,6 +44,10 @@ public final class SessionCache {
 		list = Session.getList("order by ID");
 	}
 	
+	public List<Session> getList() {
+		return list;
+	}
+	
 	/**
 	 * Print the list of objects in the cache.
 	 */
