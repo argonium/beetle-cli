@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -205,14 +206,40 @@ public final class ConnManager {
 		}
 		
 		try {
-			conn = DriverManager.getConnection(url, user, pw);
+		    UrlInfo urlInfo = UrlInfo.createFromString(url);
+			conn = DriverManager.getConnection(urlInfo.url, user, pw);
 			if (conn == null) {
 				System.err.println("Error: The generated connection is null");
+			} else {
+		      // Connect to a schema
+		      connectToSchema(urlInfo.schema, conn);
 			}
 		} catch (SQLException e) {
 			System.err.println("Exception in connection: " + e.getMessage());
 		}
 	}
+	  
+	  
+  private static void connectToSchema(String schema, final Connection conn) {
+	  if ((schema == null) || schema.trim().isEmpty()) {
+		  return;
+	  }
+	  
+	  Statement statement = null;
+	  try { 
+		  statement = conn.createStatement();
+		  statement.execute("set search_path to '" + schema + "'");
+	  } catch (SQLException ex) {
+		  ex.printStackTrace();
+	  }
+	  finally {
+		  try {
+			statement.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	  }
+    }
 	
 	@Override
 	public String toString() {
