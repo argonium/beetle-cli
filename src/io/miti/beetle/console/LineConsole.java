@@ -25,9 +25,11 @@ import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
+import io.miti.beetle.cache.UserDBCache;
 import io.miti.beetle.dbutil.ConnManager;
 import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.model.DbType;
+import io.miti.beetle.model.UserDb;
 import io.miti.beetle.util.Content;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
@@ -189,6 +191,8 @@ public final class LineConsole {
 			ConnManager.get().close();
 		} else if (validateCommand(cmds, 2, "list", "dbtypes")) {
 			listDatabaseTypes();
+		} else if (validateCommand(cmds, 2, "list", "userdbs")) {
+			listUserDatabases();
 		} else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
 			setDBTypeJar(cmds.get(2), cmds.get(4));
 		} else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -322,6 +326,20 @@ public final class LineConsole {
 			} else {
 				System.err.println("No matching DBType found");
 			}
+		}
+	}
+	
+	
+	private void listUserDatabases() {
+		List<UserDb> list = UserDBCache.get().getList();
+		if ((list == null) || list.isEmpty()) {
+			System.out.println("No user databases found");
+		} else {
+			// Print the list
+			String table = new ListFormatter().getTable(list, 3,
+					new String[] {"id", "dbName", "url", "userId"},
+					new String[] {"ID", "Name", "URL", "User"});
+			System.out.print(table);
 		}
 	}
 	
@@ -1080,7 +1098,7 @@ public final class LineConsole {
 		final String[] array = new String[]{"debug", "debug off", "debug on",
 				"help", "quit", "gc", "mem", "time", "version",
 				"count tables", "export data <table name> [<where-clause>]",
-				"cat <file>", "head <file>", "dir [<path>]",
+				"cat <file>", "head <file>", "dir [<path>]", "list userdbs",
 				"time <command>", "list dbtypes", "set dbtype <id> jar <filename>",
 				"count rows <table>", "dbinfo", "list schemas", "clear dbtype <id> jar",
 				"check database", "list tables", "connections",
