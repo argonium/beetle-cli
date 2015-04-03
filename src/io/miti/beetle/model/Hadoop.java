@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class Hadoop
-  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<Hadoop>
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, IIdentifiable, Comparable<Hadoop>
 {
   /**
    * The table column ID.
@@ -239,6 +239,7 @@ public final class Hadoop
    *
    * @param pId the new value for id
    */
+  @Override
   public void setId(final int pId)
   {
     id = pId;

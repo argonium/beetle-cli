@@ -147,6 +147,8 @@ public final class DataType
     sb.append(") values (");
     sb.append("?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this);
   }
   
   

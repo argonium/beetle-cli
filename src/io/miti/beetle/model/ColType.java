@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class ColType
-  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<ColType>
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, IIdentifiable, Comparable<ColType>
 {
   /**
    * The table column ID.
@@ -258,6 +258,7 @@ public final class ColType
    *
    * @param pId the new value for id
    */
+  @Override
   public void setId(final int pId)
   {
     id = pId;

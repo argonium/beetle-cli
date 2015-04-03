@@ -20,7 +20,7 @@ import io.miti.beetle.dbutil.*;
  * @version 1.0
  */
 public final class Session
-  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<Session>
+  implements FetchDatabaseRecords, IInsertable, IUpdateable, IIdentifiable, Comparable<Session>
 {
   /**
    * The table column ID.
@@ -249,6 +249,7 @@ public final class Session
    *
    * @param pId the new value for id
    */
+  @Override
   public void setId(final int pId)
   {
     id = pId;

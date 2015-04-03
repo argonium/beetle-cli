@@ -148,6 +148,8 @@ public final class AppProperty
     sb.append(") values (");
     sb.append("?, ?");
     sb.append(")");
+    
+    PrefsDatabase.insert(sb.toString(), this);
   }
   
   

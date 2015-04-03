@@ -6,6 +6,7 @@
 package io.miti.beetle.model;
 
 import io.miti.beetle.dbutil.FetchDatabaseRecords;
+import io.miti.beetle.prefs.IIdentifiable;
 import io.miti.beetle.prefs.IInsertable;
 import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.prefs.PrefsDatabase;
@@ -22,7 +23,7 @@ import java.util.List;
  * @version 1.0
  */
 public final class DbType
-	implements FetchDatabaseRecords, IUpdateable, IInsertable, Comparable<DbType>
+	implements FetchDatabaseRecords, IUpdateable, IInsertable, IIdentifiable, Comparable<DbType>
 {
   /**
    * The table column ID.
@@ -251,6 +252,7 @@ public final class DbType
    *
    * @param pId the new value for id
    */
+  @Override
   public void setId(final int pId)
   {
     id = pId;

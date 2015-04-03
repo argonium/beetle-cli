@@ -141,6 +141,10 @@ public final class Config
     sb.append(") values (");
     sb.append("?");
     sb.append(")");
+    
+    // There should only be one row in this table, so delete before inserting
+    PrefsDatabase.delete("delete from CONFIG");
+    PrefsDatabase.insert(sb.toString(), this);
   }
   
   
