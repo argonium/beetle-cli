@@ -195,6 +195,10 @@ public final class LineConsole {
 			listUserDatabases();
 		} else if (validateCommand(cmds, 5, "add", "userdb")) {
 			addUserDatabase(cmds, console);
+		} else if (validateCommand(cmds, 3, "delete", "userdb")) {
+			deleteUserDatabase(cmds.get(2));
+		} else if (validateCommand(cmds, 3, "connect", "userdb")) {
+			connectUserDatabase(cmds.get(2));
 		} else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
 			setDBTypeJar(cmds.get(2), cmds.get(4));
 		} else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -255,6 +259,78 @@ public final class LineConsole {
 	}
 	
 	
+	private void connectUserDatabase(final String dbId) {
+		
+		// Get the numeric ID
+		int id = Utility.getStringAsInteger(dbId, -1, -1);
+		if (id < 0) {
+			System.err.println("Error: Invalid ID specified");
+			return;
+		}
+		
+		List<UserDb> list = UserDBCache.get().getList();
+		if (list == null) {
+			System.out.println("No user databases found");
+		} else {
+			// Find the object matching on ID
+			boolean found = false;
+			final int size = list.size();
+			for (int i = 0; i < size; ++i) {
+				UserDb udb = list.get(i);
+				if (udb.getId() == id) {
+					// TODO Verify this DB has a type, and the type has a JAR
+					// that implements the required driver class
+					
+					// TODO What to do here?  Store the reference in the session?
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				System.out.println("User database reference found");
+			} else {
+				System.err.println("No matching reference found");
+			}
+		}
+	}
+
+
+	private void deleteUserDatabase(final String dbId) {
+		// Get the numeric ID
+		int id = Utility.getStringAsInteger(dbId, -1, -1);
+		if (id < 0) {
+			System.err.println("Error: Invalid ID specified");
+			return;
+		}
+		
+		List<UserDb> list = UserDBCache.get().getList();
+		if (list == null) {
+			System.out.println("No user databases found");
+		} else {
+			// Find the object matching on ID
+			boolean found = false;
+			final int size = list.size();
+			for (int i = 0; i < size; ++i) {
+				UserDb udb = list.get(i);
+				if (udb.getId() == id) {
+					// Remove the object from the cache and the database
+					list.remove(i);
+					udb.delete();
+					found = true;
+					break;
+				}
+			}
+			
+			if (found) {
+				System.out.println("User database reference deleted");
+			} else {
+				System.err.println("No matching reference found");
+			}
+		}
+	}
+
+
 	private void addUserDatabase(final List<String> cmds, final ConsoleReader console) {
 		// Format: add userdb <name> <URL> <user ID>
 		final String dbName = cmds.get(2);
@@ -1125,7 +1201,8 @@ public final class LineConsole {
 				"count rows <table>", "dbinfo", "list schemas", "clear dbtype <id> jar",
 				"check database", "list tables", "connections", "add userdb <name> <url> <user>",
 				"select connection", "describe table", "export schema <filename>",
-				"connect <URL> [<user> [<pw>]]", "close database",
+				"connect <URL> [<user> [<pw>]]", "close database", "delete userdb <id>",
+				"connect userdb <id>",
 				"help <start of a command>", "jar <filename>"};
 		supportedCommands = Arrays.asList(array);
 		Collections.sort(supportedCommands);
