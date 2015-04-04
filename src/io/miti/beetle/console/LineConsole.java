@@ -193,6 +193,8 @@ public final class LineConsole {
 			listDatabaseTypes();
 		} else if (validateCommand(cmds, 2, "list", "userdbs")) {
 			listUserDatabases();
+		} else if (validateCommand(cmds, 5, "add", "userdb")) {
+			addUserDatabase(cmds, console);
 		} else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
 			setDBTypeJar(cmds.get(2), cmds.get(4));
 		} else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -253,6 +255,26 @@ public final class LineConsole {
 	}
 	
 	
+	private void addUserDatabase(final List<String> cmds, final ConsoleReader console) {
+		// Format: add userdb <name> <URL> <user ID>
+		final String dbName = cmds.get(2);
+		final String url = cmds.get(3);
+		final String userId = cmds.get(4);
+		
+		// Prompt for the password
+		final String passwd = getPassword(console);
+		
+		// Create the object for the database
+		final UserDb userDb = new UserDb(dbName, url, userId, passwd);
+		
+		// Save the object to the database and update the cache
+		userDb.insert();
+		UserDBCache.get().add(userDb);
+		
+		System.out.println("User database created.  ID = " + userDb.getId());
+	}
+
+
 	private void clearDBTypeJar(final String sTypeID) {
 		// Get the numeric ID
 		int id = Utility.getStringAsInteger(sTypeID, -1, -1);
@@ -1101,7 +1123,7 @@ public final class LineConsole {
 				"cat <file>", "head <file>", "dir [<path>]", "list userdbs",
 				"time <command>", "list dbtypes", "set dbtype <id> jar <filename>",
 				"count rows <table>", "dbinfo", "list schemas", "clear dbtype <id> jar",
-				"check database", "list tables", "connections",
+				"check database", "list tables", "connections", "add userdb <name> <url> <user>",
 				"select connection", "describe table", "export schema <filename>",
 				"connect <URL> [<user> [<pw>]]", "close database",
 				"help <start of a command>", "jar <filename>"};
