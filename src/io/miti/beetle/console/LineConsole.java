@@ -29,6 +29,7 @@ import io.miti.beetle.cache.UserDBCache;
 import io.miti.beetle.dbutil.ConnManager;
 import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.model.DbType;
+import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
 import io.miti.beetle.util.Content;
 import io.miti.beetle.util.ListFormatter;
@@ -41,6 +42,7 @@ public final class LineConsole {
 	
 	private static List<String> supportedCommands = null;
 	private static final boolean useSmartREPL = true;
+	private final Session session;
 	
 	static {
 		populateSupportedCommands();
@@ -49,6 +51,7 @@ public final class LineConsole {
 
 	public LineConsole() {
 		super();
+		session = new Session();
 	}
 	
 	
@@ -268,6 +271,7 @@ public final class LineConsole {
 			return;
 		}
 		
+		// TODO Move searcher to cache
 		List<UserDb> list = UserDBCache.get().getList();
 		if (list == null) {
 			System.out.println("No user databases found");
@@ -281,7 +285,8 @@ public final class LineConsole {
 					// TODO Verify this DB has a type, and the type has a JAR
 					// that implements the required driver class
 					
-					// TODO What to do here?  Store the reference in the session?
+					// Store the reference in the session
+					session.setSourceId(udb.getId());
 					found = true;
 					break;
 				}
@@ -304,6 +309,7 @@ public final class LineConsole {
 			return;
 		}
 		
+		// TODO Move searcher to cache
 		List<UserDb> list = UserDBCache.get().getList();
 		if (list == null) {
 			System.out.println("No user databases found");
@@ -359,29 +365,12 @@ public final class LineConsole {
 			return;
 		}
 		
-		List<DbType> list = DBTypeCache.get().getList();
-		if (list == null) {
-			System.out.println("No database supported");
+		// Clear the jar setting for the object
+		final boolean result = DBTypeCache.get().clearJar(id);
+		if (result) {
+			System.out.println("DBType row updated");
 		} else {
-			// Find the object matching on ID
-			boolean found = false;
-			for (DbType dbt : list) {
-				if (dbt.getId() == id) {
-					dbt.setJarName(null);
-					boolean updateRow = dbt.update();
-					if (!updateRow) {
-						System.err.println("Error updating the table");
-					}
-					found = true;
-					break;
-				}
-			}
-			
-			if (found) {
-				System.out.println("DBType row updated");
-			} else {
-				System.err.println("No matching DBType found");
-			}
+			System.err.println("Error occurred");
 		}
 	}
 
@@ -401,6 +390,7 @@ public final class LineConsole {
 			return;
 		}
 		
+		// TODO Move searcher to cache
 		List<DbType> list = DBTypeCache.get().getList();
 		if (list == null) {
 			System.out.println("No database supported");
