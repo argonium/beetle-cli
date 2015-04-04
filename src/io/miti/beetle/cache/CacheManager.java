@@ -1,17 +1,18 @@
 package io.miti.beetle.cache;
 
-public final class CacheManager {
+public final class CacheManager
+{
+  private CacheManager() {
+    super();
+  }
 
-	private CacheManager() {
-		super();
-	}
-	
-	public static void loadCache() {
-		
-		DBTypeCache.get().loadCache();
-		UserDBCache.get().loadCache();
-		HadoopCache.get().loadCache();
-		SessionCache.get().loadCache();
-		DataTypeCache.get().loadCache();
-	}
+
+  public static void loadCache() {
+
+    DBTypeCache.get().loadCache();
+    UserDBCache.get().loadCache();
+    HadoopCache.get().loadCache();
+    SessionCache.get().loadCache();
+    DataTypeCache.get().loadCache();
+  }
 }
