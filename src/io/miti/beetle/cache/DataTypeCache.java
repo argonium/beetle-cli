@@ -4,8 +4,7 @@ import io.miti.beetle.model.DataType;
 
 import java.util.List;
 
-public final class DataTypeCache
-{
+public final class DataTypeCache {
   /** The one instance of the cache object. */
   private static final DataTypeCache cache;
 

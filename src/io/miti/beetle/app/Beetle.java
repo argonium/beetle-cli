@@ -12,8 +12,7 @@ import io.miti.beetle.util.Utility;
  * 
  * @author mike
  */
-public final class Beetle
-{
+public final class Beetle {
   /**
    * Default constructor.
    */
@@ -60,7 +59,7 @@ public final class Beetle
 
 
   /**
-   * Entry point for the application
+   * Entry point for the application.
    * 
    * @param args arguments to the application
    */

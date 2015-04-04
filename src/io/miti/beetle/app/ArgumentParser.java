@@ -1,7 +1,6 @@
 package io.miti.beetle.app;
 
-public final class ArgumentParser
-{
+public final class ArgumentParser {
   // Set the default values for the system parameters
   private boolean shouldExit = false;
   public boolean loadClassNames = false;

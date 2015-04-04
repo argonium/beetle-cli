@@ -4,8 +4,7 @@ import io.miti.beetle.model.Hadoop;
 
 import java.util.List;
 
-public final class HadoopCache
-{
+public final class HadoopCache {
   /** The one instance of the cache object. */
   private static final HadoopCache cache;
 

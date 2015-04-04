@@ -4,8 +4,7 @@ import io.miti.beetle.model.UserDb;
 
 import java.util.List;
 
-public final class UserDBCache
-{
+public final class UserDBCache {
   /** The one instance of the cache object. */
   private static final UserDBCache cache;
 

@@ -4,8 +4,7 @@ import io.miti.beetle.model.Session;
 
 import java.util.List;
 
-public final class SessionCache
-{
+public final class SessionCache {
   /** The one instance of the cache object. */
   private static final SessionCache cache;
 

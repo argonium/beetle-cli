@@ -4,8 +4,7 @@ import io.miti.beetle.model.DbType;
 
 import java.util.List;
 
-public final class DBTypeCache
-{
+public final class DBTypeCache {
   /** The one instance of the cache object. */
   private static final DBTypeCache cache;
 
@@ -67,8 +66,14 @@ public final class DBTypeCache
       System.out.println("  " + obj.toString());
     }
   }
-
-
+  
+  
+  /**
+   * Get the DB type matching the URL parameter.
+   * 
+   * @param url the URL to check
+   * @return the matching DB type object
+   */
   public int getMatchingDbTypeId(final String url) {
 
     int matchingID = -1;
