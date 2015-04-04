@@ -12,71 +12,69 @@ import io.miti.beetle.util.Utility;
  * 
  * @author mike
  */
-public final class Beetle {
+public final class Beetle
+{
+  /**
+   * Default constructor.
+   */
+  public Beetle() {
+    super();
+  }
 
-	/**
-	 * Default constructor.
-	 */
-	public Beetle() {
-		super();
-	}
-	
-	
-	private void start() {
-		
-		// Store whether we're in a jar or not
-		checkInputFileSource();
-		
-	    // Initialize the database
-	    boolean result = PrefsDatabase.initializeDatabase();
-	    
-	    // Check the database connection
-	    if (!result)
-	    {
-		  System.out.println("Unable to start preferences database.  " +
-				  			 "Another copy may be running.  Exiting.");
-		  return;
-	    }
-	    
-	    // Check that the database version is up-to-date
-	    if (!DatabaseValidator.checkDatabase())
-	    {
-	      return;
-	    }
-	    
-		// Start the cache manager
-	    CacheManager.loadCache();
-		
-		// Start the console
-	    new LineConsole().start();
-	}
-  
-  
-	/**
-	 * Check how the application is run.
-	 */
-	private void checkInputFileSource() {
-		final java.net.URL url = getClass().getResource("/initdb.sql");
-		Utility.readFilesAsStream(url != null);
-	}
-	
-	
-	/**
-	 * Entry point for the application
-	 * 
-	 * @param args arguments to the application
-	 */
-	public static void main(final String[] args) {
-		
-		// Initialize our logger
-		Logger.initialize(3, "stdout", false);
-		
-		// Parse any command line arguments
-		if ((new ArgumentParser(args)).exit()) {
-			return;
-		}
-		
-		// Start the application
-		new Beetle().start();
-	}
+
+  private void start() {
+
+    // Store whether we're in a jar or not
+    checkInputFileSource();
+
+    // Initialize the database
+    boolean result = PrefsDatabase.initializeDatabase();
+
+    // Check the database connection
+    if (!result) {
+      System.out.println("Unable to start preferences database.  "
+          + "Another copy may be running.  Exiting.");
+      return;
+    }
+
+    // Check that the database version is up-to-date
+    if (!DatabaseValidator.checkDatabase()) {
+      return;
+    }
+
+    // Start the cache manager
+    CacheManager.loadCache();
+
+    // Start the console
+    new LineConsole().start();
+  }
+
+
+  /**
+   * Check how the application is run.
+   */
+  private void checkInputFileSource() {
+    final java.net.URL url = getClass().getResource("/initdb.sql");
+    Utility.readFilesAsStream(url != null);
+  }
+
+
+  /**
+   * Entry point for the application
+   * 
+   * @param args arguments to the application
+   */
+  public static void main(final String[] args) {
+
+    // Initialize our logger
+    Logger.initialize(3, "stdout", false);
+
+    // Parse any command line arguments
+    if ((new ArgumentParser(args)).exit()) {
+      return;
+    }
+
+    // Start the application
+    new Beetle().start();
+  }
 }
