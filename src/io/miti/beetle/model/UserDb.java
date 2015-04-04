@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.miti.beetle.prefs.*;
+import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.dbutil.*;
 
 /**
@@ -62,7 +63,22 @@ public final class UserDb
   }
   
   
-  /**
+  public UserDb(final String dbName, final String url,
+		  		final String userId, final String userPw) {
+	super();
+	this.dbName = dbName;
+	this.url = url;
+	this.userId = userId;
+	this.userPw = userPw;
+	
+	// Set the dbTypeId field based on the URL
+	dbTypeId = DBTypeCache.get().getMatchingDbTypeId(url);
+	
+	// TODO Encrypt the password
+  }
+
+
+ /**
    * Implement the FetchDatabaseRecords interface.
    * 
    * @param rs the result set to get the data from
