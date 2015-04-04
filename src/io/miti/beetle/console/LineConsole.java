@@ -20,9 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import jline.TerminalFactory;
-import jline.console.ConsoleReader;
-import jline.console.completer.StringsCompleter;
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
@@ -37,6 +34,11 @@ import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.TimeSpan;
 import io.miti.beetle.util.Utility;
 import io.miti.beetle.util.FileEntry;
+
+
+import jline.TerminalFactory;
+import jline.console.ConsoleReader;
+import jline.console.completer.StringsCompleter;
 
 public final class LineConsole
 {
@@ -53,8 +55,11 @@ public final class LineConsole
     super();
     session = new Session();
   }
-
-
+  
+  
+  /**
+   * Start the console.
+   */
   public void start() {
 
     // Run a REPL
@@ -424,9 +429,9 @@ public final class LineConsole
       System.out.println("No user databases found");
     } else {
       // Print the list
-      String table = new ListFormatter().getTable(list, 3, new String[] { "id",
-          "dbName", "url", "userId" }, new String[] { "ID", "Name", "URL",
-          "User" });
+      String table = new ListFormatter().getTable(list, 3,
+          new String[] { "id", "dbName", "url", "userId" },
+          new String[] { "ID", "Name", "URL", "User" });
       System.out.print(table);
     }
   }
@@ -438,9 +443,9 @@ public final class LineConsole
       System.out.println("No database supported");
     } else {
       // Print the list
-      String table = new ListFormatter().getTable(list, 3, new String[] { "id",
-          "name", "driver", "jarName" }, new String[] { "ID", "Name", "Class",
-          "Jar File" });
+      String table = new ListFormatter().getTable(list, 3,
+          new String[] { "id", "name", "driver", "jarName" },
+          new String[] { "ID", "Name", "Class", "Jar File" });
       System.out.print(table);
     }
   }
