@@ -30,22 +30,26 @@ public final class Session
   /**
    * The table column SOURCE_TYPE_ID.
    */
-  private int sourceTypeId;
+  private int sourceTypeId = -1;
+  
+  private int sourceId = -1;
   
   /**
    * The table column TARGET_TYPE_ID.
    */
-  private int targetTypeId;
+  private int targetTypeId = -1;
+  
+  private int targetId = -1;
   
   /**
    * The table column SOURCE_DELIM.
    */
-  private String sourceDelim;
+  private String sourceDelim = null;
   
   /**
    * The table column TARGET_DELIM.
    */
-  private String targetDelim;
+  private String targetDelim = null;
   
   
   /**
@@ -279,6 +283,50 @@ public final class Session
   
   
   /**
+   * Get the value for sourceId.
+   *
+   * @return the sourceId
+   */
+  public int getSourceId()
+  {
+    return sourceId;
+  }
+  
+  
+  /**
+   * Update the value for sourceId.
+   *
+   * @param pSourceId the new value for sourceId
+   */
+  public void setSourceId(final int pSourceId)
+  {
+    sourceId = pSourceId;
+  }
+  
+  
+  /**
+   * Get the value for targetId.
+   *
+   * @return the targetId
+   */
+  public int getTargetId()
+  {
+    return targetId;
+  }
+  
+  
+  /**
+   * Update the value for targetId.
+   *
+   * @param pTargetId the new value for targetId
+   */
+  public void setTargetId(final int pTargetId)
+  {
+    targetId = pTargetId;
+  }
+  
+  
+  /**
    * Get the value for targetTypeId.
    *
    * @return the targetTypeId
@@ -353,7 +401,8 @@ public final class Session
 	@Override
 	public String toString() {
 		return "Session [id=" + id + ", sourceTypeId=" + sourceTypeId
-				+ ", targetTypeId=" + targetTypeId + ", sourceDelim="
+				+ ", sourceId=" + sourceId + ", targetTypeId=" + targetTypeId
+				+ ", targetId=" + targetId + ", sourceDelim="
 				+ sourceDelim + ", targetDelim=" + targetDelim + "]";
 	}
 }
