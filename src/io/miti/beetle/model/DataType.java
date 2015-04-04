@@ -19,29 +19,28 @@ import io.miti.beetle.dbutil.*;
  *
  * @version 1.0
  */
-public final class DataType
-  implements FetchDatabaseRecords, IInsertable, IUpdateable, Comparable<DataType>
+public final class DataType implements FetchDatabaseRecords, IInsertable,
+    IUpdateable, Comparable<DataType>
 {
   /**
    * The table column ID.
    */
   private int id;
-  
+
   /**
    * The table column NAME.
    */
   private String name;
-  
-  
+
+
   /**
    * Default constructor.
    */
-  public DataType()
-  {
+  public DataType() {
     super();
   }
-  
-  
+
+
   /**
    * Implement the FetchDatabaseRecords interface.
    * 
@@ -51,107 +50,97 @@ public final class DataType
    */
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public boolean getFields(final ResultSet rs,
-                           final List listRecords)
-  {
+  public boolean getFields(final ResultSet rs, final List listRecords) {
     // Default return value
     boolean bResult = false;
-    
+
     // Set up our try/catch block
-    try
-    {
+    try {
       // Iterate over the result set
-      while (rs.next())
-      {
+      while (rs.next()) {
         // Instantiate a new object
         DataType obj = new DataType();
-        
+
         // Save the data in our object
         obj.id = rs.getInt(1);
         obj.name = rs.getString(2);
-        
+
         // Add to our list
         listRecords.add(obj);
       }
-      
+
       // There was no error
       bResult = true;
-    }
-    catch (java.sql.SQLException sqle)
-    {
+    } catch (java.sql.SQLException sqle) {
       // Add the exception to the master list and save the
       // result as the error code
       System.err.println(sqle.getMessage());
     }
-    
+
     // Return the result of the operation
     return bResult;
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @return a list of all objects in the database
    */
-  public static List<DataType> getList()
-  {
+  public static List<DataType> getList() {
     return getList(null);
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @param whereClause the where clause for the select statement
    * @return a list of all objects in the database
    */
-  public static List<DataType> getList(final String whereClause)
-  {
+  public static List<DataType> getList(final String whereClause) {
     // This will hold the list that gets returned
     List<DataType> listData = new ArrayList<DataType>(100);
-    
+
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("SELECT ID, NAME");
     buf.append(" from DATA_TYPE");
-    
+
     // Check if there's a where clause to append
-    if (whereClause != null)
-    {
+    if (whereClause != null) {
       buf.append(" ").append(whereClause);
     }
-    
+
     // Get all of the objects from the database
-    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new DataType());
-    if (!bResult)
-    {
+    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData,
+        new DataType());
+    if (!bResult) {
       // An error occurred
       listData.clear();
       listData = null;
     }
-    
+
     // Return the list
     return listData;
   }
-  
-  
+
+
   /**
    * Insert a record into the database.
    */
-  public void insert()
-  {
+  public void insert() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into DATA_TYPE (");
     sb.append("ID, NAME");
     sb.append(") values (");
     sb.append("?, ?");
     sb.append(")");
-    
+
     PrefsDatabase.insert(sb.toString(), this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -159,27 +148,24 @@ public final class DataType
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setInsertFields(final PreparedStatement ps)
-    throws SQLException
-  {
+  public void setInsertFields(final PreparedStatement ps) throws SQLException {
     ps.setInt(1, id);
     ps.setString(2, name);
   }
-  
-  
+
+
   /**
    * Update a record in the database.
    */
-  public void update()
-  {
+  public void update() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE DATA_TYPE set ");
     sb.append("NAME = ? ");
     sb.append("where ID = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -187,78 +173,71 @@ public final class DataType
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setUpdateFields(final PreparedStatement ps)
-    throws SQLException
-  {
-	  ps.setString(1, name);
-	  ps.setInt(2, id);
+  public void setUpdateFields(final PreparedStatement ps) throws SQLException {
+    ps.setString(1, name);
+    ps.setInt(2, id);
   }
-  
-  
+
+
   /**
    * Delete the record in the database.
    */
-  public void delete()
-  {
+  public void delete() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("DELETE from DATA_TYPE where id = ");
     sb.append(id);
     PrefsDatabase.delete(sb.toString());
   }
-  
-  
+
+
   /**
    * Get the value for id.
    *
    * @return the id
    */
-  public int getId()
-  {
+  public int getId() {
     return id;
   }
-  
-  
+
+
   /**
    * Update the value for id.
    *
    * @param pId the new value for id
    */
-  public void setId(final int pId)
-  {
+  public void setId(final int pId) {
     id = pId;
   }
-  
-  
+
+
   /**
    * Get the value for name.
    *
    * @return the name
    */
-  public String getName()
-  {
+  public String getName() {
     return name;
   }
-  
-  
+
+
   /**
    * Update the value for name.
    *
    * @param pName the new value for name
    */
-  public void setName(final String pName)
-  {
+  public void setName(final String pName) {
     name = pName;
   }
 
 
-	@Override
-	public int compareTo(final DataType o) {
-		return Integer.compare(id, o.id);
-	}
+  @Override
+  public int compareTo(final DataType o) {
+    return Integer.compare(id, o.id);
+  }
 
 
-	@Override
-	public String toString() {
-		return "DataType [id=" + id + ", name=" + name + "]";
-	}
+  @Override
+  public String toString() {
+    return "DataType [id=" + id + ", name=" + name + "]";
+  }
 }

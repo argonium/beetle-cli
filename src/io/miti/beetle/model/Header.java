@@ -19,44 +19,43 @@ import io.miti.beetle.dbutil.*;
  *
  * @version 1.0
  */
-public final class Header
-  implements FetchDatabaseRecords, IInsertable, IUpdateable, IIdentifiable, Comparable<Header>
+public final class Header implements FetchDatabaseRecords, IInsertable,
+    IUpdateable, IIdentifiable, Comparable<Header>
 {
   /**
    * The table column ID.
    */
   private int id;
-  
+
   /**
    * The table column SESSION_ID.
    */
   private int sessionId;
-  
+
   /**
    * The table column COL_NAME.
    */
   private String colName;
-  
+
   /**
    * The table column COL_TYPE_ID.
    */
   private int colTypeId;
-  
+
   /**
    * The table column DATE_FORMAT.
    */
   private String dateFormat;
-  
-  
+
+
   /**
    * Default constructor.
    */
-  public Header()
-  {
+  public Header() {
     super();
   }
-  
-  
+
+
   /**
    * Implement the FetchDatabaseRecords interface.
    * 
@@ -66,100 +65,90 @@ public final class Header
    */
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public boolean getFields(final ResultSet rs,
-                           final List listRecords)
-  {
+  public boolean getFields(final ResultSet rs, final List listRecords) {
     // Default return value
     boolean bResult = false;
-    
+
     // Set up our try/catch block
-    try
-    {
+    try {
       // Iterate over the result set
-      while (rs.next())
-      {
+      while (rs.next()) {
         // Instantiate a new object
         Header obj = new Header();
-        
+
         // Save the data in our object
         obj.id = rs.getInt(1);
         obj.sessionId = rs.getInt(2);
         obj.colName = rs.getString(3);
         obj.colTypeId = rs.getInt(4);
         obj.dateFormat = rs.getString(5);
-        
+
         // Add to our list
         listRecords.add(obj);
       }
-      
+
       // There was no error
       bResult = true;
-    }
-    catch (java.sql.SQLException sqle)
-    {
+    } catch (java.sql.SQLException sqle) {
       // Add the exception to the master list and save the
       // result as the error code
       System.err.println(sqle.getMessage());
     }
-    
+
     // Return the result of the operation
     return bResult;
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @return a list of all objects in the database
    */
-  public static List<Header> getList()
-  {
+  public static List<Header> getList() {
     return getList(null);
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @param whereClause the where clause for the select statement
    * @return a list of all objects in the database
    */
-  public static List<Header> getList(final String whereClause)
-  {
+  public static List<Header> getList(final String whereClause) {
     // This will hold the list that gets returned
     List<Header> listData = new ArrayList<Header>(100);
-    
+
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("SELECT ID, SESSION_ID, COL_NAME, COL_TYPE_ID, ");
     buf.append("DATE_FORMAT");
     buf.append(" from HEADER");
-    
+
     // Check if there's a where clause to append
-    if (whereClause != null)
-    {
+    if (whereClause != null) {
       buf.append(" ").append(whereClause);
     }
-    
+
     // Get all of the objects from the database
-    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new Header());
-    if (!bResult)
-    {
+    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData,
+        new Header());
+    if (!bResult) {
       // An error occurred
       listData.clear();
       listData = null;
     }
-    
+
     // Return the list
     return listData;
   }
-  
-  
+
+
   /**
    * Insert a record into the database.
    */
-  public void insert()
-  {
+  public void insert() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into HEADER (");
     sb.append("SESSION_ID, COL_NAME, COL_TYPE_ID, ");
@@ -167,11 +156,11 @@ public final class Header
     sb.append(") values (");
     sb.append("?, ?, ?, ?");
     sb.append(")");
-    
+
     PrefsDatabase.insert(sb.toString(), this, this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -179,21 +168,18 @@ public final class Header
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setInsertFields(final PreparedStatement ps)
-    throws SQLException
-  {
+  public void setInsertFields(final PreparedStatement ps) throws SQLException {
     ps.setInt(1, sessionId);
     ps.setString(2, colName);
     ps.setInt(3, colTypeId);
     ps.setString(4, dateFormat);
   }
-  
-  
+
+
   /**
    * Update a record in the database.
    */
-  public void update()
-  {
+  public void update() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE HEADER set ");
     sb.append("SESSION_ID = ?, COL_NAME = ?, ");
@@ -201,8 +187,8 @@ public final class Header
     sb.append("where id = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -210,150 +196,137 @@ public final class Header
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setUpdateFields(final PreparedStatement ps)
-    throws SQLException
-  {
-	  ps.setInt(1, sessionId);
-	  ps.setString(2, colName);
-	  ps.setInt(3, colTypeId);
-	  ps.setString(4, dateFormat);
-	  ps.setInt(5, id);
+  public void setUpdateFields(final PreparedStatement ps) throws SQLException {
+    ps.setInt(1, sessionId);
+    ps.setString(2, colName);
+    ps.setInt(3, colTypeId);
+    ps.setString(4, dateFormat);
+    ps.setInt(5, id);
   }
-  
-  
+
+
   /**
    * Delete the record in the database.
    */
-  public void delete()
-  {
+  public void delete() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("DELETE from HEADER where id = ");
     sb.append(id);
     PrefsDatabase.delete(sb.toString());
   }
-  
-  
+
+
   /**
    * Get the value for id.
    *
    * @return the id
    */
-  public int getId()
-  {
+  public int getId() {
     return id;
   }
-  
-  
+
+
   /**
    * Update the value for id.
    *
    * @param pId the new value for id
    */
   @Override
-  public void setId(final int pId)
-  {
+  public void setId(final int pId) {
     id = pId;
   }
-  
-  
+
+
   /**
    * Get the value for sessionId.
    *
    * @return the sessionId
    */
-  public int getSessionId()
-  {
+  public int getSessionId() {
     return sessionId;
   }
-  
-  
+
+
   /**
    * Update the value for sessionId.
    *
    * @param pSessionId the new value for sessionId
    */
-  public void setSessionId(final int pSessionId)
-  {
+  public void setSessionId(final int pSessionId) {
     sessionId = pSessionId;
   }
-  
-  
+
+
   /**
    * Get the value for colName.
    *
    * @return the colName
    */
-  public String getColName()
-  {
+  public String getColName() {
     return colName;
   }
-  
-  
+
+
   /**
    * Update the value for colName.
    *
    * @param pColName the new value for colName
    */
-  public void setColName(final String pColName)
-  {
+  public void setColName(final String pColName) {
     colName = pColName;
   }
-  
-  
+
+
   /**
    * Get the value for colTypeId.
    *
    * @return the colTypeId
    */
-  public int getColTypeId()
-  {
+  public int getColTypeId() {
     return colTypeId;
   }
-  
-  
+
+
   /**
    * Update the value for colTypeId.
    *
    * @param pColTypeId the new value for colTypeId
    */
-  public void setColTypeId(final int pColTypeId)
-  {
+  public void setColTypeId(final int pColTypeId) {
     colTypeId = pColTypeId;
   }
-  
-  
+
+
   /**
    * Get the value for dateFormat.
    *
    * @return the dateFormat
    */
-  public String getDateFormat()
-  {
+  public String getDateFormat() {
     return dateFormat;
   }
-  
-  
+
+
   /**
    * Update the value for dateFormat.
    *
    * @param pDateFormat the new value for dateFormat
    */
-  public void setDateFormat(final String pDateFormat)
-  {
+  public void setDateFormat(final String pDateFormat) {
     dateFormat = pDateFormat;
   }
 
 
-	@Override
-	public int compareTo(final Header o) {
-		return Integer.compare(id, o.id);
-	}
+  @Override
+  public int compareTo(final Header o) {
+    return Integer.compare(id, o.id);
+  }
 
 
-	@Override
-	public String toString() {
-		return "Header [id=" + id + ", sessionId=" + sessionId + ", colName="
-				+ colName + ", colTypeId=" + colTypeId + ", dateFormat="
-				+ dateFormat + "]";
-	}
+  @Override
+  public String toString() {
+    return "Header [id=" + id + ", sessionId=" + sessionId + ", colName="
+        + colName + ", colTypeId=" + colTypeId + ", dateFormat=" + dateFormat
+        + "]";
+  }
 }

@@ -19,24 +19,23 @@ import io.miti.beetle.dbutil.*;
  *
  * @version 1.0
  */
-public final class Config
-  implements FetchDatabaseRecords, IInsertable, IUpdateable
+public final class Config implements FetchDatabaseRecords, IInsertable,
+    IUpdateable
 {
   /**
    * The table column DB_VERSION.
    */
   private int dbVersion;
-  
-  
+
+
   /**
    * Default constructor.
    */
-  public Config()
-  {
+  public Config() {
     super();
   }
-  
-  
+
+
   /**
    * Implement the FetchDatabaseRecords interface.
    * 
@@ -46,108 +45,98 @@ public final class Config
    */
   @Override
   @SuppressWarnings({ "unchecked", "rawtypes" })
-  public boolean getFields(final ResultSet rs,
-                           final List listRecords)
-  {
+  public boolean getFields(final ResultSet rs, final List listRecords) {
     // Default return value
     boolean bResult = false;
-    
+
     // Set up our try/catch block
-    try
-    {
+    try {
       // Iterate over the result set
-      while (rs.next())
-      {
+      while (rs.next()) {
         // Instantiate a new object
         Config obj = new Config();
-        
+
         // Save the data in our object
         obj.dbVersion = rs.getInt(1);
-        
+
         // Add to our list
         listRecords.add(obj);
       }
-      
+
       // There was no error
       bResult = true;
-    }
-    catch (java.sql.SQLException sqle)
-    {
+    } catch (java.sql.SQLException sqle) {
       // Add the exception to the master list and save the
       // result as the error code
       System.err.println(sqle.getMessage());
     }
-    
+
     // Return the result of the operation
     return bResult;
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @return a list of all objects in the database
    */
-  public static List<Config> getList()
-  {
+  public static List<Config> getList() {
     return getList(null);
   }
-  
-  
+
+
   /**
    * Get all objects from the database.
    * 
    * @param whereClause the where clause for the select statement
    * @return a list of all objects in the database
    */
-  public static List<Config> getList(final String whereClause)
-  {
+  public static List<Config> getList(final String whereClause) {
     // This will hold the list that gets returned
     List<Config> listData = new ArrayList<Config>(100);
-    
+
     // Build our query
     StringBuffer buf = new StringBuffer(100);
     buf.append("SELECT DB_VERSION");
     buf.append(" from CONFIG");
-    
+
     // Check if there's a where clause to append
-    if (whereClause != null)
-    {
+    if (whereClause != null) {
       buf.append(" ").append(whereClause);
     }
-    
+
     // Get all of the objects from the database
-    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData, new Config());
-    if (!bResult)
-    {
+    boolean bResult = PrefsDatabase.executeSelect(buf.toString(), listData,
+        new Config());
+    if (!bResult) {
       // An error occurred
       listData.clear();
       listData = null;
     }
-    
+
     // Return the list
     return listData;
   }
-  
-  
+
+
   /**
    * Insert a record into the database.
    */
-  public void insert()
-  {
+  public void insert() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into CONFIG (");
     sb.append("DB_VERSION");
     sb.append(") values (");
     sb.append("?");
     sb.append(")");
-    
+
     // There should only be one row in this table, so delete before inserting
     PrefsDatabase.delete("delete from CONFIG");
     PrefsDatabase.insert(sb.toString(), this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -155,25 +144,22 @@ public final class Config
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setInsertFields(final PreparedStatement ps)
-    throws SQLException
-  {
+  public void setInsertFields(final PreparedStatement ps) throws SQLException {
     ps.setInt(1, dbVersion);
   }
-  
-  
+
+
   /**
    * Update a record in the database.
    */
-  public void update()
-  {
+  public void update() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE CONFIG set ");
     sb.append("DB_VERSION = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
-  
-  
+
+
   /**
    * Set the parameter values in the INSERT statement.
    * 
@@ -181,37 +167,33 @@ public final class Config
    * @throws java.sql.SQLException a database exception
    */
   @Override
-  public void setUpdateFields(final PreparedStatement ps)
-    throws SQLException
-  {
-	  ps.setInt(1, dbVersion);
+  public void setUpdateFields(final PreparedStatement ps) throws SQLException {
+    ps.setInt(1, dbVersion);
   }
-  
-  
+
+
   /**
    * Get the value for dbVersion.
    *
    * @return the dbVersion
    */
-  public int getDbVersion()
-  {
+  public int getDbVersion() {
     return dbVersion;
   }
-  
-  
+
+
   /**
    * Update the value for dbVersion.
    *
    * @param pDbVersion the new value for dbVersion
    */
-  public void setDbVersion(final int pDbVersion)
-  {
+  public void setDbVersion(final int pDbVersion) {
     dbVersion = pDbVersion;
   }
 
 
-	@Override
-	public String toString() {
-		return "Config [dbVersion=" + dbVersion + "]";
-	}
+  @Override
+  public String toString() {
+    return "Config [dbVersion=" + dbVersion + "]";
+  }
 }
