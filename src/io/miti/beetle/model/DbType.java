@@ -355,4 +355,25 @@ public final class DbType
 	public int compareTo(final DbType o) {
 		return Integer.compare(id, o.id);
 	}
+	
+	
+	public boolean matchesUrlRef(final String url) {
+		if ((url == null) || (url.length() < 7)) {
+			return false;
+		} else if (ref == null) {
+			return false;
+		}
+		
+		if (!url.startsWith("jdbc:")) {
+			return false;
+		}
+		
+		final int endColon = url.indexOf(':', 5);
+		if (endColon < 0) {
+			return false;
+		}
+		
+		final String urlRef = url.substring(5, endColon);
+		return (urlRef.equals(ref));
+	}
 }

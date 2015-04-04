@@ -48,6 +48,10 @@ public final class UserDBCache {
 		list = UserDb.getList("order by ID");
 	}
 	
+	public void add(final UserDb userDb) {
+		list.add(userDb);
+	}
+	
 	/**
 	 * Print the list of objects in the cache.
 	 */

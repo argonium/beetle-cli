@@ -62,4 +62,17 @@ public final class DBTypeCache {
 			System.out.println("  " + obj.toString());
 		}
 	}
+	
+	public int getMatchingDbTypeId(final String url) {
+		
+		int matchingID = -1;
+		for (DbType dbt : list) {
+			if (dbt.matchesUrlRef(url)) {
+				matchingID = dbt.getId();
+				break;
+			}
+		}
+		
+		return matchingID;
+	}
 }
