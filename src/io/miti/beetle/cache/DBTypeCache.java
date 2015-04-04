@@ -75,4 +75,24 @@ public final class DBTypeCache {
 		
 		return matchingID;
 	}
+
+	public boolean clearJar(int id) {
+		
+		boolean result = false;
+		if (list != null) {
+			// Find the object matching on ID
+			for (DbType dbt : list) {
+				if (dbt.getId() == id) {
+					dbt.setJarName(null);
+					boolean updateRow = dbt.update();
+					if (updateRow) {
+						result = true;
+					}
+					break;
+				}
+			}
+		}
+		
+		return result;
+	}
 }
