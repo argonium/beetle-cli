@@ -17,6 +17,7 @@ import java.util.Set;
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
+import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
@@ -26,8 +27,6 @@ import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.TimeSpan;
 import io.miti.beetle.util.Utility;
 import io.miti.beetle.util.FileEntry;
-
-
 import jline.TerminalFactory;
 import jline.console.ConsoleReader;
 import jline.console.completer.StringsCompleter;
@@ -198,6 +197,14 @@ public final class LineConsole
       deleteUserDatabase(cmds.get(2));
     } else if (validateCommand(cmds, 3, "connect", "userdb")) {
       connectUserDatabase(cmds.get(2));
+    } else if (validateCommand(cmds, 4, "import", "db", "table")) {
+      importUserTable(cmds.get(3));
+    } else if (validateCommand(cmds, 4, "import", "db", "query")) {
+      importUserQuery(cmds.get(3));
+    } else if (validateCommand(cmds, 3, "export", "csv")) {
+      exportCSV(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "export", "json")) {
+      exportJSON(cmds.get(2));
     } else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
       setDBTypeJar(cmds.get(2), cmds.get(4));
     } else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -256,8 +263,32 @@ public final class LineConsole
 
     return true;
   }
+  
+  
+  private void exportJSON(final String filename) {
+    session.setTargetId(ContentType.JSON.getId());
+    session.setTargetName(filename);
+  }
+  
+  
+  private void exportCSV(final String filename) {
+    session.setTargetId(ContentType.CSV.getId());
+    session.setTargetName(filename);
+  }
 
 
+  private void importUserTable(final String tname) {
+    session.setSourceId(ContentType.SQL.getId());
+    session.setSourceName("select * from " + tname);
+  }
+  
+  
+  private void importUserQuery(final String query) {
+    session.setSourceId(ContentType.SQL.getId());
+    session.setSourceName(query);
+  }
+  
+  
   private void connectUserDatabase(final String dbId) {
 
     // Get the numeric ID
@@ -1111,9 +1142,10 @@ public final class LineConsole
     final String[] array = new String[] { "debug", "debug off", "debug on",
         "help", "quit", "gc", "mem", "time", "version", "time <command>",
         "cat <file>", "head <file>", "dir [<path>]", "list userdbs",
-        "list dbtypes", "set dbtype <id> jar <filename>",
+        "list dbtypes", "set dbtype <id> jar <filename>", "import db query <query>",
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
-        "delete userdb <id>", "connect userdb <id>",
+        "delete userdb <id>", "connect userdb <id>", "import db table <name>",
+        "export csv <filename>", "export json <filename>",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated

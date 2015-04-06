@@ -447,9 +447,6 @@ public final class Utility
           cname = ename.substring(lastPeriod + 1);
         }
 
-        // Save the name of the input file
-        final String fname = getFName(file);
-
         // Check if the current class name matches the target
         if (className.equalsIgnoreCase(cname))
         {

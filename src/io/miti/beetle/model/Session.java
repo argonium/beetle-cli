@@ -33,6 +33,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   private int sourceTypeId = -1;
 
   private int sourceId = -1;
+  
+  private String sourceName = null;
 
   /**
    * The table column TARGET_TYPE_ID.
@@ -40,6 +42,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   private int targetTypeId = -1;
 
   private int targetId = -1;
+  
+  private String targetName = null;
 
   /**
    * The table column SOURCE_DELIM.
@@ -282,6 +286,26 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
 
 
   /**
+   * Get the value for sourceId.
+   *
+   * @return the sourceId
+   */
+  public String getSourceName() {
+    return sourceName;
+  }
+
+
+  /**
+   * Update the value for sourceId.
+   *
+   * @param pSourceId the new value for sourceId
+   */
+  public void setSourceName(final String pSourceName) {
+    sourceName = pSourceName;
+  }
+
+
+  /**
    * Get the value for targetId.
    *
    * @return the targetId
@@ -298,6 +322,26 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
    */
   public void setTargetId(final int pTargetId) {
     targetId = pTargetId;
+  }
+
+
+  /**
+   * Get the value for targetName.
+   *
+   * @return the targetName
+   */
+  public String getTargetName() {
+    return targetName;
+  }
+
+
+  /**
+   * Update the value for targetName.
+   *
+   * @param targetName the new value for targetName
+   */
+  public void setTargetName(final String pTargetName) {
+    targetName = pTargetName;
   }
 
 
