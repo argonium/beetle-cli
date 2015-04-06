@@ -275,36 +275,20 @@ public final class LineConsole
       return;
     }
 
-    // TODO Move searcher to cache
-    List<UserDb> list = UserDBCache.get().getList();
-    if (list == null) {
-      System.out.println("No user databases found");
+    // Find a match (by ID)
+    final UserDb userDb = UserDBCache.get().find(id);
+    if (userDb == null) {
+      System.out.println("No match found");
     } else {
-      // Find the object matching on ID
-      boolean found = false;
-      final int size = list.size();
-      for (int i = 0; i < size; ++i) {
-        UserDb udb = list.get(i);
-        if (udb.getId() == id) {
-          // TODO Verify this DB has a type, and the type has a JAR
-          // that implements the required driver class
+      // TODO Verify this DB has a type, and the type has a JAR
+      // that implements the required driver class
 
-          // Store the reference in the session
-          session.setSourceId(udb.getId());
-          found = true;
-          break;
-        }
-      }
-
-      if (found) {
-        System.out.println("User database reference found");
-      } else {
-        System.err.println("No matching reference found");
-      }
+      // Store the reference in the session
+      session.setSourceId(id);
     }
   }
-
-
+  
+  
   private void deleteUserDatabase(final String dbId) {
     // Get the numeric ID
     int id = Utility.getStringAsInteger(dbId, -1, -1);
@@ -313,30 +297,12 @@ public final class LineConsole
       return;
     }
 
-    // TODO Move searcher to cache
-    List<UserDb> list = UserDBCache.get().getList();
-    if (list == null) {
-      System.out.println("No user databases found");
+    // Delete the object (if found)
+    final boolean result = UserDBCache.get().remove(id);
+    if (result) {
+      System.out.println("User database reference deleted");
     } else {
-      // Find the object matching on ID
-      boolean found = false;
-      final int size = list.size();
-      for (int i = 0; i < size; ++i) {
-        UserDb udb = list.get(i);
-        if (udb.getId() == id) {
-          // Remove the object from the cache and the database
-          list.remove(i);
-          udb.delete();
-          found = true;
-          break;
-        }
-      }
-
-      if (found) {
-        System.out.println("User database reference deleted");
-      } else {
-        System.err.println("No matching reference found");
-      }
+      System.err.println("No matching reference found");
     }
   }
 
@@ -395,30 +361,16 @@ public final class LineConsole
       return;
     }
 
-    // TODO Move searcher to cache
-    List<DbType> list = DBTypeCache.get().getList();
-    if (list == null) {
-      System.out.println("No database supported");
+    // Save the jar name and update the database
+    DbType match = DBTypeCache.get().find(id);
+    if (match != null) {
+      match.setJarName(jarName);
+      if (!match.update()) {
+        System.err.println("Error updating the table");
+      }
+      System.out.println("DBType row updated");
     } else {
-      // Find the object matching on ID
-      boolean found = false;
-      for (DbType dbt : list) {
-        if (dbt.getId() == id) {
-          dbt.setJarName(jarName);
-          boolean updateRow = dbt.update();
-          if (!updateRow) {
-            System.err.println("Error updating the table");
-          }
-          found = true;
-          break;
-        }
-      }
-
-      if (found) {
-        System.out.println("DBType row updated");
-      } else {
-        System.err.println("No matching DBType found");
-      }
+      System.err.println("No matching DBType found");
     }
   }
 
