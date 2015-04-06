@@ -209,6 +209,10 @@ public final class LineConsole
       setDBTypeJar(cmds.get(2), cmds.get(4));
     } else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
       clearDBTypeJar(cmds.get(2));
+    } else if (validateCommand(cmds, 2, "print", "session")) {
+      printSession();
+    } else if (line.equals("run")) {
+      runSession();
 //    } else if (validateCommand(cmds, 3, "export", "data")) {
 //      exportTableData(cmds.get(2), null);
 //    } else if (validateCommand(cmds, 4, "export", "data")) {
@@ -262,6 +266,16 @@ public final class LineConsole
     }
 
     return true;
+  }
+  
+  
+  private void printSession() {
+    // TODO Auto-generated method stub
+  }
+  
+  
+  private void runSession() {
+    // TODO Auto-generated method stub
   }
   
   
@@ -1146,6 +1160,7 @@ public final class LineConsole
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
+        "print session", "run",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated
