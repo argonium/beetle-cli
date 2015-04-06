@@ -270,12 +270,19 @@ public final class LineConsole
   
   
   private void printSession() {
-    // TODO Auto-generated method stub
+    // TODO Test this
+    String line1 = String.format("Source ID: %d  Source Type: %s  Source Name: %s",
+        session.getSourceId(), ContentType.getById(session.getSourceId()), session.getSourceName());
+    String line2 = String.format("Target ID: %d  Target Type: %s  Target Name: %s",
+        session.getTargetId(), ContentType.getById(session.getTargetId()), session.getTargetName());
+    
+    System.out.println(line1);
+    System.out.println(line2);
   }
   
   
   private void runSession() {
-    // TODO Auto-generated method stub
+    // TODO Support input of SQL, output of CSV and JSON
   }
   
   
