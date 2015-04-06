@@ -10,7 +10,10 @@ import io.miti.beetle.prefs.IIdentifiable;
 import io.miti.beetle.prefs.IInsertable;
 import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.prefs.PrefsDatabase;
+import io.miti.beetle.util.Logger;
+import io.miti.beetle.util.Utility;
 
+import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -348,5 +351,24 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable,
 
     final String urlRef = url.substring(5, endColon);
     return (urlRef.equals(ref));
+  }
+  
+  
+  public boolean isValid() {
+    
+    boolean result = false;
+    if (jarName == null) {
+      Logger.error("Error: The DB type does not have an associated JAR file");
+    } else {
+      final File jar = new File(jarName);
+      if (!jar.exists() || !jar.isFile()) {
+        Logger.error("Error: Unable to find JAR file " + jarName);
+      } else {
+        // Test if jar has the correct JDBC class
+        result = Utility.searchFile(jar, driver);
+      }
+    }
+    
+    return result;
   }
 }

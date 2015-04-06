@@ -280,11 +280,11 @@ public final class LineConsole
     if (userDb == null) {
       System.out.println("No match found");
     } else {
-      // TODO Verify this DB has a type, and the type has a JAR
-      // that implements the required driver class
-
-      // Store the reference in the session
-      session.setSourceId(id);
+      // If the DB type is configured with a valid JAR file, save
+      // the user DB ID in the session
+      if (DBTypeCache.get().isValid(userDb.getDbTypeId())) {
+        session.setSourceId(id);
+      }
     }
   }
   

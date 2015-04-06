@@ -111,7 +111,7 @@ public final class DBTypeCache {
   }
 
 
-  public boolean clearJar(int id) {
+  public boolean clearJar(final int id) {
 
     boolean result = false;
     if (list != null) {
@@ -129,5 +129,16 @@ public final class DBTypeCache {
     }
 
     return result;
+  }
+  
+  
+  public boolean isValid(final int id) {
+    // Find a match on ID
+    final DbType match = find(id);
+    if (match == null) {
+      return false;
+    }
+    
+    return match.isValid();
   }
 }

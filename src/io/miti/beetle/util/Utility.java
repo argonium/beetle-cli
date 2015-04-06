@@ -1,10 +1,16 @@
 package io.miti.beetle.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Utility methods.
@@ -14,7 +20,6 @@ import java.util.Set;
  */
 public final class Utility
 {
-
   /**
    * Whether to read input files as a stream.
    */
@@ -364,5 +369,109 @@ public final class Utility
     }
 
     return outStr;
+  }
+  
+
+  /**
+   * Return the canonical name of the input file.
+   * 
+   * @param file the input file
+   * @return the canonical name
+   */
+  private static String getFName(final File file)
+  {
+    String fname = null;
+    try
+    {
+      fname = file.getCanonicalPath();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+
+    return fname;
+  }
+  
+  
+  /**
+   * Search the specified jar file for the specified class name.
+   * 
+   * @param file the input file
+   * @param className the class name
+   */
+  public static boolean searchFile(final File file, final String className)
+  {
+    if ((className == null) || className.isEmpty() || (file == null) || !file.exists() || !file.isFile()) {
+      return false;
+    }
+    
+    if (!getFName(file).toLowerCase().endsWith(".jar"))
+    {
+      return false;
+    }
+
+    FileInputStream inStream = null;
+    boolean result = false;
+    try
+    {
+      // Iterate over each entry in the input file
+      inStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(inStream);
+      ZipEntry entry;
+      while ((entry = zis.getNextEntry()) != null)
+      {
+        // Check if this is a class file
+        String ename = entry.getName().trim();
+        if (!ename.toLowerCase().endsWith(".class"))
+        {
+          continue;
+        }
+
+        // Convert the jar file entry to a package name (slashes
+        // become periods, and remove the '.class' from the end)
+        ename = ename.replace('/', '.').replace('\\', '.')
+                     .substring(0, ename.length() - 6);
+
+        // If the class is in the default package, save the class
+        // name as the modified entry name; else the class name
+        // is just the text after the last period
+        final int lastPeriod = ename.lastIndexOf('.');
+        String cname = null;
+        if (lastPeriod < 0)
+        {
+          cname = ename;
+        }
+        else
+        {
+          cname = ename.substring(lastPeriod + 1);
+        }
+
+        // Save the name of the input file
+        final String fname = getFName(file);
+
+        // Check if the current class name matches the target
+        if (className.equalsIgnoreCase(cname))
+        {
+          result = true;
+          break;
+        }
+      }
+
+      // Close the input streams
+      zis.close();
+      inStream.close();
+      inStream = null;
+    }
+    catch (FileNotFoundException e)
+    {
+      e.printStackTrace();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    
+    return result;
   }
 }
