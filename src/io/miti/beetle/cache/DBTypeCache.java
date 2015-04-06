@@ -50,8 +50,31 @@ public final class DBTypeCache {
   public List<DbType> getList() {
     return list;
   }
-
-
+  
+  
+  /**
+   * Find a matching object by ID.
+   * 
+   * @param id the ID to search for a match on
+   * @return the object (in the list) matching on ID)
+   */
+  public DbType find(final int id) {
+    if ((list == null) || list.isEmpty()) {
+      return null;
+    }
+    
+    DbType match = null;
+    for (DbType obj : list) {
+      if (obj.getId() == id) {
+        match = obj;
+        break;
+      }
+    }
+    
+    return match;
+  }
+  
+  
   /**
    * Print the list of objects in the cache.
    */

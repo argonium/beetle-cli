@@ -55,8 +55,31 @@ public final class UserDBCache {
   public void add(final UserDb userDb) {
     list.add(userDb);
   }
-
-
+  
+  
+  /**
+   * Find a matching object by ID.
+   * 
+   * @param id the ID to search for a match on
+   * @return the object (in the list) matching on ID)
+   */
+  public UserDb find(final int id) {
+    if ((list == null) || list.isEmpty()) {
+      return null;
+    }
+    
+    UserDb match = null;
+    for (UserDb obj : list) {
+      if (obj.getId() == id) {
+        match = obj;
+        break;
+      }
+    }
+    
+    return match;
+  }
+  
+  
   /**
    * Print the list of objects in the cache.
    */
@@ -70,5 +93,28 @@ public final class UserDBCache {
     for (UserDb obj : list) {
       System.out.println("  " + obj.toString());
     }
+  }
+
+
+  public boolean remove(int id) {
+    if (list == null) {
+      return false;
+    }
+    
+    // Find the object matching on ID
+    boolean found = false;
+    final int size = list.size();
+    for (int i = 0; i < size; ++i) {
+      final UserDb udb = list.get(i);
+      if (udb.getId() == id) {
+        // Remove the object from the cache and the database
+        list.remove(i);
+        udb.delete();
+        found = true;
+        break;
+      }
+    }
+    
+    return found;
   }
 }
