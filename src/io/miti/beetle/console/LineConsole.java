@@ -211,6 +211,8 @@ public final class LineConsole
       clearDBTypeJar(cmds.get(2));
     } else if (validateCommand(cmds, 2, "print", "session")) {
       printSession();
+    } else if (validateCommand(cmds, 2, "reset", "session")) {
+      resetSession();
     } else if (line.equals("run")) {
       runSession();
 //    } else if (validateCommand(cmds, 3, "export", "data")) {
@@ -268,9 +270,12 @@ public final class LineConsole
     return true;
   }
   
+  private void resetSession() {
+    session.reset();
+  }
+  
   
   private void printSession() {
-    // TODO Test this
     String line1 = String.format("Source ID: %d  Source Type: %s  Source Name: %s",
         session.getSourceId(), ContentType.getById(session.getSourceId()), session.getSourceName());
     String line2 = String.format("Target ID: %d  Target Type: %s  Target Name: %s",
@@ -1167,7 +1172,7 @@ public final class LineConsole
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
-        "print session", "run",
+        "print session", "reset session", "run",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated

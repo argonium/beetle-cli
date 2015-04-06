@@ -25,7 +25,7 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   /**
    * The table column ID.
    */
-  private int id;
+  private int id = -1;
 
   /**
    * The table column SOURCE_TYPE_ID.
@@ -33,7 +33,7 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   private int sourceTypeId = -1;
 
   private int sourceId = -1;
-  
+
   private String sourceName = null;
 
   /**
@@ -42,7 +42,7 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   private int targetTypeId = -1;
 
   private int targetId = -1;
-  
+
   private String targetName = null;
 
   /**
@@ -417,5 +417,21 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
         + ", sourceId=" + sourceId + ", targetTypeId=" + targetTypeId
         + ", targetId=" + targetId + ", sourceDelim=" + sourceDelim
         + ", targetDelim=" + targetDelim + "]";
+  }
+  
+  
+  /**
+   * Reset the session.
+   */
+  public void reset() {
+    id = -1;
+    sourceTypeId = -1;
+    sourceId = -1;
+    sourceName = null;
+    targetTypeId = -1;
+    targetId = -1;
+    targetName = null;
+    sourceDelim = null;
+    targetDelim = null;
   }
 }
