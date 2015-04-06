@@ -1,13 +1,8 @@
 package io.miti.beetle.console;
 
-import java.io.BufferedWriter;
 import java.io.Console;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -16,15 +11,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
-import io.miti.beetle.dbutil.ConnManager;
-import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
@@ -178,7 +170,7 @@ public final class LineConsole
     // Process the command entered by the user
     final String line = input.trim();
     if (line.equals("quit") || line.equals("exit")) {
-      ConnManager.get().close();
+      // ConnManager.get().close();
       System.out.println("Shutting down");
       System.exit(0);
     } else if (line.equals("debug on")) {
@@ -194,8 +186,8 @@ public final class LineConsole
       printHelp();
     } else if (validateCommand(cmds, 2, "help")) {
       printHelp(line.substring(5).trim());
-    } else if (validateCommand(cmds, 2, "close", "database")) {
-      ConnManager.get().close();
+//    } else if (validateCommand(cmds, 2, "close", "database")) {
+//      ConnManager.get().close();
     } else if (validateCommand(cmds, 2, "list", "dbtypes")) {
       listDatabaseTypes();
     } else if (validateCommand(cmds, 2, "list", "userdbs")) {
@@ -210,53 +202,53 @@ public final class LineConsole
       setDBTypeJar(cmds.get(2), cmds.get(4));
     } else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
       clearDBTypeJar(cmds.get(2));
-    } else if (validateCommand(cmds, 3, "export", "data")) {
-      exportTableData(cmds.get(2), null);
-    } else if (validateCommand(cmds, 4, "export", "data")) {
-      exportTableData(cmds.get(2), cmds.get(3));
-    } else if (validateCommand(cmds, 2, "check", "database")) {
-      boolean isValid = ConnManager.get().isValid();
-      System.out.println("Database valid? " + isValid);
+//    } else if (validateCommand(cmds, 3, "export", "data")) {
+//      exportTableData(cmds.get(2), null);
+//    } else if (validateCommand(cmds, 4, "export", "data")) {
+//      exportTableData(cmds.get(2), cmds.get(3));
+//    } else if (validateCommand(cmds, 2, "check", "database")) {
+//      boolean isValid = ConnManager.get().isValid();
+//      System.out.println("Database valid? " + isValid);
     } else if (validateCommand(cmds, 2, "jar")) {
       loadJar(cmds.get(1));
-    } else if (validateCommand(cmds, 2, "select", "connection")) {
-      selectConnection(console);
-    } else if (validateCommand(cmds, 3, "describe", "table")) {
-      describeTable(cmds.get(2));
-    } else if (validateCommand(cmds, 2, "list", "tables")) {
-      printTables();
+//    } else if (validateCommand(cmds, 2, "select", "connection")) {
+//      selectConnection(console);
+//    } else if (validateCommand(cmds, 3, "describe", "table")) {
+//      describeTable(cmds.get(2));
+//    } else if (validateCommand(cmds, 2, "list", "tables")) {
+//      printTables();
     } else if (line.equals("dir")) {
       printDirPath(".", false);
     } else if (validateCommand(cmds, 2, "dir")) {
       printDirPath(cmds.get(1), false);
-    } else if (validateCommand(cmds, 2, "list", "schemas")) {
-      printSchemas();
+//    } else if (validateCommand(cmds, 2, "list", "schemas")) {
+//      printSchemas();
     } else if (line.equals("time")) {
       printTime();
     } else if (line.startsWith("time ")) {
       timeCommand(line.substring(5), console);
-    } else if (validateCommand(cmds, 2, "count", "tables")) {
-      countTables();
-    } else if (validateCommand(cmds, 3, "count", "rows")) {
-      countTableRows(cmds.get(2));
+//    } else if (validateCommand(cmds, 2, "count", "tables")) {
+//      countTables();
+//    } else if (validateCommand(cmds, 3, "count", "rows")) {
+//      countTableRows(cmds.get(2));
     } else if (line.equals("gc")) {
       gc();
     } else if (line.equals("mem")) {
       mem();
-    } else if (line.equals("dbinfo")) {
-      printDBInfo();
+//    } else if (line.equals("dbinfo")) {
+//      printDBInfo();
     } else if (validateCommand(cmds, 2, "cat")) {
       catFile(cmds.get(1));
     } else if (validateCommand(cmds, 2, "head")) {
       headFile(cmds.get(1));
     } else if (line.equals("version")) {
       ver();
-    } else if (line.startsWith("connect ")) {
-      connect(cmds, console);
-    } else if (line.equals("connections")) {
-      printConnectionHistory();
-    } else if (validateCommand(cmds, 3, "export", "schema")) {
-      exportSchema(cmds.get(2));
+//    } else if (line.startsWith("connect ")) {
+//      connect(cmds, console);
+//    } else if (line.equals("connections")) {
+//      printConnectionHistory();
+//    } else if (validateCommand(cmds, 3, "export", "schema")) {
+//      exportSchema(cmds.get(2));
     } else if (!line.startsWith("-")) {
       // It's not a comment, so it's an unknown command
       System.out.println("Unknown command");
@@ -419,230 +411,230 @@ public final class LineConsole
   }
 
 
-  private void printDBInfo() {
-    if (ConnManager.get().isNull()) {
-      System.out.println("You are not connected to a database");
-      return;
-    }
-
-    final String url = ConnManager.get().getUrl();
-    final boolean isValid = ConnManager.get().isValid(3);
-    System.out.println("You are connected to " + url);
-    if (!isValid) {
-      System.out.println("The connection is no longer valid");
-    }
-  }
-
-
-  private void countTableRows(final String table) {
-    // Check the DB connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-    } else {
-      final String query = "select count(*) from " + table;
-      int count = Database.executeSelectToReturnInt(query);
-      String sCount = Utility.formatLong((long) count);
-      String msg = String.format("The number of rows in table %s is %s", table,
-          sCount);
-      System.out.println(msg);
-    }
-  }
+//  private void printDBInfo() {
+//    if (ConnManager.get().isNull()) {
+//      System.out.println("You are not connected to a database");
+//      return;
+//    }
+//
+//    final String url = ConnManager.get().getUrl();
+//    final boolean isValid = ConnManager.get().isValid(3);
+//    System.out.println("You are connected to " + url);
+//    if (!isValid) {
+//      System.out.println("The connection is no longer valid");
+//    }
+//  }
 
 
-  private void exportTableData(final String tableName, final String whereClause) {
-    // Check the DB connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-    } else {
-      // Verify this table exists
-      List<String> info = Database.getTableNames(tableName);
-      if ((info == null) || info.isEmpty() || (info.size() > 1)) {
-        System.out.println("Error getting table data");
-        return;
-      }
-
-      // Get the column names
-      List<List<String>> results = Database.getColumns(tableName, true);
-      if ((results == null) || results.isEmpty()) {
-        System.out.println("Error getting column information");
-        return;
-      }
-
-      System.out.println("Exporting table data for " + tableName + "...");
-
-      // Build the query
-      StringBuilder sb = new StringBuilder(100);
-      StringBuilder sbHeaders = new StringBuilder(100);
-      sb.append("select ");
-      final int size = results.size();
-      for (int i = 0; i < size; ++i) {
-        if (i > 0) {
-          sb.append(", ");
-          sbHeaders.append(",");
-        }
-        sb.append(results.get(i).get(1));
-        sbHeaders.append(results.get(i).get(1));
-      }
-      sb.append(" from ").append(tableName);
-
-      // If there's a where/order-by clause, add it
-      if ((whereClause != null) && !whereClause.trim().isEmpty()) {
-        sb.append(" ").append(whereClause.trim());
-      }
-
-      // Select the data
-      List<List<String>> data = Database.executeSelect(sb.toString(), size);
-
-      // Create the output file
-      final String fname = tableName + ".csv";
-
-      // Save it to a CSV file
-      try {
-        PrintWriter pw = new PrintWriter(fname, "UTF-8");
-        pw.println(sbHeaders.toString());
-        for (List<String> row : data) {
-          pw.println(getAsCSVLine(row));
-        }
-
-        pw.flush();
-        pw.close();
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-      }
-
-      System.out.println("Data saved to " + fname);
-    }
-  }
+//  private void countTableRows(final String table) {
+//    // Check the DB connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//    } else {
+//      final String query = "select count(*) from " + table;
+//      int count = Database.executeSelectToReturnInt(query);
+//      String sCount = Utility.formatLong((long) count);
+//      String msg = String.format("The number of rows in table %s is %s", table,
+//          sCount);
+//      System.out.println(msg);
+//    }
+//  }
 
 
-  private String getAsCSVLine(List<String> row) {
-    StringBuilder sb = new StringBuilder(100);
-    if ((row == null) || row.isEmpty()) {
-      return "";
-    }
+//  private void exportTableData(final String tableName, final String whereClause) {
+//    // Check the DB connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//    } else {
+//      // Verify this table exists
+//      List<String> info = Database.getTableNames(tableName);
+//      if ((info == null) || info.isEmpty() || (info.size() > 1)) {
+//        System.out.println("Error getting table data");
+//        return;
+//      }
+//
+//      // Get the column names
+//      List<List<String>> results = Database.getColumns(tableName, true);
+//      if ((results == null) || results.isEmpty()) {
+//        System.out.println("Error getting column information");
+//        return;
+//      }
+//
+//      System.out.println("Exporting table data for " + tableName + "...");
+//
+//      // Build the query
+//      StringBuilder sb = new StringBuilder(100);
+//      StringBuilder sbHeaders = new StringBuilder(100);
+//      sb.append("select ");
+//      final int size = results.size();
+//      for (int i = 0; i < size; ++i) {
+//        if (i > 0) {
+//          sb.append(", ");
+//          sbHeaders.append(",");
+//        }
+//        sb.append(results.get(i).get(1));
+//        sbHeaders.append(results.get(i).get(1));
+//      }
+//      sb.append(" from ").append(tableName);
+//
+//      // If there's a where/order-by clause, add it
+//      if ((whereClause != null) && !whereClause.trim().isEmpty()) {
+//        sb.append(" ").append(whereClause.trim());
+//      }
+//
+//      // Select the data
+//      List<List<String>> data = Database.executeSelect(sb.toString(), size);
+//
+//      // Create the output file
+//      final String fname = tableName + ".csv";
+//
+//      // Save it to a CSV file
+//      try {
+//        PrintWriter pw = new PrintWriter(fname, "UTF-8");
+//        pw.println(sbHeaders.toString());
+//        for (List<String> row : data) {
+//          pw.println(getAsCSVLine(row));
+//        }
+//
+//        pw.flush();
+//        pw.close();
+//      } catch (FileNotFoundException e) {
+//        e.printStackTrace();
+//      } catch (UnsupportedEncodingException e) {
+//        e.printStackTrace();
+//      }
+//
+//      System.out.println("Data saved to " + fname);
+//    }
+//  }
 
-    boolean firstField = true;
-    for (String field : row) {
-      if (!firstField) {
-        sb.append(",");
-      }
-      firstField = false;
-      sb.append(Utility.quoteString(field));
-    }
 
-    return sb.toString();
-  }
-
-
-  private void countTables() {
-    // Check the DB connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-    } else {
-      final List<String> tables = Database.getTableNames(null);
-      if (tables == null) {
-        System.out.println("No tables were found (list is null)");
-      } else {
-        System.out.println("Number of database tables: " + tables.size());
-      }
-    }
-  }
+//  private String getAsCSVLine(List<String> row) {
+//    StringBuilder sb = new StringBuilder(100);
+//    if ((row == null) || row.isEmpty()) {
+//      return "";
+//    }
+//
+//    boolean firstField = true;
+//    for (String field : row) {
+//      if (!firstField) {
+//        sb.append(",");
+//      }
+//      firstField = false;
+//      sb.append(Utility.quoteString(field));
+//    }
+//
+//    return sb.toString();
+//  }
 
 
-  private void exportSchema(final String filename) {
-    // Check the DB connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-    } else {
-      System.out.println("Generating the list of tables...");
+//  private void countTables() {
+//    // Check the DB connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//    } else {
+//      final List<String> tables = Database.getTableNames(null);
+//      if (tables == null) {
+//        System.out.println("No tables were found (list is null)");
+//      } else {
+//        System.out.println("Number of database tables: " + tables.size());
+//      }
+//    }
+//  }
 
-      // Get the list of database tables
-      final List<String> tables = Database.getTableNames(null);
-      if (tables == null) {
-        System.out.println("No tables were found (list is null)");
-        return;
-      } else if (tables.size() < 1) {
-        System.out.println("No tables were found");
-        return;
-      }
 
-      // Print out the list of database tables
-      Collections.sort(tables);
-
-      final String lineEnd = "\r\n";
-      StringBuilder sb = new StringBuilder(500);
-      sb.append("<?xml version=\"1.0\"?>").append(lineEnd);
-      sb.append("<tables>").append(lineEnd);
-      sb.append("  <lastrun>")
-          .append(Long.toString(System.currentTimeMillis()))
-          .append("</lastrun>").append(lineEnd);
-
-      // Iterate over the table
-      for (String table : tables) {
-        sb.append("  <table id=\"").append(table.toUpperCase()).append("\">")
-            .append(lineEnd);
-
-        // Get the info
-        List<List<String>> results = Database.getColumns(table, true);
-        if (results == null) {
-          continue;
-        } else if (results.size() < 1) {
-          continue;
-        }
-
-        // Add the columns
-        final int size = results.size();
-        for (int i = 0; i < size; ++i) {
-          List<String> points = results.get(i);
-
-          // Output the current column info
-          final String colOrder = (points.size() > 0) ? points.get(0) : "";
-          final String colName = (points.size() > 1) ? points.get(1) : "";
-          final String colType = (points.size() > 2) ? points.get(2) : "";
-          String isNullable = (points.size() > 3) ? points.get(3) : "false";
-          isNullable = (isNullable.contains("NOT NULL") ? "0" : "1");
-          String isPK = (points.size() > 4) ? points.get(4) : "";
-          isPK = (isPK.contains("PK")) ? "1" : "0";
-
-          String msg = String
-              .format(
-                  "    <col order=\"%s\" type=\"%s\" nullable=\"%s\" pk=\"%s\">%s</col>%s",
-                  colOrder, colType, isNullable, isPK, colName, lineEnd);
-          sb.append(msg);
-        }
-
-        sb.append("  </table>").append(lineEnd);
-      }
-      sb.append("</tables>").append(lineEnd);
-
-      // Get the output file name
-      File file = new File(filename);
-      if ((file.exists()) && file.isDirectory()) {
-        System.out.println("The output file name is a directory. Stopping.");
-        return;
-      }
-
-      // Write out the data
-      boolean result = false;
-      try {
-        BufferedWriter bf = new BufferedWriter(new FileWriter(file));
-        bf.write(sb.toString());
-        bf.close();
-        bf = null;
-        result = true;
-      } catch (IOException ioe) {
-        System.err.println(ioe.getMessage());
-        System.out.println("Exception while saving the data: "
-            + ioe.getMessage());
-      }
-
-      if (result) {
-        System.out.println("Database information saved to file");
-      }
-    }
-  }
+//  private void exportSchema(final String filename) {
+//    // Check the DB connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//    } else {
+//      System.out.println("Generating the list of tables...");
+//
+//      // Get the list of database tables
+//      final List<String> tables = Database.getTableNames(null);
+//      if (tables == null) {
+//        System.out.println("No tables were found (list is null)");
+//        return;
+//      } else if (tables.size() < 1) {
+//        System.out.println("No tables were found");
+//        return;
+//      }
+//
+//      // Print out the list of database tables
+//      Collections.sort(tables);
+//
+//      final String lineEnd = "\r\n";
+//      StringBuilder sb = new StringBuilder(500);
+//      sb.append("<?xml version=\"1.0\"?>").append(lineEnd);
+//      sb.append("<tables>").append(lineEnd);
+//      sb.append("  <lastrun>")
+//          .append(Long.toString(System.currentTimeMillis()))
+//          .append("</lastrun>").append(lineEnd);
+//
+//      // Iterate over the table
+//      for (String table : tables) {
+//        sb.append("  <table id=\"").append(table.toUpperCase()).append("\">")
+//            .append(lineEnd);
+//
+//        // Get the info
+//        List<List<String>> results = Database.getColumns(table, true);
+//        if (results == null) {
+//          continue;
+//        } else if (results.size() < 1) {
+//          continue;
+//        }
+//
+//        // Add the columns
+//        final int size = results.size();
+//        for (int i = 0; i < size; ++i) {
+//          List<String> points = results.get(i);
+//
+//          // Output the current column info
+//          final String colOrder = (points.size() > 0) ? points.get(0) : "";
+//          final String colName = (points.size() > 1) ? points.get(1) : "";
+//          final String colType = (points.size() > 2) ? points.get(2) : "";
+//          String isNullable = (points.size() > 3) ? points.get(3) : "false";
+//          isNullable = (isNullable.contains("NOT NULL") ? "0" : "1");
+//          String isPK = (points.size() > 4) ? points.get(4) : "";
+//          isPK = (isPK.contains("PK")) ? "1" : "0";
+//
+//          String msg = String
+//              .format(
+//                  "    <col order=\"%s\" type=\"%s\" nullable=\"%s\" pk=\"%s\">%s</col>%s",
+//                  colOrder, colType, isNullable, isPK, colName, lineEnd);
+//          sb.append(msg);
+//        }
+//
+//        sb.append("  </table>").append(lineEnd);
+//      }
+//      sb.append("</tables>").append(lineEnd);
+//
+//      // Get the output file name
+//      File file = new File(filename);
+//      if ((file.exists()) && file.isDirectory()) {
+//        System.out.println("The output file name is a directory. Stopping.");
+//        return;
+//      }
+//
+//      // Write out the data
+//      boolean result = false;
+//      try {
+//        BufferedWriter bf = new BufferedWriter(new FileWriter(file));
+//        bf.write(sb.toString());
+//        bf.close();
+//        bf = null;
+//        result = true;
+//      } catch (IOException ioe) {
+//        System.err.println(ioe.getMessage());
+//        System.out.println("Exception while saving the data: "
+//            + ioe.getMessage());
+//      }
+//
+//      if (result) {
+//        System.out.println("Database information saved to file");
+//      }
+//    }
+//  }
 
 
   /**
@@ -699,107 +691,104 @@ public final class LineConsole
   }
 
 
-  private void selectConnection(final ConsoleReader console) {
-    if (!ConnManager.get().hasHistory()) {
-      System.out.println("No connection history found");
-    } else {
-      // Print the list
-      List<String> history = new ArrayList<String>(10);
-      int i = 0;
-      Iterator<String> iter = ConnManager.get().getHistory();
-      while (iter.hasNext()) {
-        String name = iter.next();
-        String msg = String.format("#%d - %s", (i + 1), name);
-        System.out.println(msg);
-        history.add(name);
-        ++i;
-      }
-
-      // Let the user select a connection
-      final int selection = getSelection(console);
-      if ((selection < 1) || (selection > history.size())) {
-        System.out.println("Illegal selection");
-      } else {
-        // Get the selected URL
-        final String url = history.get(selection - 1);
-        System.out.println("Selected " + url);
-
-        // TODO Try to put this in the console buffer
-        // final String buffer = "connect " + url;
-
-        // Open a connection
-        List<String> cmds = new ArrayList<String>(2);
-        cmds.add("");
-        cmds.add(url);
-        connect(cmds, console);
-      }
-    }
-  }
+//  private void selectConnection(final ConsoleReader console) {
+//    if (!ConnManager.get().hasHistory()) {
+//      System.out.println("No connection history found");
+//    } else {
+//      // Print the list
+//      List<String> history = new ArrayList<String>(10);
+//      int i = 0;
+//      Iterator<String> iter = ConnManager.get().getHistory();
+//      while (iter.hasNext()) {
+//        String name = iter.next();
+//        String msg = String.format("#%d - %s", (i + 1), name);
+//        System.out.println(msg);
+//        history.add(name);
+//        ++i;
+//      }
+//
+//      // Let the user select a connection
+//      final int selection = getSelection(console);
+//      if ((selection < 1) || (selection > history.size())) {
+//        System.out.println("Illegal selection");
+//      } else {
+//        // Get the selected URL
+//        final String url = history.get(selection - 1);
+//        System.out.println("Selected " + url);
+//
+//        // Open a connection
+//        List<String> cmds = new ArrayList<String>(2);
+//        cmds.add("");
+//        cmds.add(url);
+//        connect(cmds, console);
+//      }
+//    }
+//  }
 
 
-  private int getSelection(final ConsoleReader console) {
-    if (console == null) {
-      final String str = System.console().readLine("Select a number: ");
-      final int sel = Utility.getStringAsInteger(str, -1, -1);
-      return sel;
-    }
-
-    console.setPrompt("Select a number: ");
-    int sel = -1;
-    try {
-      String val = console.readLine();
-      sel = Utility.getStringAsInteger(val, -1, -1);
-    } catch (IOException e) {
-      System.out.println("Exception reading selection: " + e.getMessage());
-    }
-
-    setPrompt(console);
-    return sel;
-  }
-
-
-  private void describeTable(final String table) {
-    // Check the DB connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-    } else {
-      // Get the info
-      List<List<String>> results = Database.getColumns(table, true);
-      if (results == null) {
-        System.out.println("No table description found (result is null)");
-        return;
-      } else if (results.size() < 1) {
-        System.out.println("No table description found");
-        return;
-      }
-
-      // Add a header row
-      List<String> labels = new ArrayList<String>(5);
-      labels.add("#");
-      labels.add("Name");
-      labels.add("Type");
-      labels.add("Nullable?");
-      labels.add("PK?");
-      results.add(0, labels);
-
-      // Format and print the list
-      ListFormatter fmt = new ListFormatter(results);
-      List<String> fmtd = fmt.format(5, results);
-      System.out.print(ListFormatter.getTextLine(fmtd));
-    }
-  }
+//  private int getSelection(final ConsoleReader console) {
+//    if (console == null) {
+//      final String str = System.console().readLine("Select a number: ");
+//      final int sel = Utility.getStringAsInteger(str, -1, -1);
+//      return sel;
+//    }
+//
+//    console.setPrompt("Select a number: ");
+//    int sel = -1;
+//    try {
+//      String val = console.readLine();
+//      sel = Utility.getStringAsInteger(val, -1, -1);
+//    } catch (IOException e) {
+//      System.out.println("Exception reading selection: " + e.getMessage());
+//    }
+//
+//    setPrompt(console);
+//    return sel;
+//  }
 
 
-  private void printConnectionHistory() {
-    Iterator<String> history = ConnManager.get().getHistory();
-    if (!history.hasNext()) {
-      System.out.println("No connection history found");
-    } else {
-      while (history.hasNext()) {
-        System.out.println(history.next());
-      }
-    }
-  }
+//  private void describeTable(final String table) {
+//    // Check the DB connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//    } else {
+//      // Get the info
+//      List<List<String>> results = Database.getColumns(table, true);
+//      if (results == null) {
+//        System.out.println("No table description found (result is null)");
+//        return;
+//      } else if (results.size() < 1) {
+//        System.out.println("No table description found");
+//        return;
+//      }
+//
+//      // Add a header row
+//      List<String> labels = new ArrayList<String>(5);
+//      labels.add("#");
+//      labels.add("Name");
+//      labels.add("Type");
+//      labels.add("Nullable?");
+//      labels.add("PK?");
+//      results.add(0, labels);
+//
+//      // Format and print the list
+//      ListFormatter fmt = new ListFormatter(results);
+//      List<String> fmtd = fmt.format(5, results);
+//      System.out.print(ListFormatter.getTextLine(fmtd));
+//    }
+//  }
+
+
+//  private void printConnectionHistory() {
+//    Iterator<String> history = ConnManager.get().getHistory();
+//    if (!history.hasNext()) {
+//      System.out.println("No connection history found");
+//    } else {
+//      while (history.hasNext()) {
+//        System.out.println(history.next());
+//      }
+//    }
+//  }
 
 
   /**
@@ -856,51 +845,51 @@ public final class LineConsole
 
 
   // Get the list of database schemas
-  private void printSchemas() {
-
-    // Check the database connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-      return;
-    }
-
-    final List<String> schemas = Database.getSchemas();
-    if (schemas == null) {
-      System.out.println("No schemas were found (list is null)");
-    } else if (schemas.size() < 1) {
-      System.out.println("No schemas were found");
-    } else {
-      // Print out the list
-      Collections.sort(schemas);
-      for (String schema : schemas) {
-        System.out.println(schema);
-      }
-    }
-  }
+//  private void printSchemas() {
+//
+//    // Check the database connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//      return;
+//    }
+//
+//    final List<String> schemas = Database.getSchemas();
+//    if (schemas == null) {
+//      System.out.println("No schemas were found (list is null)");
+//    } else if (schemas.size() < 1) {
+//      System.out.println("No schemas were found");
+//    } else {
+//      // Print out the list
+//      Collections.sort(schemas);
+//      for (String schema : schemas) {
+//        System.out.println(schema);
+//      }
+//    }
+//  }
 
 
   // Get the list of database tables
-  private void printTables() {
-
-    // Check the database connection
-    if (!ConnManager.get().isValid()) {
-      System.out.println("No database connection found");
-      return;
-    }
-
-    final List<String> tables = Database.getTableNames(null);
-    if (tables == null) {
-      System.out.println("No tables were found (list is null)");
-    } else if (tables.size() < 1) {
-      System.out.println("No tables were found");
-    } else {
-      // Print out the list of database tables
-      Collections.sort(tables);
-      for (String table : tables) {
-        System.out.println(table);
-      }
-    }
-  }
+//  private void printTables() {
+//
+//    // Check the database connection
+//    if (!ConnManager.get().isValid()) {
+//      System.out.println("No database connection found");
+//      return;
+//    }
+//
+//    final List<String> tables = Database.getTableNames(null);
+//    if (tables == null) {
+//      System.out.println("No tables were found (list is null)");
+//    } else if (tables.size() < 1) {
+//      System.out.println("No tables were found");
+//    } else {
+//      // Print out the list of database tables
+//      Collections.sort(tables);
+//      for (String table : tables) {
+//        System.out.println(table);
+//      }
+//    }
+//  }
 
 
   private void loadJar(final String jarName) {
@@ -933,57 +922,57 @@ public final class LineConsole
   }
 
 
-  private void connect(final List<String> cmds, final ConsoleReader console) {
-    final int numCmds = cmds.size();
-    if ((numCmds < 2) || (numCmds > 4)) {
-      System.out.println("Format: connect <url> [<user> [<pw>]]");
-    }
+//  private void connect(final List<String> cmds, final ConsoleReader console) {
+//    final int numCmds = cmds.size();
+//    if ((numCmds < 2) || (numCmds > 4)) {
+//      System.out.println("Format: connect <url> [<user> [<pw>]]");
+//    }
+//
+//    final String url = cmds.get(1);
+//
+//    // Get the user name. If it's not specified, skip the rest.
+//    final String user = (numCmds > 2) ? cmds.get(2) : getUserName(console);
+//    if ((user == null) || (user.trim().isEmpty())) {
+//      System.out
+//          .println("User name not specified.  Aborting connection attempt.");
+//      return;
+//    }
+//
+//    final String pw = (numCmds > 3) ? cmds.get(3) : getPassword(console);
+//
+//    ConnManager.get().init(url, user, pw);
+//    // System.out.println(ConnManager.get().toString());
+//
+//    // If requested by the user at startup, load the appropriate class
+//    // name based on the URL
+//    // if (loadClassNames) {
+//    // JdbcManager.get().loadClassByUrl(url);
+//    // }
+//
+//    ConnManager.get().create();
+//    // if (!result) {
+//    // System.out.println("Error creating database connection");
+//    // }
+//  }
 
-    final String url = cmds.get(1);
 
-    // Get the user name. If it's not specified, skip the rest.
-    final String user = (numCmds > 2) ? cmds.get(2) : getUserName(console);
-    if ((user == null) || (user.trim().isEmpty())) {
-      System.out
-          .println("User name not specified.  Aborting connection attempt.");
-      return;
-    }
-
-    final String pw = (numCmds > 3) ? cmds.get(3) : getPassword(console);
-
-    ConnManager.get().init(url, user, pw);
-    // System.out.println(ConnManager.get().toString());
-
-    // If requested by the user at startup, load the appropriate class
-    // name based on the URL
-    // if (loadClassNames) {
-    // JdbcManager.get().loadClassByUrl(url);
-    // }
-
-    ConnManager.get().create();
-    // if (!result) {
-    // System.out.println("Error creating database connection");
-    // }
-  }
-
-
-  private String getUserName(final ConsoleReader console) {
-    if (console == null) {
-      final String str = System.console().readLine("User: ");
-      return str;
-    }
-
-    console.setPrompt("User: ");
-    String user = null;
-    try {
-      user = console.readLine();
-    } catch (IOException e) {
-      System.out.println("Exception reading user: " + e.getMessage());
-    }
-
-    setPrompt(console);
-    return user;
-  }
+//  private String getUserName(final ConsoleReader console) {
+//    if (console == null) {
+//      final String str = System.console().readLine("User: ");
+//      return str;
+//    }
+//
+//    console.setPrompt("User: ");
+//    String user = null;
+//    try {
+//      user = console.readLine();
+//    } catch (IOException e) {
+//      System.out.println("Exception reading user: " + e.getMessage());
+//    }
+//
+//    setPrompt(console);
+//    return user;
+//  }
 
 
   private String getPassword(final ConsoleReader console) {
@@ -1120,16 +1109,18 @@ public final class LineConsole
   private static void populateSupportedCommands() {
 
     final String[] array = new String[] { "debug", "debug off", "debug on",
-        "help", "quit", "gc", "mem", "time", "version", "count tables",
-        "export data <table name> [<where-clause>]", "cat <file>",
-        "head <file>", "dir [<path>]", "list userdbs", "time <command>",
-        "list dbtypes", "set dbtype <id> jar <filename>", "count rows <table>",
-        "dbinfo", "list schemas", "clear dbtype <id> jar", "check database",
-        "list tables", "connections", "add userdb <name> <url> <user>",
-        "select connection", "describe table", "export schema <filename>",
-        "connect <URL> [<user> [<pw>]]", "close database",
+        "help", "quit", "gc", "mem", "time", "version", "time <command>",
+        "cat <file>", "head <file>", "dir [<path>]", "list userdbs",
+        "list dbtypes", "set dbtype <id> jar <filename>",
+        "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>",
         "help <start of a command>", "jar <filename>" };
+    
+    // Deprecated
+    // "count tables", "export data <table name> [<where-clause>]", "dbinfo", "list schemas", 
+    // "check database", "connect <URL> [<user> [<pw>]]", "close database",  "count rows <table>",
+    // "list tables", "connections", "select connection", "describe table", "export schema <filename>",
+    
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
   }
