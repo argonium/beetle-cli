@@ -40,6 +40,13 @@ public final class DataProcessor
   
   
   public void importSQL() {
+    
+    ContentType cType = ContentType.getById(session.getTargetTypeId());
+    if ((cType != ContentType.JSON) && (cType != ContentType.CSV)) {
+      Logger.error("Only export to JSON and CSV are supported");
+      return;
+    }
+    
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
@@ -51,6 +58,25 @@ public final class DataProcessor
     final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
     ConnManager.get().addDriverClass(dbType);
     
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // TODO Get the metadata
+    
+    // TODO Configure the data target
+    if (session.getTargetTypeId() == ContentType.CSV.getId()) {
+      // TODO
+    } else if (session.getTargetTypeId() == ContentType.JSON.getId()) {
+      // TODO
+    }
+    
     // TODO Export to CSV or JSON
+    
+    // Close the connection
+    ConnManager.get().close();
   }
 }
