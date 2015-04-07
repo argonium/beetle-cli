@@ -434,4 +434,10 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     sourceDelim = null;
     targetDelim = null;
   }
+  
+  
+  public boolean isValid() {
+    return ((sourceTypeId >= 0) && (sourceId >= 0) && (sourceName != null) &&
+            (targetTypeId >= 0) && (targetId >= 0) && (targetName != null));
+  }
 }

@@ -21,6 +21,7 @@ import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
+import io.miti.beetle.processor.DataProcessor;
 import io.miti.beetle.util.Content;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
@@ -287,7 +288,7 @@ public final class LineConsole
   
   
   private void runSession() {
-    // TODO Support input of SQL, output of CSV and JSON
+    new DataProcessor(session).run();
   }
   
   

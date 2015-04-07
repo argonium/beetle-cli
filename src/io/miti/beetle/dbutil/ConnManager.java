@@ -1,5 +1,8 @@
 package io.miti.beetle.dbutil;
 
+import io.miti.beetle.model.DbType;
+import io.miti.beetle.util.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,12 +11,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +34,8 @@ public final class ConnManager
   private String url = null;
   private String user = null;
   private String pw = null;
+  
+  private Set<String> loadedClasses = new HashSet<String>(10);
 
   private Set<String> history = new java.util.LinkedHashSet<String>(5);
 
@@ -263,5 +272,53 @@ public final class ConnManager
   @Override
   public String toString() {
     return "URL: " + url + ", User: " + user + ", PW: " + pw;
+  }
+
+
+  public boolean addDriverClass(final DbType dbType) {
+    if (dbType == null) {
+      Logger.error("No DB type found for the selected database");
+      return false;
+    } else if ((dbType.getJarName() == null) || dbType.getJarName().isEmpty()) {
+      Logger.error("No JAR file specified for the database type");
+      return false;
+    } else if ((dbType.getDriver() == null) || dbType.getDriver().isEmpty()) {
+      Logger.error("No driver class specified for the database type");
+      return false;
+    }
+    
+    // See if we've already loaded this class
+    if (loadedClasses.contains(dbType.getDriver())) {
+      return true;
+    }
+    
+    // See if the JAR file exists
+    final File jar = new File(dbType.getJarName());
+    if (!jar.exists() || !jar.isFile()) {
+      Logger.error("The JAR file was not found: " + dbType.getJarName());
+      return false;
+    }
+    
+    // Load the class
+    boolean result = false;
+    try {
+      // Add the JAR file to the classpath
+      URLClassLoader loader = URLClassLoader.newInstance(new URL[] {jar.toURI().toURL()});
+      
+      // Load the class
+      Class.forName(dbType.getDriver(), true, loader);
+      
+      // If we reach here, the result is true
+      result = true;
+      
+      // Store the loaded class as being loaded in the classpath
+      loadedClasses.add(dbType.getDriver());
+    } catch (ClassNotFoundException e) {
+      Logger.error("Error loading class " + dbType.getDriver() + ": " + e.getMessage());
+    } catch (MalformedURLException mue) {
+      Logger.error("Malformed URL exception loading class " + dbType.getDriver() + ": " + mue.getMessage());
+    }
+    
+    return result;
   }
 }
