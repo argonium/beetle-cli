@@ -1,5 +1,6 @@
 package io.miti.beetle.dbutil;
 
+import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.prefs.IUpdateable;
 import io.miti.beetle.util.Logger;
 
@@ -104,6 +105,77 @@ public final class Database
 
     // Return the result of the operation
     return results;
+  }
+
+
+  /**
+   * Executes a database SELECT.
+   * 
+   * @param sqlCmd the database ststement to execute
+   * @param listData will hold the retrieved data
+   * @param fetcher used to retrieve the selected database columns
+   * @return the result of the operation
+   */
+  public static void executeSelect(final String sqlCmd,
+                                   final DBFileWriter writer) {
+    // Check the SQL command
+    if ((sqlCmd == null) || (sqlCmd.length() < 1)) {
+      return;
+    }
+
+    Logger.info("DB Query: " + sqlCmd);
+
+    // Execute the statement and get the returned ID
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      // Create the Statement object from the connection
+      Connection conn = ConnManager.get().getConn();
+      stmt = conn.prepareStatement(sqlCmd);
+      if (null != stmt) {
+        // Now execute the query and save the result set
+        rs = stmt.executeQuery();
+
+        // Check for a result
+        if (rs != null) {
+          while (rs.next()) {
+            writer.writeObject(rs);
+          }
+
+          // Close the result set
+          rs.close();
+          rs = null;
+        }
+
+        // Close the statement
+        stmt.close();
+        stmt = null;
+      }
+    } catch (SQLException sqlex) {
+      Logger.error(sqlex);
+    } catch (Exception ex) {
+      Logger.error(ex, -1);
+    } finally {
+      // Close the ResultSet if it's not null
+      try {
+        if (rs != null) {
+          rs.close();
+          rs = null;
+        }
+      } catch (SQLException sqle) {
+        Logger.error(sqle);
+      }
+
+      // Close the Statement if it's not null
+      try {
+        if (stmt != null) {
+          stmt.close();
+          stmt = null;
+        }
+      } catch (SQLException sqle) {
+        Logger.error(sqle);
+      }
+    }
   }
 
 

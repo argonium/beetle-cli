@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
 import io.miti.beetle.dbutil.ConnManager;
+import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.exporters.CsvDBFileWriter;
 import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.exporters.JsonDBFileWriter;
@@ -73,7 +74,7 @@ public final class DataProcessor
       return;
     }
     
-    // TODO Get the metadata
+    // Get the metadata
     PreparedStatement stmt = null;
     try {
       stmt = ConnManager.get().getConn().prepareStatement(session.getSourceName());
@@ -86,20 +87,21 @@ public final class DataProcessor
       
       // Configure the data target
       final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
-        new CsvDBFileWriter(session.getTargetName(), rsmd);
+                                     new CsvDBFileWriter(session.getTargetName(), rsmd);
       
       // Write the header
       writer.writeHeader();
       
-      // TODO Iterate over the data for exporting
+      // Iterate over the data for exporting
+      Database.executeSelect(session.getSourceName(), writer);
       
       // Write the footer
       writer.writeFooter();
       
+      // Close things
       rs.close();
       stmt.close();
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     
