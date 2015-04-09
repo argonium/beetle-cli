@@ -1,6 +1,7 @@
 package io.miti.beetle.exporters;
 
 import java.io.File;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 
 public abstract class DBFileWriter
@@ -26,9 +27,14 @@ public abstract class DBFileWriter
   
   public abstract void writeFooter();
   
-  public abstract void writeObject(final Object obj);
+  public abstract void writeObject(final ResultSet rsj);
   
   public final void writeString() {
-    // TODO
+    // Check the length of the string
+    if (sb.length() > 10000) {
+      // TODO Write the string to a file
+      
+      sb.setLength(0);
+    }
   }
 }

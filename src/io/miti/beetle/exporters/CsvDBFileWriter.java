@@ -1,6 +1,8 @@
 package io.miti.beetle.exporters;
 
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 
 public class CsvDBFileWriter extends DBFileWriter
 {
@@ -19,7 +21,7 @@ public class CsvDBFileWriter extends DBFileWriter
         sb.append(',').append(rsmd.getColumnName(i));
       }
     } catch (Exception ex) {
-      // TODO
+      System.err.println("Exception writing CSV header: " + ex.getMessage());
     }
     
     writeString();
@@ -33,7 +35,41 @@ public class CsvDBFileWriter extends DBFileWriter
 
 
   @Override
-  public void writeObject(final Object obj) {
-    // TODO Write the object
+  public void writeObject(final ResultSet rs) {
+    try {
+      final int colCount = rsmd.getColumnCount();
+      sb.append(quoteString(rs.getString(1)));
+      for (int i = 2; i <= colCount; ++i) {
+        sb.append(',').append(quoteString(rs.getString(i)));
+      }
+    } catch (SQLException se) {
+      System.err.println("SQLException in CsvDBFileWriter.writeObject: " + se.getMessage());
+    }
+  }
+  
+  
+  /**
+   * Surround the string with single quotes, and backquote any
+   * single quotes in the string.
+   * 
+   * @param str the input string
+   * @return the quoted string
+   */
+  private static String quoteString(final String str)
+  {
+    // Check the input
+    if (str == null)
+    {
+      // It's null, so just return that
+      return "";
+    }
+    
+    String outStr = str.replace("\"", "\\\"");
+    
+    if (outStr.contains("\n") || outStr.contains(",")) {
+      outStr = "\"" + outStr + "\"";
+    }
+    
+    return outStr;
   }
 }
