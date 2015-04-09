@@ -1,8 +1,16 @@
 package io.miti.beetle.processor;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
 import io.miti.beetle.dbutil.ConnManager;
+import io.miti.beetle.exporters.CsvDBFileWriter;
+import io.miti.beetle.exporters.DBFileWriter;
+import io.miti.beetle.exporters.JsonDBFileWriter;
 import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
@@ -66,15 +74,34 @@ public final class DataProcessor
     }
     
     // TODO Get the metadata
-    
-    // TODO Configure the data target
-    if (session.getTargetTypeId() == ContentType.CSV.getId()) {
-      // TODO
-    } else if (session.getTargetTypeId() == ContentType.JSON.getId()) {
-      // TODO
+    PreparedStatement stmt = null;
+    try {
+      stmt = ConnManager.get().getConn().prepareStatement(session.getSourceName());
+      ResultSet rs = stmt.getResultSet();
+      // TODO Test this
+      ResultSetMetaData rsmd = rs.getMetaData();
+      final int colCount = rsmd.getColumnCount();
+      // TODO Delete this
+      System.out.println("Column count = " + colCount);
+      
+      // Configure the data target
+      final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
+        new CsvDBFileWriter(session.getTargetName(), rsmd);
+      
+      // Write the header
+      writer.writeHeader();
+      
+      // TODO Iterate over the data for exporting
+      
+      // Write the footer
+      writer.writeFooter();
+      
+      rs.close();
+      stmt.close();
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-    
-    // TODO Export to CSV or JSON
     
     // Close the connection
     ConnManager.get().close();
