@@ -17,6 +17,7 @@ import java.util.Set;
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
+import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
@@ -229,8 +230,8 @@ public final class LineConsole
 //      selectConnection(console);
 //    } else if (validateCommand(cmds, 3, "describe", "table")) {
 //      describeTable(cmds.get(2));
-//    } else if (validateCommand(cmds, 2, "list", "tables")) {
-//      printTables();
+    } else if (validateCommand(cmds, 2, "list", "tables")) {
+      printTables();
     } else if (line.equals("dir")) {
       printDirPath(".", false);
     } else if (validateCommand(cmds, 2, "dir")) {
@@ -334,6 +335,8 @@ public final class LineConsole
       // the user DB ID in the session
       if (DBTypeCache.get().isValid(userDb.getDbTypeId())) {
         session.setSourceId(id);
+      } else {
+        System.out.println("No DB type found for ID " + userDb.getDbTypeId());
       }
     }
   }
@@ -927,27 +930,28 @@ public final class LineConsole
 
 
   // Get the list of database tables
-//  private void printTables() {
-//
-//    // Check the database connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//      return;
-//    }
-//
-//    final List<String> tables = Database.getTableNames(null);
-//    if (tables == null) {
-//      System.out.println("No tables were found (list is null)");
-//    } else if (tables.size() < 1) {
-//      System.out.println("No tables were found");
-//    } else {
-//      // Print out the list of database tables
-//      Collections.sort(tables);
-//      for (String table : tables) {
-//        System.out.println(table);
-//      }
-//    }
-//  }
+  private void printTables() {
+
+    // Check the database connection
+    if (session.getSourceId() < 0) {
+      System.out.println("No database connection found");
+      return;
+    }
+    
+    // TODO Need to use the session's ID
+    final List<String> tables = Database.getTableNames(null);
+    if (tables == null) {
+      System.out.println("No tables were found (list is null)");
+    } else if (tables.size() < 1) {
+      System.out.println("No tables were found");
+    } else {
+      // Print out the list of database tables
+      Collections.sort(tables);
+      for (String table : tables) {
+        System.out.println(table);
+      }
+    }
+  }
 
 
   private void loadJar(final String jarName) {

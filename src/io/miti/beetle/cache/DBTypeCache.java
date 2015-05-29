@@ -1,6 +1,7 @@
 package io.miti.beetle.cache;
 
 import io.miti.beetle.model.DbType;
+import io.miti.beetle.util.Logger;
 
 import java.util.List;
 
@@ -136,6 +137,7 @@ public final class DBTypeCache {
     // Find a match on ID
     final DbType match = find(id);
     if (match == null) {
+      Logger.error("No match was found for DB type with ID " + id);
       return false;
     }
     

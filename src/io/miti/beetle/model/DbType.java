@@ -366,6 +366,10 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable,
       } else {
         // Test if jar has the correct JDBC class
         result = Utility.searchFile(jar, driver);
+        
+        if (result == false) {
+          Logger.error("JAR file " + jarName + " does not have class " + driver);
+        }
       }
     }
     
