@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -56,14 +55,22 @@ public abstract class DBFileWriter
    * @param rsj the result set
    */
   public abstract void writeObject(final ResultSet rsj);
-
-
+  
+  
+  /**
+   * Write a string to the file.  Default to not forcing a write.
+   */
+  public final void writeString() {
+    writeString(false);
+  }
+  
+  
   /**
    * If the string buffer is big enough, flush it to disk.
    */
-  public final void writeString() {
+  public final void writeString(final boolean forceWrite) {
     // Check the length of the string
-    if (sb.length() > 10000) {
+    if (forceWrite || sb.length() > 10000) {
 
       // The input buffer is long enough that we need to
       // write it to file and then clear out the buffer

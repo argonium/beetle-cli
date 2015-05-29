@@ -42,6 +42,7 @@ public class CsvDBFileWriter extends DBFileWriter
       for (int i = 2; i <= colCount; ++i) {
         sb.append(',').append(quoteString(rs.getString(i)));
       }
+      sb.append("\n");
     } catch (SQLException se) {
       System.err.println("SQLException in CsvDBFileWriter.writeObject: " + se.getMessage());
     }
