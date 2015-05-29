@@ -20,6 +20,7 @@ public class CsvDBFileWriter extends DBFileWriter
       for (int i = 2; i <= colCount; ++i) {
         sb.append(',').append(rsmd.getColumnName(i));
       }
+      sb.append("\n");
     } catch (Exception ex) {
       System.err.println("Exception writing CSV header: " + ex.getMessage());
     }
