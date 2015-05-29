@@ -1,5 +1,7 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.Logger;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,6 +17,8 @@ public abstract class DBFileWriter
   protected String filename = null;
   protected File file = null;
   protected ResultSetMetaData rsmd = null;
+  
+  protected static final String EOL = "\r\n";
 
 
   @SuppressWarnings("unused")
@@ -34,6 +38,15 @@ public abstract class DBFileWriter
     file = new File(sFilename);
     filename = sFilename;
     rsmd = pRSMD;
+    
+    // Check the output file - if it exists as a file, empty it
+    if (file.exists() && file.isFile()) {
+      try {
+        file.delete();
+      } catch (Exception ex) {
+        Logger.error("Exception deleting file: " + ex.getMessage());
+      }
+    }
   }
 
 
