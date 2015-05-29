@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -209,7 +210,7 @@ public final class ConnManager
 
     try {
       BufferedReader in = new BufferedReader(new InputStreamReader(
-          new FileInputStream(file), "UTF8"));
+          new FileInputStream(file), StandardCharsets.UTF_8));
       String line = null;
       while ((line = in.readLine()) != null) {
         if (!line.startsWith("#")) {
@@ -218,8 +219,6 @@ public final class ConnManager
       }
 
       in.close();
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
