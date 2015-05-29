@@ -87,16 +87,13 @@ public final class DataProcessor
         if (!result) {
           Logger.error("The statement did not execute correctly");
         } else {
-          // Get the metadata
+          // Get the result set of executing the query
           ResultSet rs = stmt.getResultSet();
           
-          // Verify it's not null
+          // Verify the result set is not null
           if (rs != null) {
-            // TODO Test this
+            // Get the metadata
             ResultSetMetaData rsmd = rs.getMetaData();
-            final int colCount = rsmd.getColumnCount();
-            // TODO Delete this
-            System.out.println("Column count = " + colCount);
             
             // Configure the data target
             final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
@@ -106,7 +103,7 @@ public final class DataProcessor
             writer.writeHeader();
             
             // Iterate over the data for exporting
-            Database.executeSelect(session.getSourceName(), writer);
+            Database.executeSelect(rs, writer);
             
             // Write the footer
             writer.writeFooter();
