@@ -111,13 +111,11 @@ public final class Database
   /**
    * Executes a database SELECT.
    * 
-   * @param sqlCmd the database ststement to execute
-   * @param listData will hold the retrieved data
-   * @param fetcher used to retrieve the selected database columns
-   * @return the result of the operation
+   * @param sqlCmd the database statement to execute
+   * @param writer the file to write the results to
    */
   public static void executeSelect(final String sqlCmd,
-                                   final DBFileWriter writer) {
+      final DBFileWriter writer) {
     // Check the SQL command
     if ((sqlCmd == null) || (sqlCmd.length() < 1)) {
       return;
@@ -171,6 +169,37 @@ public final class Database
         if (stmt != null) {
           stmt.close();
           stmt = null;
+        }
+      } catch (SQLException sqle) {
+        Logger.error(sqle);
+      }
+    }
+  }
+
+
+  /**
+   * Executes a database SELECT.
+   * 
+   * @param rs the result set of data to iterate over
+   * @param writer the file to write results to
+   */
+  public static void executeSelect(final ResultSet rs, final DBFileWriter writer) {
+    try {
+      while (rs.next()) {
+        writer.writeObject(rs);
+      }
+
+      // Close the result set
+      rs.close();
+    } catch (SQLException sqlex) {
+      Logger.error(sqlex);
+    } catch (Exception ex) {
+      Logger.error(ex, -1);
+    } finally {
+      // Close the ResultSet if it's not null
+      try {
+        if (rs != null) {
+          rs.close();
         }
       } catch (SQLException sqle) {
         Logger.error(sqle);
