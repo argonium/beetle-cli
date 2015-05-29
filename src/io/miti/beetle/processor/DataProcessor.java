@@ -77,30 +77,48 @@ public final class DataProcessor
     // Get the metadata
     PreparedStatement stmt = null;
     try {
+      // Prepare the statement
       stmt = ConnManager.get().getConn().prepareStatement(session.getSourceName());
-      ResultSet rs = stmt.getResultSet();
-      // TODO Test this
-      ResultSetMetaData rsmd = rs.getMetaData();
-      final int colCount = rsmd.getColumnCount();
-      // TODO Delete this
-      System.out.println("Column count = " + colCount);
       
-      // Configure the data target
-      final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
-                                     new CsvDBFileWriter(session.getTargetName(), rsmd);
-      
-      // Write the header
-      writer.writeHeader();
-      
-      // Iterate over the data for exporting
-      Database.executeSelect(session.getSourceName(), writer);
-      
-      // Write the footer
-      writer.writeFooter();
-      
-      // Close things
-      rs.close();
-      stmt.close();
+      // Verify it's not null
+      if (stmt != null) {
+        // Get the metadata
+        ResultSet rs = stmt.getResultSet();
+        
+        // Verify it's not null
+        if (rs != null) {
+          // TODO Test this
+          ResultSetMetaData rsmd = rs.getMetaData();
+          final int colCount = rsmd.getColumnCount();
+          // TODO Delete this
+          System.out.println("Column count = " + colCount);
+          
+          // Configure the data target
+          final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
+                                         new CsvDBFileWriter(session.getTargetName(), rsmd);
+          
+          // Write the header
+          writer.writeHeader();
+          
+          // Iterate over the data for exporting
+          Database.executeSelect(session.getSourceName(), writer);
+          
+          // Write the footer
+          writer.writeFooter();
+          
+          // Close the result set
+          rs.close();
+          rs = null;
+        } else {
+          Logger.error("The database result set is null");
+        }
+        
+        // Close the statement
+        stmt.close();
+        stmt = null;
+      } else {
+        Logger.error("The database statement is null");
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
