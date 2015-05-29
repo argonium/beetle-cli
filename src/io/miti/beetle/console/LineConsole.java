@@ -334,7 +334,7 @@ public final class LineConsole
       // If the DB type is configured with a valid JAR file, save
       // the user DB ID in the session
       if (DBTypeCache.get().isValid(userDb.getDbTypeId())) {
-        session.setSourceId(id);
+        session.setSourceId(1); // SQL
       } else {
         System.out.println("No DB type found for ID " + userDb.getDbTypeId());
       }
