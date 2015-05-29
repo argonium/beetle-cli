@@ -3,32 +3,21 @@ package io.miti.beetle.dbutil;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.util.Logger;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 public final class ConnManager
 {
-  private static final String FILENAME = "connhistory.txt";
+  // private static final String FILENAME = "connhistory.txt";
 
   private static final ConnManager mgr = new ConnManager();
 
@@ -44,7 +33,7 @@ public final class ConnManager
 
 
   private ConnManager() {
-    loadHistory();
+    // loadHistory();
   }
 
 
@@ -153,43 +142,43 @@ public final class ConnManager
     history.add(url);
 
     // Update the file
-    writeHistoryFile();
+    // writeHistoryFile();
   }
 
 
-  private void writeHistoryFile() {
-
-    if ((history == null) || history.isEmpty()) {
-      return;
-    }
-
-    final File file = new File(FILENAME);
-    if (file.exists() && file.isDirectory()) {
-      return;
-    }
-
-    if (file.exists()) {
-      file.delete();
-    }
-
-    List<String> names = new ArrayList<String>(history.size());
-    for (String item : history) {
-      names.add(item);
-    }
-    Collections.sort(names);
-
-    try {
-      PrintWriter writer = new PrintWriter(file, "UTF-8");
-      for (String name : names) {
-        writer.println(name);
-      }
-      writer.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    }
-  }
+//  private void writeHistoryFile() {
+//
+//    if ((history == null) || history.isEmpty()) {
+//      return;
+//    }
+//
+//    final File file = new File(FILENAME);
+//    if (file.exists() && file.isDirectory()) {
+//      return;
+//    }
+//
+//    if (file.exists()) {
+//      file.delete();
+//    }
+//
+//    List<String> names = new ArrayList<String>(history.size());
+//    for (String item : history) {
+//      names.add(item);
+//    }
+//    Collections.sort(names);
+//
+//    try {
+//      PrintWriter writer = new PrintWriter(file, "UTF-8");
+//      for (String name : names) {
+//        writer.println(name);
+//      }
+//      writer.close();
+//    } catch (FileNotFoundException e) {
+//      e.printStackTrace();
+//    } catch (UnsupportedEncodingException e) {
+//      e.printStackTrace();
+//    }
+//  }
 
 
   public Iterator<String> getHistory() {
@@ -202,29 +191,29 @@ public final class ConnManager
   }
 
 
-  private void loadHistory() {
-    File file = new File(FILENAME);
-    if (!file.exists() || file.isDirectory()) {
-      return;
-    }
-
-    try {
-      BufferedReader in = new BufferedReader(new InputStreamReader(
-          new FileInputStream(file), StandardCharsets.UTF_8));
-      String line = null;
-      while ((line = in.readLine()) != null) {
-        if (!line.startsWith("#")) {
-          history.add(line);
-        }
-      }
-
-      in.close();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
+//  private void loadHistory() {
+//    File file = new File(FILENAME);
+//    if (!file.exists() || file.isDirectory()) {
+//      return;
+//    }
+//
+//    try {
+//      BufferedReader in = new BufferedReader(new InputStreamReader(
+//          new FileInputStream(file), StandardCharsets.UTF_8));
+//      String line = null;
+//      while ((line = in.readLine()) != null) {
+//        if (!line.startsWith("#")) {
+//          history.add(line);
+//        }
+//      }
+//
+//      in.close();
+//    } catch (FileNotFoundException e) {
+//      e.printStackTrace();
+//    } catch (IOException e) {
+//      e.printStackTrace();
+//    }
+//  }
 
 
   private void initConnection() {
