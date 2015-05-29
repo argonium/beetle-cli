@@ -279,9 +279,9 @@ public final class LineConsole
   
   private void printSession() {
     String line1 = String.format("Source ID: %d  Source Type: %s  Source Name: %s",
-        session.getSourceId(), ContentType.getById(session.getSourceId()), session.getSourceName());
+        session.getSourceId(), ContentType.getById(session.getSourceTypeId()), session.getSourceName());
     String line2 = String.format("Target ID: %d  Target Type: %s  Target Name: %s",
-        session.getTargetId(), ContentType.getById(session.getTargetId()), session.getTargetName());
+        session.getTargetId(), ContentType.getById(session.getTargetTypeId()), session.getTargetName());
     
     System.out.println(line1);
     System.out.println(line2);
@@ -294,25 +294,26 @@ public final class LineConsole
   
   
   private void exportJSON(final String filename) {
-    session.setTargetId(ContentType.JSON.getId());
+    session.setTargetTypeId(ContentType.JSON.getId());
     session.setTargetName(filename);
   }
   
   
   private void exportCSV(final String filename) {
-    session.setTargetId(ContentType.CSV.getId());
+    session.setTargetTypeId(ContentType.CSV.getId());
     session.setTargetName(filename);
   }
 
 
   private void importUserTable(final String tname) {
-    session.setSourceId(ContentType.SQL.getId());
+    session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName("select * from " + tname);
   }
   
   
   private void importUserQuery(final String query) {
-    session.setSourceId(ContentType.SQL.getId());
+    session.setSourceTypeId(ContentType.SQL.getId());
+    // TODO Verify this is a 'select' statement
     session.setSourceName(query);
   }
   
@@ -334,7 +335,8 @@ public final class LineConsole
       // If the DB type is configured with a valid JAR file, save
       // the user DB ID in the session
       if (DBTypeCache.get().isValid(userDb.getDbTypeId())) {
-        session.setSourceId(1); // SQL
+        session.setSourceTypeId(ContentType.SQL.getId());
+        session.setSourceId(id);
       } else {
         System.out.println("No DB type found for ID " + userDb.getDbTypeId());
       }
