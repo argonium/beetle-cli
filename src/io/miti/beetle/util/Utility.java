@@ -436,19 +436,19 @@ public final class Utility
         // If the class is in the default package, save the class
         // name as the modified entry name; else the class name
         // is just the text after the last period
-        final int lastPeriod = ename.lastIndexOf('.');
-        String cname = null;
-        if (lastPeriod < 0)
-        {
-          cname = ename;
-        }
-        else
-        {
-          cname = ename.substring(lastPeriod + 1);
-        }
+//        final int lastPeriod = ename.lastIndexOf('.');
+//        String cname = null;
+//        if (lastPeriod < 0)
+//        {
+//          cname = ename;
+//        }
+//        else
+//        {
+//          cname = ename.substring(lastPeriod + 1);
+//        }
 
         // Check if the current class name matches the target
-        if (className.equalsIgnoreCase(cname))
+        if (className.equalsIgnoreCase(ename))
         {
           result = true;
           break;
