@@ -43,7 +43,7 @@ public final class DataProcessor
     if (session.getSourceTypeId() == ContentType.SQL.getId()) {
       importSQL();
     } else {
-      Logger.error("Error: Only SQL imports are supported for now");
+      Logger.error("Error: Only SQL imports are supported for now; type = " + session.getSourceTypeId());
     }
   }
   
