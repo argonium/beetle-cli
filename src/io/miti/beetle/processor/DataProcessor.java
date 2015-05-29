@@ -82,35 +82,44 @@ public final class DataProcessor
       
       // Verify it's not null
       if (stmt != null) {
-        // Get the metadata
-        ResultSet rs = stmt.getResultSet();
-        
-        // Verify it's not null
-        if (rs != null) {
-          // TODO Test this
-          ResultSetMetaData rsmd = rs.getMetaData();
-          final int colCount = rsmd.getColumnCount();
-          // TODO Delete this
-          System.out.println("Column count = " + colCount);
-          
-          // Configure the data target
-          final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
-                                         new CsvDBFileWriter(session.getTargetName(), rsmd);
-          
-          // Write the header
-          writer.writeHeader();
-          
-          // Iterate over the data for exporting
-          Database.executeSelect(session.getSourceName(), writer);
-          
-          // Write the footer
-          writer.writeFooter();
-          
-          // Close the result set
-          rs.close();
-          rs = null;
+        // Execute the statement and check the result
+        final boolean result = stmt.execute();
+        if (!result) {
+          Logger.error("The statement did not execute correctly");
         } else {
-          Logger.error("The database result set is null");
+          // Get the metadata
+          ResultSet rs = stmt.getResultSet();
+          
+          // Verify it's not null
+          if (rs != null) {
+            // TODO Test this
+            ResultSetMetaData rsmd = rs.getMetaData();
+            final int colCount = rsmd.getColumnCount();
+            // TODO Delete this
+            System.out.println("Column count = " + colCount);
+            
+            // Configure the data target
+            final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
+                                           new CsvDBFileWriter(session.getTargetName(), rsmd);
+            
+            // Write the header
+            writer.writeHeader();
+            
+            // Iterate over the data for exporting
+            Database.executeSelect(session.getSourceName(), writer);
+            
+            // Write the footer
+            writer.writeFooter();
+            
+            // Force out any pending data
+            writer.writeString(true);
+            
+            // Close the result set
+            rs.close();
+            rs = null;
+          } else {
+            Logger.error("The database result set is null");
+          }
         }
         
         // Close the statement
