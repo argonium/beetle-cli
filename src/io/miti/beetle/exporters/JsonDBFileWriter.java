@@ -12,13 +12,13 @@ public class JsonDBFileWriter extends DBFileWriter
 
   @Override
   public void writeHeader() {
-    sb.append("[\r\n  ");
+    sb.append("[").append(EOL);
   }
 
 
   @Override
   public void writeFooter() {
-    sb.append("]\r\n");
+    sb.append("]").append(EOL);
     writeString();
   }
 
