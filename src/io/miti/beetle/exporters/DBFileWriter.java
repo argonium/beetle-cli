@@ -1,6 +1,7 @@
 package io.miti.beetle.exporters;
 
 import io.miti.beetle.util.Logger;
+import io.miti.beetle.util.NodeInfo;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +11,9 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DBFileWriter
 {
@@ -17,8 +21,8 @@ public abstract class DBFileWriter
   protected String filename = null;
   protected File file = null;
   
-  // TODO Replace list with a list
-  protected ResultSetMetaData rsmd = null;
+  // Save info about the result set - column names and types
+  protected List<NodeInfo> nodes = null;
   
   protected static final String EOL = "\r\n";
 
@@ -40,8 +44,8 @@ public abstract class DBFileWriter
     file = new File(sFilename);
     filename = sFilename;
     
-    // TODO Save just the info we need - column names and types - into an array
-    rsmd = pRSMD;
+    // Save just the info we need - column names and types - into an array
+    initializeNodeList(pRSMD);
     
     // Check the output file - if it exists as a file, empty it
     if (file.exists() && file.isFile()) {
@@ -49,6 +53,42 @@ public abstract class DBFileWriter
         file.delete();
       } catch (Exception ex) {
         Logger.error("Exception deleting file: " + ex.getMessage());
+      }
+    }
+  }
+  
+  
+  private void initializeNodeList(final ResultSetMetaData pRSMD) {
+    // Check if the metadata has results
+    if (pRSMD == null) {
+      return;
+    }
+    
+    // Get the number of columns
+    int count = 0;
+    try {
+      count = pRSMD.getColumnCount();
+    } catch (SQLException e) {
+      Logger.error("Error getting metadata column count: " + e.getMessage());
+    }
+    
+    if (count <= 0) {
+      return;
+    }
+    
+    nodes = new ArrayList<NodeInfo>(count);
+    for (int i = 1; i <= count; ++i) {
+      try {
+        // Save the column name
+        String name = pRSMD.getColumnName(i);
+        
+        // TODO Derive the correct class
+        NodeInfo node = new NodeInfo(name, String.class);
+        
+        // Save the entry
+        nodes.add(node);
+      } catch (SQLException e) {
+        Logger.error("Error getting metadata column info: " + e.getMessage());
       }
     }
   }

@@ -15,10 +15,10 @@ public class CsvDBFileWriter extends DBFileWriter
   public void writeHeader() {
     // Write the row of column names
     try {
-      final int colCount = rsmd.getColumnCount();
-      sb.append(rsmd.getColumnName(1));
-      for (int i = 2; i <= colCount; ++i) {
-        sb.append(',').append(rsmd.getColumnName(i));
+      final int colCount = nodes.size();
+      sb.append(nodes.get(0).getName());
+      for (int i = 1; i < colCount; ++i) {
+        sb.append(',').append(nodes.get(i).getName());
       }
       sb.append(EOL);
     } catch (Exception ex) {
@@ -38,7 +38,8 @@ public class CsvDBFileWriter extends DBFileWriter
   @Override
   public void writeObject(final ResultSet rs) {
     try {
-      final int colCount = rsmd.getColumnCount();
+      // TODO Use the correct class (via nodes)
+      final int colCount = nodes.size();
       sb.append(quoteString(rs.getString(1)));
       for (int i = 2; i <= colCount; ++i) {
         sb.append(',').append(quoteString(rs.getString(i)));
