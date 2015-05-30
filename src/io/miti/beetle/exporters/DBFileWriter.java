@@ -126,6 +126,12 @@ public abstract class DBFileWriter
    * If the string buffer is big enough, flush it to disk.
    */
   public final void writeString(final boolean forceWrite) {
+    
+    // If nothing to write, nothing to do
+    if (sb.length() == 0) {
+      return;
+    }
+    
     // Check the length of the string
     if (forceWrite || sb.length() > 10000) {
 
