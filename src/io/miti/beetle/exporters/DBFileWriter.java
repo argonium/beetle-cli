@@ -16,6 +16,8 @@ public abstract class DBFileWriter
   protected StringBuilder sb = null;
   protected String filename = null;
   protected File file = null;
+  
+  // TODO Replace list with a list
   protected ResultSetMetaData rsmd = null;
   
   protected static final String EOL = "\r\n";
@@ -37,6 +39,8 @@ public abstract class DBFileWriter
     sb = new StringBuilder(100);
     file = new File(sFilename);
     filename = sFilename;
+    
+    // TODO Save just the info we need - column names and types - into an array
     rsmd = pRSMD;
     
     // Check the output file - if it exists as a file, empty it
