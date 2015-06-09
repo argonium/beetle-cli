@@ -360,7 +360,7 @@ public final class Logger
 
     // Prepend the date/time and level description
     String s = Utility.getDateTimeString() + " "
-        + getLogLevelDesc(logger.logLevel) + ": " + msg;
+        + getLogLevelDesc(levelBound) + ": " + msg;
 
     // Write out the string, based on the file mode
     if (logger.logFileMode == 0) {

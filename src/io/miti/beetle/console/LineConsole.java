@@ -312,8 +312,22 @@ public final class LineConsole
   
   
   private void importUserQuery(final String query) {
+    
+    // Check there is a query
+    if ((query == null) || query.trim().isEmpty()) {
+      Logger.error("The query is null or empty");
+      return;
+    }
+    
+    // Verify this is a 'select' statement
+    final String testQuery = query.trim().toLowerCase();
+    if (!testQuery.startsWith("select ")) {
+      Logger.error("Only SELECT statements are allowed");
+      return;
+    }
+    
+    // Save the query
     session.setSourceTypeId(ContentType.SQL.getId());
-    // TODO Verify this is a 'select' statement
     session.setSourceName(query);
   }
   
