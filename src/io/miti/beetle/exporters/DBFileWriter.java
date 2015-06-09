@@ -12,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,8 @@ public abstract class DBFileWriter
   protected StringBuilder sb = null;
   protected String filename = null;
   protected File file = null;
+  
+  private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
   
   // Save info about the result set - column names and types
   protected List<NodeInfo> nodes = null;
@@ -80,20 +85,104 @@ public abstract class DBFileWriter
     for (int i = 1; i <= count; ++i) {
       try {
         // Save the column name
-        String name = pRSMD.getColumnName(i);
+        final String name = pRSMD.getColumnName(i);
         
-        // TODO Derive the correct class
-        NodeInfo node = new NodeInfo(name, String.class);
+        // Derive the correct class
+        final int nClassType = pRSMD.getColumnType(i);
+        final Class<?> clazz = getJavaClassFromSqlType(nClassType);
         
-        // Save the entry
+        // Save the node data
+        final NodeInfo node = new NodeInfo(name, clazz);
         nodes.add(node);
       } catch (SQLException e) {
         Logger.error("Error getting metadata column info: " + e.getMessage());
       }
     }
   }
-
-
+  
+  
+  public Object getValueFromRow(final ResultSet rs, Class<?> clazz, final int index) {
+    // Check the output class
+    if (clazz == null) {
+      // Unsupported data type
+      return "";
+    }
+    
+    try {
+      if (clazz.equals(Boolean.class)) {
+        boolean value = rs.getBoolean(index);
+        return (rs.wasNull() ? null : value);
+      } else if (clazz.equals(String.class)) {
+        return rs.getString(index);
+      } else if (clazz.equals(Long.class)) {
+        long value = rs.getLong(index);
+        return (rs.wasNull() ? null : value);
+      } else if (clazz.equals(Double.class)) {
+        double value = rs.getDouble(index);
+        return (rs.wasNull() ? null : value);
+      } else if (clazz.equals(java.util.Date.class)) {
+        final Timestamp ts = rs.getTimestamp(index);
+        final java.util.Date date = (ts == null) ? null : new java.util.Date(ts.getTime());
+        return date;
+      } else {
+        // Unknown data type
+        return "";
+      }
+    } catch (SQLException se) {
+      Logger.error(se);
+    }
+    
+    return "";
+  }
+  
+  
+  private Class<?> getJavaClassFromSqlType(final int nClassType) {
+    
+    switch (nClassType) {
+      case Types.BOOLEAN:
+        return Boolean.class;
+      
+      case Types.TIME_WITH_TIMEZONE:
+      case Types.TIMESTAMP_WITH_TIMEZONE:
+      case Types.DATE:
+      case Types.TIME:
+      case Types.TIMESTAMP:
+        return java.util.Date.class;
+      
+      case Types.BIT:
+      case Types.TINYINT:
+      case Types.SMALLINT:
+      case Types.INTEGER:
+      case Types.BIGINT:
+        return Long.class;
+      
+      case Types.FLOAT:
+      case Types.REAL:
+      case Types.DOUBLE:
+      case Types.NUMERIC:
+      case Types.DECIMAL:
+        return Double.class;
+        
+      case Types.CHAR:
+      case Types.VARCHAR:
+      case Types.LONGVARCHAR:
+      case Types.BINARY:
+      case Types.VARBINARY:
+      case Types.LONGVARBINARY:
+      case Types.BLOB:
+      case Types.CLOB:
+      case Types.NCHAR:
+      case Types.NVARCHAR:
+      case Types.LONGNVARCHAR:
+      case Types.NCLOB:
+        return String.class;
+        
+      default:
+        return null;
+    }
+  }
+  
+  
   /**
    * Abstract method for writing the file's header.
    */
@@ -119,6 +208,11 @@ public abstract class DBFileWriter
    */
   public final void writeString() {
     writeString(false);
+  }
+  
+  
+  public static final String toGMTDate(final java.util.Date date) {
+    return sdf.format(date);
   }
   
   
