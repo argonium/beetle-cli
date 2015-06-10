@@ -95,7 +95,6 @@ public final class SQLLogger
    */
   public void setSqlDebug(final boolean bLogEvents) {
     sqlDebug = bLogEvents;
-    // TODO Code deleted to set this elsewhere
   }
 
 

@@ -556,7 +556,7 @@ public final class PrevLineConsole
         final String url = history.get(selection - 1);
         System.out.println("Selected " + url);
 
-        // TODO Try to put this in the console buffer
+        // Try to put this in the console buffer
         // final String buffer = "connect " + url;
 
         // Open a connection

@@ -155,18 +155,4 @@ public final class DataProcessor
       return new XmlDBFileWriter(outType, rsmd);
     }
   }
-  
-
-// TODO Delete this
-//  public static void main(String[] args) {
-//    io.miti.beetle.prefs.PrefsDatabase.initializeDatabase();
-//    io.miti.beetle.cache.CacheManager.loadCache();
-//    Session s = new Session();
-//    s.setSourceTypeId(ContentType.SQL.getId());
-//    s.setSourceId(3);
-//    s.setSourceName("select * from test5");
-//    s.setTargetTypeId(ContentType.JSON.getId());
-//    s.setTargetName("out.json");
-//    new DataProcessor(s).run();
-//  }
 }

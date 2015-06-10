@@ -335,7 +335,7 @@ public final class DBScript
 
             case java.sql.Types.VARCHAR:
             default:
-              // TODO Handle quotes/control characters in the string
+              // Need to handle quotes/control characters in the string
               sbValues.append(quoteString(rs.getString(col)));
             }
 
