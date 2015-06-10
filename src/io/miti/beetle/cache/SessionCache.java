@@ -43,7 +43,7 @@ public final class SessionCache {
       return;
     }
 
-    list = Session.getList("order by ID");
+    list = Session.getList();
   }
 
 
