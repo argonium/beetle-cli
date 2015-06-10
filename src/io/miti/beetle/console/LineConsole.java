@@ -216,6 +216,8 @@ public final class LineConsole
       importUserTable(cmds.get(3));
     } else if (validateCommand(cmds, 4, "import", "db", "query")) {
       importUserQuery(cmds.get(3));
+    } else if (validateCommand(cmds, 4, "import", "db", "file")) {
+      importUserFile(cmds.get(3));
     } else if (validateCommand(cmds, 3, "export", "csv")) {
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
@@ -330,6 +332,34 @@ public final class LineConsole
   private void importUserTable(final String tname) {
     session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName("select * from " + tname);
+  }
+  
+  
+  private void importUserFile(final String fname) {
+    // Open the specified file
+    final File file = new File(fname);
+    if (!file.exists() || !file.isFile()) {
+      Logger.error("The specified file was not found");
+      return;
+    }
+    
+    // Read the contents
+    String text = Content.getFileAsText(file);
+    if ((text == null) || text.isEmpty()) {
+      Logger.error("No contents found in file");
+      return;
+    }
+    
+    // Verify this is a 'select' statement
+    final String testQuery = text.trim().toLowerCase();
+    if (!testQuery.startsWith("select ")) {
+      Logger.error("Only SELECT statements are allowed");
+      return;
+    }
+    
+    // Save the query
+    session.setSourceTypeId(ContentType.SQL.getId());
+    session.setSourceName(text);
   }
   
   
@@ -1191,7 +1221,7 @@ public final class LineConsole
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
-        "print session", "reset session", "run",
+        "print session", "reset session", "run", "import db file <filename>",
         "list tables", "describe table <table name>",
         "help <start of a command>", "jar <filename>" };
     
