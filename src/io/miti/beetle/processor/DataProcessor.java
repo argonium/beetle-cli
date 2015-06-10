@@ -12,6 +12,9 @@ import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.exporters.CsvDBFileWriter;
 import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.exporters.JsonDBFileWriter;
+import io.miti.beetle.exporters.TomlDBFileWriter;
+import io.miti.beetle.exporters.XmlDBFileWriter;
+import io.miti.beetle.exporters.YamlDBFileWriter;
 import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
@@ -51,8 +54,10 @@ public final class DataProcessor
   public void importSQL() {
     
     ContentType cType = ContentType.getById(session.getTargetTypeId());
-    if ((cType != ContentType.JSON) && (cType != ContentType.CSV)) {
-      Logger.error("Only export to JSON and CSV are supported");
+    if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
+        (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
+        (cType != ContentType.XML)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML");
       return;
     }
     
@@ -96,8 +101,7 @@ public final class DataProcessor
             ResultSetMetaData rsmd = rs.getMetaData();
             
             // Configure the data target
-            final DBFileWriter writer = (cType == ContentType.JSON) ? new JsonDBFileWriter(session.getTargetName(), rsmd) :
-                                           new CsvDBFileWriter(session.getTargetName(), rsmd);
+            final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), rsmd);
             
             // Write the header
             writer.writeHeader();
@@ -133,6 +137,25 @@ public final class DataProcessor
     // Close the connection
     ConnManager.get().close();
   }
+  
+  
+  private static DBFileWriter getFileWriter(final ContentType cType,
+                                            final String outType,
+                                            final ResultSetMetaData rsmd) {
+    // Create the appropriate file writer object
+    if (cType == ContentType.JSON) {
+      return new JsonDBFileWriter(outType, rsmd);
+    } else if (cType == ContentType.CSV) {
+      return new CsvDBFileWriter(outType, rsmd);
+    } else if (cType == ContentType.YAML) {
+      return new YamlDBFileWriter(outType, rsmd);
+    } else if (cType == ContentType.TOML) {
+      return new TomlDBFileWriter(outType, rsmd);
+    } else {
+      return new XmlDBFileWriter(outType, rsmd);
+    }
+  }
+  
 
 // TODO Delete this
 //  public static void main(String[] args) {
