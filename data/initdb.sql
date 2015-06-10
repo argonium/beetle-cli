@@ -38,9 +38,13 @@ create table if not exists hadoop (
 
 -- Store a session
 create table if not exists session (
-	id int auto_increment not null,
+	-- id int auto_increment not null,
 	source_type_id int not null,
 	target_type_id int not null,
+	source_id int not null,
+	target_id int not null,
+	source_name varchar2(100),
+	target_name varchar2(100),
 	source_delim varchar2(10),
 	target_delim varchar2(10)
 );
