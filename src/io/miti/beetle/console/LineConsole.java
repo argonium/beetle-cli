@@ -1190,12 +1190,13 @@ public final class LineConsole
         "export csv <filename>", "export json <filename>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run",
+        "list tables", "describe table <table name>",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated
     // "count tables", "export data <table name> [<where-clause>]", "dbinfo", "list schemas", 
     // "check database", "connect <URL> [<user> [<pw>]]", "close database",  "count rows <table>",
-    // "list tables", "connections", "select connection", "describe table", "export schema <filename>",
+    // "connections", "select connection", "export schema <filename>",
     
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
@@ -1236,7 +1237,7 @@ public final class LineConsole
    // new DataProcessor(s).run();
    LineConsole lc = new LineConsole();
    lc.setSession(s);
-   // lc.describeTable("test1");
-   lc.printTables();
+   lc.describeTable("test1");
+   // lc.printTables();
  }
 }

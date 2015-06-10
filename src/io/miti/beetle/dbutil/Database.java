@@ -225,7 +225,7 @@ public final class Database
       // Specify the type of object; in this case we want tables
       String[] types = { "TABLE" };
       ResultSet resultSet = dbmd.getTables(conn.getCatalog(),
-          dbmd.getUserName(), tPattern, types);
+          tPattern, tPattern, types);
 
       // Get the table names
       while (resultSet.next()) {
@@ -326,8 +326,8 @@ public final class Database
       DatabaseMetaData dbmd = conn.getMetaData();
 
       // Get the table info
-      ResultSet rs = dbmd.getColumns(conn.getCatalog(), dbmd.getUserName(),
-          table, null);
+      ResultSet rs = dbmd.getColumns(conn.getCatalog(), null,
+          table.toUpperCase(), null);
 
       // Iterate over all column info for the table
       while (rs.next()) {
@@ -409,7 +409,7 @@ public final class Database
       DatabaseMetaData dbmd = conn.getMetaData();
 
       // Get the primary key column names
-      ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), dbmd.getUserName(),
+      ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), null,
           table);
 
       // Iterate over all column info for the table
