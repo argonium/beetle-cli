@@ -1,8 +1,10 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.Logger;
+import io.miti.beetle.util.NodeInfo;
+
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 
 public class CsvDBFileWriter extends DBFileWriter
 {
@@ -37,17 +39,49 @@ public class CsvDBFileWriter extends DBFileWriter
 
   @Override
   public void writeObject(final ResultSet rs) {
-    try {
-      // TODO Use the correct class (via nodes)
-      final int colCount = nodes.size();
-      sb.append(quoteString(rs.getString(1)));
-      for (int i = 2; i <= colCount; ++i) {
-        sb.append(',').append(quoteString(rs.getString(i)));
+    
+    // Iterate over the data
+    final int nodeCount = nodes.size();
+    for (int i = 0; i < nodeCount; ++i) {
+      final NodeInfo node = nodes.get(i);
+      
+      // Write out the value
+      Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
+      sb.append(outputValue(obj, node.getClazz()));
+      
+      // Add a comma if we have more data to write
+      if (i < (nodeCount - 1)) {
+        sb.append(",");
       }
-      sb.append(EOL);
-    } catch (SQLException se) {
-      System.err.println("SQLException in CsvDBFileWriter.writeObject: " + se.getMessage());
+      
+      writeString();
     }
+    
+    sb.append(EOL);
+  }
+  
+  
+  private String outputValue(final Object obj, final Class<?> clazz) {
+    // Handle the different values
+    if (obj == null) {
+      return "";
+    }
+    
+    if (obj instanceof Boolean) {
+      return Boolean.toString(((Boolean) obj).booleanValue());
+    } else if (obj instanceof Long) {
+      return Long.toString(((Long) obj).longValue());
+    } else if (obj instanceof Double) {
+      return Double.toString(((Double) obj).doubleValue());
+    } else if (obj instanceof String) {
+      return quoteString(obj.toString());
+    } else if (obj instanceof java.util.Date) {
+      return toGMTDate((java.util.Date) obj);
+    }
+    
+    // Unknown type
+    Logger.error("Unknown data type: " + obj.getClass().getName());
+    return "";
   }
   
   
