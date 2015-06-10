@@ -48,6 +48,7 @@ public final class LineConsole
   public LineConsole() {
     super();
     session = new Session();
+    loadSession();
   }
   
   
@@ -185,6 +186,7 @@ public final class LineConsole
     // Process the command entered by the user
     final String line = input.trim();
     if (line.equals("quit") || line.equals("exit")) {
+      saveSession();
       System.out.println("Shutting down");
       System.exit(0);
     } else if (line.equals("debug on")) {
@@ -1200,6 +1202,30 @@ public final class LineConsole
     
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
+  }
+  
+  
+  private void loadSession() {
+    // Get the list of sessions from the database (should be zero or one)
+    List<Session> list = Session.getList();
+    
+    // If none found, return
+    if ((list == null) || list.isEmpty()) {
+      return;
+    }
+    
+    // Save the session from the database to the object in memory
+    setSession(list.get(0));
+  }
+  
+  
+  private void saveSession() {
+    // Only keep one session in the database for now, so
+    // delete any in the database first
+    Session.delete();
+    
+    // Save the current one
+    session.insert();
   }
 
 
