@@ -17,6 +17,7 @@ import java.util.Set;
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
+import io.miti.beetle.dbutil.ConnManager;
 import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
@@ -98,6 +99,19 @@ public final class LineConsole
       }
     }
   }
+  
+  
+  public void setSession(final Session pSession) {
+    session.setId(pSession.getId());
+    session.setSourceDelim(pSession.getSourceDelim());
+    session.setSourceId(pSession.getSourceId());
+    session.setSourceName(pSession.getSourceName());
+    session.setSourceTypeId(pSession.getSourceTypeId());
+    session.setTargetDelim(pSession.getTargetDelim());
+    session.setTargetId(pSession.getTargetId());
+    session.setTargetName(pSession.getTargetName());
+    session.setTargetTypeId(pSession.getTargetTypeId());
+  }
 
 
   /**
@@ -171,7 +185,6 @@ public final class LineConsole
     // Process the command entered by the user
     final String line = input.trim();
     if (line.equals("quit") || line.equals("exit")) {
-      // ConnManager.get().close();
       System.out.println("Shutting down");
       System.exit(0);
     } else if (line.equals("debug on")) {
@@ -187,8 +200,6 @@ public final class LineConsole
       printHelp();
     } else if (validateCommand(cmds, 2, "help")) {
       printHelp(line.substring(5).trim());
-//    } else if (validateCommand(cmds, 2, "close", "database")) {
-//      ConnManager.get().close();
     } else if (validateCommand(cmds, 2, "list", "dbtypes")) {
       listDatabaseTypes();
     } else if (validateCommand(cmds, 2, "list", "userdbs")) {
@@ -223,19 +234,10 @@ public final class LineConsole
       resetSession();
     } else if (line.equals("run")) {
       runSession();
-//    } else if (validateCommand(cmds, 3, "export", "data")) {
-//      exportTableData(cmds.get(2), null);
-//    } else if (validateCommand(cmds, 4, "export", "data")) {
-//      exportTableData(cmds.get(2), cmds.get(3));
-//    } else if (validateCommand(cmds, 2, "check", "database")) {
-//      boolean isValid = ConnManager.get().isValid();
-//      System.out.println("Database valid? " + isValid);
     } else if (validateCommand(cmds, 2, "jar")) {
       loadJar(cmds.get(1));
-//    } else if (validateCommand(cmds, 2, "select", "connection")) {
-//      selectConnection(console);
-//    } else if (validateCommand(cmds, 3, "describe", "table")) {
-//      describeTable(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "describe", "table")) {
+      describeTable(cmds.get(2));
     } else if (validateCommand(cmds, 2, "list", "tables")) {
       printTables();
     } else if (line.equals("dir")) {
@@ -264,12 +266,6 @@ public final class LineConsole
       headFile(cmds.get(1));
     } else if (line.equals("version")) {
       ver();
-//    } else if (line.startsWith("connect ")) {
-//      connect(cmds, console);
-//    } else if (line.equals("connections")) {
-//      printConnectionHistory();
-//    } else if (validateCommand(cmds, 3, "export", "schema")) {
-//      exportSchema(cmds.get(2));
     } else if (!line.startsWith("-")) {
       // It's not a comment, so it's an unknown command
       System.out.println("Unknown command");
@@ -790,106 +786,67 @@ public final class LineConsole
       }
     }
   }
+  
+  
+  private void describeTable(final String table) {
+    
+    // Check the session
+    if (session == null) {
+      Logger.error("Error: The session is null or invalid");
+      return;
+    }
+    
+    // TODO
+    
+    // Find the user DB with the specified ID
+    final UserDb userDb = UserDBCache.get().find(session.getSourceId());
+    if (userDb == null) {
+      Logger.error("Error: Invalid database ID in the session");
+      return;
+    }
+    
+    // Make sure the JDBC DB's driver class is loaded
+    final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
+    ConnManager.get().addDriverClass(dbType);
+    
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // Check the DB connection
+    if (!ConnManager.get().isValid()) {
+      System.out.println("No database connection found");
+    } else {
+      // Get the info
+      List<List<String>> results = Database.getColumns(table, true);
+      if (results == null) {
+        System.out.println("No table description found (result is null)");
+        return;
+      } else if (results.size() < 1) {
+        System.out.println("No table description found");
+        return;
+      }
 
+      // Add a header row
+      List<String> labels = new ArrayList<String>(5);
+      labels.add("#");
+      labels.add("Name");
+      labels.add("Type");
+      labels.add("Nullable?");
+      labels.add("PK?");
+      results.add(0, labels);
 
-//  private void selectConnection(final ConsoleReader console) {
-//    if (!ConnManager.get().hasHistory()) {
-//      System.out.println("No connection history found");
-//    } else {
-//      // Print the list
-//      List<String> history = new ArrayList<String>(10);
-//      int i = 0;
-//      Iterator<String> iter = ConnManager.get().getHistory();
-//      while (iter.hasNext()) {
-//        String name = iter.next();
-//        String msg = String.format("#%d - %s", (i + 1), name);
-//        System.out.println(msg);
-//        history.add(name);
-//        ++i;
-//      }
-//
-//      // Let the user select a connection
-//      final int selection = getSelection(console);
-//      if ((selection < 1) || (selection > history.size())) {
-//        System.out.println("Illegal selection");
-//      } else {
-//        // Get the selected URL
-//        final String url = history.get(selection - 1);
-//        System.out.println("Selected " + url);
-//
-//        // Open a connection
-//        List<String> cmds = new ArrayList<String>(2);
-//        cmds.add("");
-//        cmds.add(url);
-//        connect(cmds, console);
-//      }
-//    }
-//  }
-
-
-//  private int getSelection(final ConsoleReader console) {
-//    if (console == null) {
-//      final String str = System.console().readLine("Select a number: ");
-//      final int sel = Utility.getStringAsInteger(str, -1, -1);
-//      return sel;
-//    }
-//
-//    console.setPrompt("Select a number: ");
-//    int sel = -1;
-//    try {
-//      String val = console.readLine();
-//      sel = Utility.getStringAsInteger(val, -1, -1);
-//    } catch (IOException e) {
-//      System.out.println("Exception reading selection: " + e.getMessage());
-//    }
-//
-//    setPrompt(console);
-//    return sel;
-//  }
-
-
-//  private void describeTable(final String table) {
-//    // Check the DB connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//    } else {
-//      // Get the info
-//      List<List<String>> results = Database.getColumns(table, true);
-//      if (results == null) {
-//        System.out.println("No table description found (result is null)");
-//        return;
-//      } else if (results.size() < 1) {
-//        System.out.println("No table description found");
-//        return;
-//      }
-//
-//      // Add a header row
-//      List<String> labels = new ArrayList<String>(5);
-//      labels.add("#");
-//      labels.add("Name");
-//      labels.add("Type");
-//      labels.add("Nullable?");
-//      labels.add("PK?");
-//      results.add(0, labels);
-//
-//      // Format and print the list
-//      ListFormatter fmt = new ListFormatter(results);
-//      List<String> fmtd = fmt.format(5, results);
-//      System.out.print(ListFormatter.getTextLine(fmtd));
-//    }
-//  }
-
-
-//  private void printConnectionHistory() {
-//    Iterator<String> history = ConnManager.get().getHistory();
-//    if (!history.hasNext()) {
-//      System.out.println("No connection history found");
-//    } else {
-//      while (history.hasNext()) {
-//        System.out.println(history.next());
-//      }
-//    }
-//  }
+      // Format and print the list
+      ListFormatter fmt = new ListFormatter(results);
+      List<String> fmtd = fmt.format(5, results);
+      System.out.print(ListFormatter.getTextLine(fmtd));
+    }
+    
+    ConnManager.get().close();
+  }
 
 
   /**
@@ -1249,4 +1206,22 @@ public final class LineConsole
   private void printHelp() {
     printList(supportedCommands);
   }
+  
+
+//TODO Delete this
+ public static void main(String[] args) {
+   io.miti.beetle.prefs.PrefsDatabase.initializeDatabase();
+   io.miti.beetle.cache.CacheManager.loadCache();
+   Logger.updateLogLevel(1);
+   Session s = new Session();
+   s.setSourceTypeId(ContentType.SQL.getId());
+   s.setSourceId(3);
+   s.setSourceName("select * from test1");
+   s.setTargetTypeId(ContentType.JSON.getId());
+   s.setTargetName("out2.json");
+   // new DataProcessor(s).run();
+   LineConsole lc = new LineConsole();
+   lc.setSession(s);
+   lc.describeTable("test1");
+ }
 }
