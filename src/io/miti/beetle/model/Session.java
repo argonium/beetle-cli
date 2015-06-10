@@ -25,7 +25,7 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   /**
    * The table column ID.
    */
-  private int id = -1;
+  private int id = 1;
 
   /**
    * The table column SOURCE_TYPE_ID.
@@ -85,11 +85,15 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
         Session obj = new Session();
 
         // Save the data in our object
-        obj.id = rs.getInt(1);
-        obj.sourceTypeId = rs.getInt(2);
-        obj.targetTypeId = rs.getInt(3);
-        obj.sourceDelim = rs.getString(4);
-        obj.targetDelim = rs.getString(5);
+        // obj.id = rs.getInt(1);
+        obj.sourceTypeId = rs.getInt(1);
+        obj.targetTypeId = rs.getInt(2);
+        obj.sourceDelim = rs.getString(3);
+        obj.targetDelim = rs.getString(4);
+        obj.sourceId = rs.getInt(5);
+        obj.targetId = rs.getInt(6);
+        obj.sourceName = rs.getString(7);
+        obj.targetName = rs.getString(8);
 
         // Add to our list
         listRecords.add(obj);
@@ -127,12 +131,12 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public static List<Session> getList(final String whereClause) {
     // This will hold the list that gets returned
     List<Session> listData = new ArrayList<Session>(100);
-
+    
     // Build our query
     StringBuffer buf = new StringBuffer(100);
-    buf.append("SELECT ID, SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
-    buf.append("TARGET_DELIM");
-    buf.append(" from SESSION");
+    buf.append("SELECT SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
+    buf.append("TARGET_DELIM, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME ");
+    buf.append("from SESSION");
 
     // Check if there's a where clause to append
     if (whereClause != null) {
@@ -160,9 +164,9 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into SESSION (");
     sb.append("SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
-    sb.append("TARGET_DELIM");
+    sb.append("TARGET_DELIM, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME");
     sb.append(") values (");
-    sb.append("?, ?, ?, ?");
+    sb.append("?, ?, ?, ?, ?, ?, ?, ?");
     sb.append(")");
 
     PrefsDatabase.insert(sb.toString(), this, this);
@@ -181,6 +185,10 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     ps.setInt(2, targetTypeId);
     ps.setString(3, sourceDelim);
     ps.setString(4, targetDelim);
+    ps.setInt(5, sourceId);
+    ps.setInt(6, targetId);
+    ps.setString(7, sourceName);
+    ps.setString(8, targetName);
   }
 
 
@@ -191,8 +199,10 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE SESSION set ");
     sb.append("SOURCE_TYPE_ID = ?, TARGET_TYPE_ID = ?, ");
-    sb.append("SOURCE_DELIM = ?, TARGET_DELIM = ? ");
-    sb.append("where id = ?");
+    sb.append("SOURCE_DELIM = ?, TARGET_DELIM = ?, ");
+    sb.append("SOURCE_ID = ?, TARGET_ID = ?, ");
+    sb.append("SOURCE_NAME = ?, TARGET_NAME = ? ");
+    // sb.append("where id = ?");
     PrefsDatabase.update(sb.toString(), this);
   }
 
@@ -209,17 +219,19 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     ps.setInt(2, targetTypeId);
     ps.setString(3, sourceDelim);
     ps.setString(4, targetDelim);
-    ps.setInt(5, id);
+    ps.setInt(5, sourceId);
+    ps.setInt(6, targetId);
+    ps.setString(7, sourceName);
+    ps.setString(8, targetName);
   }
 
 
   /**
    * Delete the record in the database.
    */
-  public void delete() {
+  public static void delete() {
     StringBuilder sb = new StringBuilder(200);
-    sb.append("DELETE from SESSION where id = ");
-    sb.append(id);
+    sb.append("DELETE from SESSION");
     PrefsDatabase.delete(sb.toString());
   }
 
@@ -426,13 +438,13 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public void reset() {
     id = -1;
     sourceTypeId = -1;
-    sourceId = -1;
-    sourceName = null;
     targetTypeId = -1;
-    targetId = -1;
-    targetName = null;
     sourceDelim = null;
     targetDelim = null;
+    sourceId = -1;
+    targetId = -1;
+    sourceName = null;
+    targetName = null;
   }
   
   
