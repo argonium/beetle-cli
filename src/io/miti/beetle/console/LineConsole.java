@@ -207,6 +207,12 @@ public final class LineConsole
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
       exportJSON(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "export", "toml")) {
+      exportTOML(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "export", "yaml")) {
+      exportYAML(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "export", "xml")) {
+      exportXML(cmds.get(2));
     } else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
       setDBTypeJar(cmds.get(2), cmds.get(4));
     } else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -301,6 +307,24 @@ public final class LineConsole
   
   private void exportCSV(final String filename) {
     session.setTargetTypeId(ContentType.CSV.getId());
+    session.setTargetName(filename);
+  }
+  
+  
+  private void exportTOML(final String filename) {
+    session.setTargetTypeId(ContentType.TOML.getId());
+    session.setTargetName(filename);
+  }
+  
+  
+  private void exportYAML(final String filename) {
+    session.setTargetTypeId(ContentType.YAML.getId());
+    session.setTargetName(filename);
+  }
+  
+  
+  private void exportXML(final String filename) {
+    session.setTargetTypeId(ContentType.XML.getId());
     session.setTargetName(filename);
   }
 
@@ -1193,6 +1217,7 @@ public final class LineConsole
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
+        "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run",
         "help <start of a command>", "jar <filename>" };
     
