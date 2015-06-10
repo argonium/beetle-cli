@@ -790,12 +790,6 @@ public final class LineConsole
   
   private void describeTable(final String table) {
     
-    // Check the session
-    if (session == null) {
-      Logger.error("Error: The session is null or invalid");
-      return;
-    }
-    
     // TODO
     
     // Find the user DB with the specified ID
@@ -929,13 +923,33 @@ public final class LineConsole
   // Get the list of database tables
   private void printTables() {
 
+    // TODO
+    
     // Check the database connection
     if (session.getSourceId() < 0) {
       System.out.println("No database connection found");
       return;
     }
     
-    // TODO Need to use the session's ID
+    // Find the user DB with the specified ID
+    final UserDb userDb = UserDBCache.get().find(session.getSourceId());
+    if (userDb == null) {
+      Logger.error("Error: Invalid database ID in the session");
+      return;
+    }
+    
+    // Make sure the JDBC DB's driver class is loaded
+    final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
+    ConnManager.get().addDriverClass(dbType);
+    
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // Get the list of tables in the session schema
     final List<String> tables = Database.getTableNames(null);
     if (tables == null) {
       System.out.println("No tables were found (list is null)");
@@ -1222,6 +1236,7 @@ public final class LineConsole
    // new DataProcessor(s).run();
    LineConsole lc = new LineConsole();
    lc.setSession(s);
-   lc.describeTable("test1");
+   // lc.describeTable("test1");
+   lc.printTables();
  }
 }
