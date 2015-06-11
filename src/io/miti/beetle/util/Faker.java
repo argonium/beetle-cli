@@ -210,16 +210,12 @@ public class Faker
    */
   public static int getRandom(final int nMinValue, final int nMaxValue) {
 
-    // TODO Use rn
-
     if (nMaxValue <= nMinValue) {
       return nMinValue;
     }
 
-    double d = Math.random();
-    double r = (double) (nMaxValue + 1 - nMinValue);
-
-    int i = nMinValue + ((int) (d * r));
+    final double r = (double) (nMaxValue + 1 - nMinValue);
+    final int i = nMinValue + ((int) (rn.nextDouble() * r));
 
     return i;
   }
