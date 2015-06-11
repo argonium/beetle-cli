@@ -5,6 +5,9 @@ import java.util.Random;
 
 public class Faker
 {
+  private static int id = 1;
+  private static int idIncr = 1;
+  
   private static final Random rn;
   
   private static final String[] emails = {"aol.com", "fastmail.com", "gmail.com",
@@ -18,6 +21,21 @@ public class Faker
 
   private Faker() {
     super();
+  }
+  
+  public static int getId() {
+    final int val = id;
+    id += idIncr;
+    return val;
+  }
+  
+  public static void setId(final int nId) {
+    id = nId;
+  }
+  
+  public static void setId(final int nId, final int nIdIncr) {
+    id = nId;
+    idIncr = nIdIncr;
   }
   
   public static String getEmail() {
@@ -103,6 +121,11 @@ public class Faker
     final int val4 = rn.nextInt(256);
     final String result = val1 + "." + val2 + "." + val3 + "." + val4;
     return result;
+  }
+  
+  
+  public static String getColor() {
+    return Colors.getRandomColor();
   }
 
 
@@ -226,6 +249,61 @@ public class Faker
     final long max =  1609304400000L; // Dec 30, 2020
     final long value = min + ((long) (rn.nextDouble() * ((double) (max - min))));
     return new Date(value);
+  }
+  
+  public static String getFullName() {
+    return getFullName(getBoolean());
+  }
+  
+  public static String getFullName(final boolean useMale) {
+    StringBuilder sb = new StringBuilder(100);
+    sb.append(useMale ? getMaleName() : getFemaleName())
+      .append(' ').append(getSurname());
+    return sb.toString();
+  }
+  
+  public static String getStreetAddress() {
+    final int num = getRandomInteger(99) + 1;
+    StringBuilder sb = new StringBuilder(50);
+    sb.append(Integer.toString(num)).append(" ")
+      .append(getStreet()).append(" ")
+      .append(getStreetSuffix());
+    return sb.toString();
+  }
+  
+  
+  public static String getCountry() {
+    return FakeCache.getRandomCountry();
+  }
+  
+  
+  public static String getCity() {
+    return FakeCache.getRandomCity();
+  }
+  
+  
+  public static String getState() {
+    return FakeCache.getRandomState();
+  }
+  
+  
+  public static String getStreet() {
+    return FakeCache.getRandomStreet();
+  }
+  
+  
+  public static String getMaleName() {
+    return FakeCache.getRandomMaleName();
+  }
+  
+  
+  public static String getFemaleName() {
+    return FakeCache.getRandomFemaleName();
+  }
+  
+  
+  public static String getSurname() {
+    return FakeCache.getRandomSurname();
   }
   
   
