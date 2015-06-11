@@ -1,6 +1,5 @@
 package io.miti.beetle.util;
 
-import java.io.File;
 import java.util.List;
 
 public final class FakeCache

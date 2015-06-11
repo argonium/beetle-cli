@@ -220,6 +220,20 @@ public class Faker
     return i;
   }
   
+  
+  public static double getRandomDouble(final double minValue, final double maxValue) {
+    return getRandomDouble(minValue, maxValue, 4);
+  }
+  
+  private static double getRandomDouble(final double minValue, final double maxValue, final int mantissaDigits) {
+    final double range = (maxValue - minValue);
+    final double result = minValue + (rn.nextDouble() * range);
+    
+    // TODO Truncate the mantissa
+    
+    return result;
+  }
+  
   public static String getTime() {
     final Date date = getDateInRange();
     String str = Utility.getTimeString(date);
@@ -304,14 +318,18 @@ public class Faker
   
   
   public static void main(final String[] args) {
-    System.out.println(getCity());
-    System.out.println(getCountry());
-    System.out.println(getFemaleName());
-    System.out.println(getMaleName());
-    System.out.println(getSurname());
-    System.out.println(getFullName());
-    System.out.println(getFullName(false));
-    System.out.println(getStreetAddress());
-    System.out.println(getState());
+//    System.out.println(getCity());
+//    System.out.println(getCountry());
+//    System.out.println(getFemaleName());
+//    System.out.println(getMaleName());
+//    System.out.println(getSurname());
+//    System.out.println(getFullName());
+//    System.out.println(getFullName(false));
+//    System.out.println(getStreetAddress());
+//    System.out.println(getState());
+    
+    for (int i = 0; i < 50; ++i) {
+      System.out.println("" + getRandomDouble(5.0, 10.0));
+    }
   }
 }
