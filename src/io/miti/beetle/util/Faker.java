@@ -304,8 +304,14 @@ public class Faker
   
   
   public static void main(final String[] args) {
-    System.out.println(getTime());
-    System.out.println(getDate());
-    System.out.println(getDateTime());
+    System.out.println(getCity());
+    System.out.println(getCountry());
+    System.out.println(getFemaleName());
+    System.out.println(getMaleName());
+    System.out.println(getSurname());
+    System.out.println(getFullName());
+    System.out.println(getFullName(false));
+    System.out.println(getStreetAddress());
+    System.out.println(getState());
   }
 }

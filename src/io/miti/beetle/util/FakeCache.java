@@ -116,8 +116,7 @@ public final class FakeCache
   }
 
   private static List<String> readFile(final String filename) {
-    // TODO
-    List<String> lines = Content.getFileAsTextArray(new File(filename), -1);
+    final List<String> lines = Content.getContent(filename);
     return lines;
   }
 }
