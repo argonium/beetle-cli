@@ -1,5 +1,6 @@
 package io.miti.beetle.util;
 
+import java.util.Date;
 import java.util.Random;
 
 public class Faker
@@ -61,6 +62,13 @@ public class Faker
   public static boolean getBoolean() {
     final int value = rn.nextInt(2);
     return (value < 1);
+  }
+  
+  
+  public static String getZipCode() {
+    final int num = getRandom(1, 99999);
+    final String value = Utility.padString(Integer.toString(num), 5, '0');
+    return value;
   }
 
 
@@ -191,5 +199,39 @@ public class Faker
     int i = nMinValue + ((int) (d * r));
 
     return i;
+  }
+  
+  public static String getTime() {
+    final Date date = getDateInRange();
+    String str = Utility.getTimeString(date);
+    return str;
+  }
+  
+  public static String getDate() {
+    final Date date = getDateInRange();
+    String str = Utility.getDateString(date);
+    return str;
+  }
+  
+  public static String getDateTime() {
+    final Date date = getDateInRange();
+    String str = Utility.getDateTimeString(date);
+    return str;
+  }
+  
+  public static Date getDateInRange() {
+    
+    // Set the upper and lower bounds for the random date
+    final long min = -2208970800000L; // Jan 1, 1900
+    final long max =  1609304400000L; // Dec 30, 2020
+    final long value = min + ((long) (rn.nextDouble() * ((double) (max - min))));
+    return new Date(value);
+  }
+  
+  
+  public static void main(final String[] args) {
+    System.out.println(getTime());
+    System.out.println(getDate());
+    System.out.println(getDateTime());
   }
 }

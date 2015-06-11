@@ -251,11 +251,6 @@ public final class Utility
    * @return the date as a string
    */
   public static String getDateTimeString(final long time) {
-    // Check the input
-    if (time <= 0) {
-      return "Invalid time (" + Long.toString(time) + ")";
-    }
-
     // Convert the time into a Date object
     Date date = new Date(time);
 
@@ -275,7 +270,45 @@ public final class Utility
    */
   public static String getDateString(final Date date) {
     // Declare our formatter
-    SimpleDateFormat formatter = new SimpleDateFormat("MMMM d, yyyy");
+    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+
+    if (date == null) {
+      return formatter.format(new Date());
+    }
+
+    // Return the date/time as a string
+    return formatter.format(date);
+  }
+
+
+  /**
+   * Format the date as a string, using a standard format.
+   * 
+   * @param date the date to format
+   * @return the date as a string
+   */
+  public static String getTimeString(final Date date) {
+    // Declare our formatter
+    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+
+    if (date == null) {
+      return formatter.format(new Date());
+    }
+
+    // Return the date/time as a string
+    return formatter.format(date);
+  }
+
+
+  /**
+   * Format the date as a string, using a standard format.
+   * 
+   * @param date the date to format
+   * @return the date as a string
+   */
+  public static String getDateTimeString(final Date date) {
+    // Declare our formatter
+    SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 
     if (date == null) {
       return formatter.format(new Date());
