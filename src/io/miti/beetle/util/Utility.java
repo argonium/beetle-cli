@@ -370,7 +370,7 @@ public final class Utility
 
     return outStr;
   }
-  
+
 
   /**
    * Return the canonical name of the input file.
@@ -378,78 +378,69 @@ public final class Utility
    * @param file the input file
    * @return the canonical name
    */
-  private static String getFName(final File file)
-  {
+  private static String getFName(final File file) {
     String fname = null;
-    try
-    {
+    try {
       fname = file.getCanonicalPath();
-    }
-    catch (IOException e)
-    {
+    } catch (IOException e) {
       e.printStackTrace();
     }
 
     return fname;
   }
-  
-  
+
+
   /**
    * Search the specified jar file for the specified class name.
    * 
    * @param file the input file
    * @param className the class name
    */
-  public static boolean searchFile(final File file, final String className)
-  {
-    if ((className == null) || className.isEmpty() || (file == null) || !file.exists() || !file.isFile()) {
+  public static boolean searchFile(final File file, final String className) {
+    if ((className == null) || className.isEmpty() || (file == null)
+        || !file.exists() || !file.isFile()) {
       return false;
     }
-    
-    if (!getFName(file).toLowerCase().endsWith(".jar"))
-    {
+
+    if (!getFName(file).toLowerCase().endsWith(".jar")) {
       return false;
     }
 
     FileInputStream inStream = null;
     boolean result = false;
-    try
-    {
+    try {
       // Iterate over each entry in the input file
       inStream = new FileInputStream(file);
       ZipInputStream zis = new ZipInputStream(inStream);
       ZipEntry entry;
-      while ((entry = zis.getNextEntry()) != null)
-      {
+      while ((entry = zis.getNextEntry()) != null) {
         // Check if this is a class file
         String ename = entry.getName().trim();
-        if (!ename.toLowerCase().endsWith(".class"))
-        {
+        if (!ename.toLowerCase().endsWith(".class")) {
           continue;
         }
 
         // Convert the jar file entry to a package name (slashes
         // become periods, and remove the '.class' from the end)
         ename = ename.replace('/', '.').replace('\\', '.')
-                     .substring(0, ename.length() - 6);
+            .substring(0, ename.length() - 6);
 
         // If the class is in the default package, save the class
         // name as the modified entry name; else the class name
         // is just the text after the last period
-//        final int lastPeriod = ename.lastIndexOf('.');
-//        String cname = null;
-//        if (lastPeriod < 0)
-//        {
-//          cname = ename;
-//        }
-//        else
-//        {
-//          cname = ename.substring(lastPeriod + 1);
-//        }
+        // final int lastPeriod = ename.lastIndexOf('.');
+        // String cname = null;
+        // if (lastPeriod < 0)
+        // {
+        // cname = ename;
+        // }
+        // else
+        // {
+        // cname = ename.substring(lastPeriod + 1);
+        // }
 
         // Check if the current class name matches the target
-        if (className.equalsIgnoreCase(ename))
-        {
+        if (className.equalsIgnoreCase(ename)) {
           result = true;
           break;
         }
@@ -459,16 +450,33 @@ public final class Utility
       zis.close();
       inStream.close();
       inStream = null;
-    }
-    catch (FileNotFoundException e)
-    {
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
       e.printStackTrace();
     }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    
+
     return result;
+  }
+
+
+  /**
+   * Get a random number between min and max, inclusive.
+   * 
+   * @param nMinValue
+   * @param nMaxValue
+   * @return
+   */
+  public static int getRandom(final int nMinValue, final int nMaxValue) {
+    if (nMaxValue <= nMinValue) {
+      return nMinValue;
+    }
+
+    double d = Math.random();
+    double r = (double) (nMaxValue + 1 - nMinValue);
+
+    int i = nMinValue + ((int) (d * r));
+
+    return i;
   }
 }
