@@ -458,25 +458,20 @@ public final class Utility
 
     return result;
   }
-
-
-  /**
-   * Get a random number between min and max, inclusive.
-   * 
-   * @param nMinValue
-   * @param nMaxValue
-   * @return
-   */
-  public static int getRandom(final int nMinValue, final int nMaxValue) {
-    if (nMaxValue <= nMinValue) {
-      return nMinValue;
+  
+  public static String padString(final String str, final int maxLen, final char padder) {
+    
+    if (str.length() >= maxLen) {
+      return str;
     }
-
-    double d = Math.random();
-    double r = (double) (nMaxValue + 1 - nMinValue);
-
-    int i = nMinValue + ((int) (d * r));
-
-    return i;
+    
+    StringBuilder sb = new StringBuilder(maxLen);
+    for (int toPrepend= maxLen - str.length(); toPrepend > 0; toPrepend--) {
+      sb.append(padder);
+    }
+    
+    sb.append(str);
+    String result = sb.toString();
+    return result;
   }
 }
