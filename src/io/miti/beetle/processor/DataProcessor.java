@@ -24,6 +24,7 @@ import io.miti.beetle.util.Logger;
 public final class DataProcessor
 {
   private Session session = null;
+  private int runCount = 1;
   
   public DataProcessor() {
     super();
@@ -32,6 +33,10 @@ public final class DataProcessor
   
   public DataProcessor(final Session pSession) {
     session = pSession;
+  }
+  
+  public void setRunCount(final int nRunCount) {
+    runCount = nRunCount;
   }
   
   
@@ -45,9 +50,45 @@ public final class DataProcessor
     // Check for SQL imports
     if (session.getSourceTypeId() == ContentType.SQL.getId()) {
       importSQL();
+    } else if (session.getSourceTypeId() == ContentType.FAKE.getId()) {
+      saveFakeData();
     } else {
       Logger.error("Error: Only SQL imports are supported for now; type = " + session.getSourceTypeId());
     }
+  }
+  
+  
+  public void saveFakeData() {
+    
+    // Check the output file type
+    ContentType cType = ContentType.getById(session.getTargetTypeId());
+    if (cType != ContentType.JSON) {
+      Logger.error("Only supported export formats: JSON");
+      return;
+    }
+    
+    // TODO Parse the specification in the source name
+    // TODO Parse the spec, store in a new structure, and pass that to getFileWriter
+    // It should store the list of column names, their class type, and a pointer to
+    // the function call to generate the fake data for that column
+    
+    // TODO Configure the data target (last parameter)
+    final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), null);
+    
+    // Write the header
+    writer.writeHeader();
+    
+    // Iterate over the data for exporting
+    for (int i = 0; i < runCount; ++i) {
+      // TODO Write out the data
+      // Database.executeSelect(rs, writer);
+    }
+    
+    // Write the footer
+    writer.writeFooter();
+    
+    // Force out any pending data
+    writer.writeString(true);
   }
   
   

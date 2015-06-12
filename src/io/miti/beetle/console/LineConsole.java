@@ -25,6 +25,7 @@ import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
 import io.miti.beetle.processor.DataProcessor;
 import io.miti.beetle.util.Content;
+import io.miti.beetle.util.Faker;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.TimeSpan;
@@ -218,6 +219,8 @@ public final class LineConsole
       importUserQuery(cmds.get(3));
     } else if (validateCommand(cmds, 4, "import", "db", "file")) {
       importUserFile(cmds.get(3));
+    } else if (validateCommand(cmds, 2, "fake")) {
+      generateFakeData(cmds.get(1));
     } else if (validateCommand(cmds, 3, "export", "csv")) {
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
@@ -238,6 +241,8 @@ public final class LineConsole
       resetSession();
     } else if (line.equals("run")) {
       runSession();
+    } else if (validateCommand(cmds, 2, "run")) {
+      runSession(cmds.get(1));
     } else if (validateCommand(cmds, 2, "jar")) {
       loadJar(cmds.get(1));
     } else if (validateCommand(cmds, 3, "describe", "table")) {
@@ -299,6 +304,24 @@ public final class LineConsole
   }
   
   
+  private void runSession(final String sRunCount) {
+    // Get the number of times to run (only used for fake data)
+    final int nRunCount = Utility.getStringAsInteger(sRunCount, -1, -1);
+    if (nRunCount < 1) {
+      Logger.error("The run count must be at least 1");
+      return;
+    }
+    
+    // Reset the ID and incrementor fields
+    Faker.setId(1, 1);
+    
+    // Run the data processor
+    final DataProcessor dp = new DataProcessor(session);
+    dp.setRunCount(nRunCount);
+    dp.run();
+  }
+  
+  
   private void exportJSON(final String filename) {
     session.setTargetTypeId(ContentType.JSON.getId());
     session.setTargetName(filename);
@@ -332,6 +355,12 @@ public final class LineConsole
   private void importUserTable(final String tname) {
     session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName("select * from " + tname);
+  }
+  
+  
+  private void generateFakeData(final String spec) {
+    session.setSourceTypeId(ContentType.FAKE.getId());
+    session.setSourceName(spec);
   }
   
   
@@ -822,8 +851,6 @@ public final class LineConsole
   
   private void describeTable(final String table) {
     
-    // TODO
-    
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
@@ -955,8 +982,6 @@ public final class LineConsole
   // Get the list of database tables
   private void printTables() {
 
-    // TODO
-    
     // Check the database connection
     if (session.getSourceId() < 0) {
       System.out.println("No database connection found");
@@ -1221,8 +1246,8 @@ public final class LineConsole
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
-        "print session", "reset session", "run", "import db file <filename>",
-        "list tables", "describe table <table name>",
+        "print session", "reset session", "run [count]", "import db file <filename>",
+        "list tables", "describe table <table name>", "fake <specification>",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated
