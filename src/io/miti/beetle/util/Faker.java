@@ -221,17 +221,59 @@ public class Faker
   }
   
   
+  /**
+   * Get a random double number, between minValue (inclusive) and maxValue (exclusive).
+   * 
+   * @param minValue minimum value, inclusive
+   * @param maxValue maximum value, exclusive
+   * @return a random double in the specified range
+   */
   public static double getRandomDouble(final double minValue, final double maxValue) {
     return getRandomDouble(minValue, maxValue, 4);
   }
   
-  private static double getRandomDouble(final double minValue, final double maxValue, final int mantissaDigits) {
+  /**
+   * Get a random double number, between minValue (inclusive) and maxValue (exclusive).
+   * 
+   * @param minValue minimum value, inclusive
+   * @param maxValue maximum value, exclusive
+   * @param mantissaDigits the number of digits in the mantissa
+   * @return a random double in the specified range
+   */
+  private static double getRandomDouble(final double minValue,
+                                        final double maxValue,
+                                        final int mantissaDigits) {
+    // Compute the range
     final double range = (maxValue - minValue);
+    
+    // Compute the random number in that range
     final double result = minValue + (rn.nextDouble() * range);
     
-    // TODO Truncate the mantissa
+    // If the mantissa size is too small, truncate the number and return it
+    if (mantissaDigits < 1) {
+      return ((double) ((long) result));
+    }
     
-    return result;
+    // Set a limit on the number of digits in the mantissa
+    final double precision = Math.min(10.0, (double) mantissaDigits);
+    final double power = Math.pow(10.0, precision);
+    
+    // Truncate the mantissa.  First get the left and right parts.
+    final double decLeft = (long) result;
+    double decRight = (double) (result - ((double) decLeft));
+    
+    // Multiply the right side by 10^precision
+    decRight *= power;
+    
+    // Truncate anything in the mantissa
+    decRight = (double) ((long) decRight);
+    
+    // Divide by 10^precision
+    decRight /= power;
+    
+    // Sum the parts and return the answer
+    final double answer = decLeft + decRight;
+    return answer;
   }
   
   public static String getTime() {
