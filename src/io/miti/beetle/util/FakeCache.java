@@ -11,6 +11,7 @@ public final class FakeCache
   private static List<String> maleNames = null;
   private static List<String> surnames = null;
   private static List<String> streets = null;
+  private static List<String> cars = null;
   
   private FakeCache() {
     super();
@@ -112,6 +113,20 @@ public final class FakeCache
     }
     
     surnames = readFile("surnames.txt");
+  }
+  
+  public static String getRandomCar() {
+    loadCars();
+    final int index = Faker.getRandomInteger(cars.size());
+    return cars.get(index);
+  }
+  
+  private static void loadCars() {
+    if (cars != null) {
+      return;
+    }
+    
+    cars = readFile("cars.txt");
   }
 
   private static List<String> readFile(final String filename) {

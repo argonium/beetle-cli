@@ -323,6 +323,10 @@ public class Faker
     return sb.toString();
   }
   
+  public static String getCar() {
+    return FakeCache.getRandomCar();
+  }
+  
   
   public static String getCountry() {
     return FakeCache.getRandomCountry();
@@ -369,9 +373,10 @@ public class Faker
 //    System.out.println(getFullName(false));
 //    System.out.println(getStreetAddress());
 //    System.out.println(getState());
+    System.out.println(getCar());
     
-    for (int i = 0; i < 50; ++i) {
-      System.out.println("" + getRandomDouble(5.0, 10.0));
-    }
+//    for (int i = 0; i < 50; ++i) {
+//      System.out.println("" + getRandomDouble(5.0, 10.0));
+//    }
   }
 }
