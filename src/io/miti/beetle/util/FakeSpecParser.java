@@ -1,6 +1,7 @@
 package io.miti.beetle.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -105,5 +106,42 @@ public final class FakeSpecParser
   
   public List<FakeNode> getNodes() {
     return nodes;
+  }
+
+  public List<List<String>> getNodesAsListList() {
+    if (nodes == null) {
+      return null;
+    } else if (nodes.isEmpty()) {
+      return Collections.emptyList();
+    }
+    
+    // Declare the list we return
+    List<List<String>> list = new ArrayList<List<String>>(nodes.size());
+    
+    // Add the header row
+    List<String> header = new ArrayList<String>(4);
+    header.add("Field");
+    header.add("Class");
+    header.add("Method");
+    header.add("Data");
+    list.add(header);
+    
+    for (FakeNode node : nodes) {
+      List<String> row = new ArrayList<String>(4);
+      row.add(node.getName());
+      
+      final Class<?> clazz = node.getClazz();
+      row.add(clazz == null ? "" : clazz.getName());
+      
+      final FakeType func = node.getFunc();
+      row.add(func == null ? "" : func.toString());
+      
+      final Object obj = node.getData();
+      row.add(obj == null ? "" : obj.toString());
+      
+      list.add(row);
+    }
+    
+    return list;
   }
 }

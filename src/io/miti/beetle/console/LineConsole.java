@@ -25,6 +25,8 @@ import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
 import io.miti.beetle.processor.DataProcessor;
 import io.miti.beetle.util.Content;
+import io.miti.beetle.util.FakeNode;
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Faker;
 import io.miti.beetle.util.ListFormatter;
 import io.miti.beetle.util.Logger;
@@ -221,6 +223,8 @@ public final class LineConsole
       importUserFile(cmds.get(3));
     } else if (validateCommand(cmds, 2, "fake")) {
       generateFakeData(cmds.get(1));
+    } else if (validateCommand(cmds, 3, "parse", "fake")) {
+      parseFakeSpec(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "csv")) {
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
@@ -282,6 +286,28 @@ public final class LineConsole
 
     return true;
   }
+  
+  
+  private void parseFakeSpec(final String spec) {
+    final FakeSpecParser fsp = new FakeSpecParser();
+    final boolean rc = fsp.parse(spec);
+    System.out.println("The parsing was " + (rc ? "" : "un") + "successful");
+    final List<FakeNode> nodes = fsp.getNodes();
+    if (nodes == null) {
+      System.out.println("The list of nodes is null");
+    } else if (nodes.isEmpty()) {
+      System.out.println("The list of nodes is empty");
+    } else {
+      // Get the data as a list of list of strings
+      final List<List<String>> table = fsp.getNodesAsListList();
+
+      // Format and print the list
+      ListFormatter fmt = new ListFormatter(table);
+      List<String> fmtd = fmt.format(3, table);
+      System.out.print(ListFormatter.getTextLine(fmtd));
+    }
+  }
+  
   
   private void resetSession() {
     session.reset();
@@ -1248,6 +1274,7 @@ public final class LineConsole
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
+        "parse fake <specification>",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated
