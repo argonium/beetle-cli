@@ -1,5 +1,6 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
@@ -10,8 +11,12 @@ public class TomlDBFileWriter extends DBFileWriter
 {
   private boolean isFirstRow = true;
   
-  public TomlDBFileWriter(String sFilename, ResultSetMetaData pRSMD) {
+  public TomlDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
     super(sFilename, pRSMD);
+  }
+  
+  public TomlDBFileWriter(final String sFilename, final FakeSpecParser spec) {
+    super(sFilename, spec);
   }
 
 

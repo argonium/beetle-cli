@@ -1,17 +1,24 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeNode;
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.List;
 
 public class JsonDBFileWriter extends DBFileWriter
 {
   private boolean isFirstRow = true;
   
-  public JsonDBFileWriter(String sFilename, ResultSetMetaData pRSMD) {
+  public JsonDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
     super(sFilename, pRSMD);
+  }
+  
+  public JsonDBFileWriter(final String sFilename, final FakeSpecParser spec) {
+    super(sFilename, spec);
   }
 
 
@@ -44,17 +51,43 @@ public class JsonDBFileWriter extends DBFileWriter
 //     "omen": "sam"
 //   }
 // ]
+  
+  
+  @Override
+  public void writeObject(final FakeSpecParser spec) {
+    
+    startBlock();
+    
+    // Iterate over the data
+    final int nodeCount = nodes.size();
+    final List<FakeNode> fakes = spec.getNodes();
+    for (int i = 0; i < nodeCount; ++i) {
+      final NodeInfo node = nodes.get(i);
+      
+      // Write out the column name
+      sb.append("    \"").append(node.getName()).append("\": ");
+      
+      // Write out the value
+      final Object obj = getValueFromSpec(fakes.get(i));
+      sb.append(outputValue(obj, node.getClazz()));
+      
+      // Add a comma if we have more data to write
+      if (i < (nodeCount - 1)) {
+        sb.append(",");
+      }
+      
+      sb.append(EOL);
+      writeString();
+    }
+    
+    endBlock();
+  }
 
 
   @Override
   public void writeObject(final ResultSet rs) {
-    // If we started a block previously, end it now
-    if (!isFirstRow) {
-      sb.append("  },").append(EOL);
-    }
     
-    // Start a new block
-    sb.append("  {").append(EOL);
+    startBlock();
     
     // Iterate over the data
     final int nodeCount = nodes.size();
@@ -77,8 +110,25 @@ public class JsonDBFileWriter extends DBFileWriter
       writeString();
     }
     
+    endBlock();
+  }
+  
+  
+  private void endBlock() {
     // We're not in the first JSON row anymore
     isFirstRow = false;
+  }
+  
+  
+  private void startBlock() {
+    
+    // If we started a block previously, end it now
+    if (!isFirstRow) {
+      sb.append("  },").append(EOL);
+    }
+    
+    // Start a new block
+    sb.append("  {").append(EOL);
   }
   
   

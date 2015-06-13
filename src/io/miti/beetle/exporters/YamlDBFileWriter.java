@@ -1,5 +1,6 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
@@ -8,8 +9,12 @@ import java.sql.ResultSetMetaData;
 
 public class YamlDBFileWriter extends DBFileWriter
 {
-  public YamlDBFileWriter(String sFilename, ResultSetMetaData pRSMD) {
+  public YamlDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
     super(sFilename, pRSMD);
+  }
+  
+  public YamlDBFileWriter(final String sFilename, final FakeSpecParser spec) {
+    super(sFilename, spec);
   }
 
 

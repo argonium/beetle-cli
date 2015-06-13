@@ -1,5 +1,8 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeNode;
+import io.miti.beetle.util.FakeSpecParser;
+import io.miti.beetle.util.FakeType;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
@@ -45,12 +48,35 @@ public abstract class DBFileWriter
    * @param pRSMD the database result set metadata (column names, etc.)
    */
   public DBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
-    sb = new StringBuilder(100);
-    file = new File(sFilename);
-    filename = sFilename;
+    
+    // Initialize this class
+    init(sFilename);
     
     // Save just the info we need - column names and types - into an array
     initializeNodeList(pRSMD);
+  }
+
+
+  /**
+   * Constructor taking the output filename and result set.
+   * 
+   * @param sFilename the output filename
+   * @param specData the parsed fake-data spec
+   */
+  public DBFileWriter(final String sFilename, final FakeSpecParser specData) {
+    
+    // Initialize this class
+    init(sFilename);
+    
+    // Save just the info we need - column names and types - into an array
+    initializeNodeList(specData);
+  }
+  
+  
+  private void init(final String sFilename) {
+    sb = new StringBuilder(100);
+    file = new File(sFilename);
+    filename = sFilename;
     
     // Check the output file - if it exists as a file, empty it
     if (file.exists() && file.isFile()) {
@@ -59,6 +85,16 @@ public abstract class DBFileWriter
       } catch (Exception ex) {
         Logger.error("Exception deleting file: " + ex.getMessage());
       }
+    }
+  }
+  
+  
+  private void initializeNodeList(final FakeSpecParser specData) {
+    // Save the column names and classes into NodeList
+    final List<FakeNode> fakeNodes = specData.getNodes();
+    nodes = new ArrayList<NodeInfo>();
+    for (FakeNode fake : fakeNodes) {
+      nodes.add(new NodeInfo(fake.getName(), fake.getClazz()));
     }
   }
   
@@ -98,6 +134,11 @@ public abstract class DBFileWriter
         Logger.error("Error getting metadata column info: " + e.getMessage());
       }
     }
+  }
+  
+  
+  public Object getValueFromSpec(final FakeNode fake) {
+    return FakeType.getValue(fake);
   }
   
   
@@ -201,6 +242,10 @@ public abstract class DBFileWriter
    * @param rsj the result set
    */
   public abstract void writeObject(final ResultSet rsj);
+  
+  public void writeObject(final FakeSpecParser str) {
+    // TODO Make this abstract and implement in the other classes
+  }
   
   
   /**

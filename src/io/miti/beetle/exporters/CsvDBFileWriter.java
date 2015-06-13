@@ -1,5 +1,6 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
@@ -8,8 +9,12 @@ import java.sql.ResultSetMetaData;
 
 public class CsvDBFileWriter extends DBFileWriter
 {
-  public CsvDBFileWriter(String sFilename, ResultSetMetaData pRSMD) {
+  public CsvDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
     super(sFilename, pRSMD);
+  }
+  
+  public CsvDBFileWriter(final String sFilename, final FakeSpecParser spec) {
+    super(sFilename, spec);
   }
 
 
