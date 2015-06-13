@@ -307,6 +307,15 @@ public class Faker
     return getFullName(getBoolean());
   }
   
+  public static String getFirstName() {
+    final boolean useMale = getBoolean();
+    return getFirstName(useMale);
+  }
+  
+  public static String getFirstName(final boolean useMale) {
+    return (useMale ? getMaleName() : getFemaleName());
+  }
+  
   public static String getFullName(final boolean useMale) {
     StringBuilder sb = new StringBuilder(100);
     sb.append(useMale ? getMaleName() : getFemaleName())
