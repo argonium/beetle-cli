@@ -1,11 +1,13 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.List;
 
 public class TomlDBFileWriter extends DBFileWriter
 {
@@ -27,6 +29,39 @@ public class TomlDBFileWriter extends DBFileWriter
 
   @Override
   public void writeFooter() {
+  }
+  
+  
+  @Override
+  public void writeObject(final FakeSpecParser spec) {
+    
+    // If this is not the first block, add another newline
+    if (!isFirstRow) {
+      sb.append(EOL);
+    }
+    
+    // Start a new block
+    sb.append("[[result]]").append(EOL);
+    
+    // Iterate over the data
+    final int nodeCount = nodes.size();
+    final List<FakeNode> fakes = spec.getNodes();
+    for (int i = 0; i < nodeCount; ++i) {
+      final NodeInfo node = nodes.get(i);
+      
+      // Write out the column name
+      sb.append(node.getName()).append(" = ");
+      
+      // Write out the value
+      final Object obj = getValueFromSpec(fakes.get(i));
+      sb.append(outputValue(obj, node.getClazz()));
+      
+      sb.append(EOL);
+      writeString();
+    }
+    
+    // We're not in the first JSON row anymore
+    isFirstRow = false;
   }
 
 
@@ -50,7 +85,7 @@ public class TomlDBFileWriter extends DBFileWriter
       sb.append(node.getName()).append(" = ");
       
       // Write out the value
-      Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
+      final Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
       sb.append(outputValue(obj, node.getClazz()));
       
       sb.append(EOL);

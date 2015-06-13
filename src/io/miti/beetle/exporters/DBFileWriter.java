@@ -243,9 +243,7 @@ public abstract class DBFileWriter
    */
   public abstract void writeObject(final ResultSet rsj);
   
-  public void writeObject(final FakeSpecParser str) {
-    // TODO Make this abstract and implement in the other classes
-  }
+  public abstract void writeObject(final FakeSpecParser str);
   
   
   /**

@@ -1,11 +1,13 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.List;
 
 public class XmlDBFileWriter extends DBFileWriter
 {
@@ -30,6 +32,36 @@ public class XmlDBFileWriter extends DBFileWriter
     sb.append("</Results>").append(EOL);
     writeString();
   }
+  
+  
+  @Override
+  public void writeObject(final FakeSpecParser spec) {
+    
+    // Start a new block
+    sb.append("  <Row>").append(EOL);
+    
+    // Iterate over the data
+    final int nodeCount = nodes.size();
+    final List<FakeNode> fakes = spec.getNodes();
+    for (int i = 0; i < nodeCount; ++i) {
+      final NodeInfo node = nodes.get(i);
+      
+      // Write out the column name
+      sb.append("    <").append(node.getName()).append(">");
+      
+      // Write out the value
+      final Object obj = getValueFromSpec(fakes.get(i));
+      sb.append(outputValue(obj, node.getClazz()));
+      
+      // Close the line
+      sb.append("</").append(node.getName()).append(">");
+      sb.append(EOL);
+      writeString();
+    }
+    
+    // End the block
+    sb.append("  </Row>").append(EOL);
+  }
 
 
   @Override
@@ -47,7 +79,7 @@ public class XmlDBFileWriter extends DBFileWriter
       sb.append("    <").append(node.getName()).append(">");
       
       // Write out the value
-      Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
+      final Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
       sb.append(outputValue(obj, node.getClazz()));
       
       // Close the line

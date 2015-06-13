@@ -1,11 +1,13 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 import io.miti.beetle.util.NodeInfo;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.util.List;
 
 public class CsvDBFileWriter extends DBFileWriter
 {
@@ -40,6 +42,31 @@ public class CsvDBFileWriter extends DBFileWriter
   public void writeFooter() {
     // Nothing to do for a CSV footer
   }
+  
+  
+  @Override
+  public void writeObject(final FakeSpecParser spec) {
+    
+    // Iterate over the data
+    final int nodeCount = nodes.size();
+    final List<FakeNode> fakes = spec.getNodes();
+    for (int i = 0; i < nodeCount; ++i) {
+      final NodeInfo node = nodes.get(i);
+      
+      // Write out the value
+      final Object obj = getValueFromSpec(fakes.get(i));
+      sb.append(outputValue(obj, node.getClazz()));
+      
+      // Add a comma if we have more data to write
+      if (i < (nodeCount - 1)) {
+        sb.append(",");
+      }
+      
+      writeString();
+    }
+    
+    sb.append(EOL);
+  }
 
 
   @Override
@@ -51,7 +78,7 @@ public class CsvDBFileWriter extends DBFileWriter
       final NodeInfo node = nodes.get(i);
       
       // Write out the value
-      Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
+      final Object obj = getValueFromRow(rs, node.getClazz(), i + 1);
       sb.append(outputValue(obj, node.getClazz()));
       
       // Add a comma if we have more data to write
