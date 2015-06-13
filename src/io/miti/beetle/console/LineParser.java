@@ -91,7 +91,7 @@ public final class LineParser
         }
 
         ++i;
-      } else if ((ch == ' ') || (ch == ',')) {
+      } else if (ch == ' ') {
         // See if we're in quotes
         if (inQuote) {
           // Save the character
@@ -102,10 +102,6 @@ public final class LineParser
           if (sb.length() > 0) {
             list.add(sb.toString());
             sb.setLength(0);
-          }
-
-          if (ch == ',') {
-            list.add(",");
           }
         }
 
