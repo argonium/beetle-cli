@@ -19,6 +19,7 @@ import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
+import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
 
 public final class DataProcessor
@@ -67,21 +68,25 @@ public final class DataProcessor
       return;
     }
     
-    // TODO Parse the specification in the source name
-    // TODO Parse the spec, store in a new structure, and pass that to getFileWriter
+    // Parse the specification in the source name.
     // It should store the list of column names, their class type, and a pointer to
     // the function call to generate the fake data for that column
+    final FakeSpecParser spec = new FakeSpecParser();
+    if (!spec.parse(session.getSourceName())) {
+      Logger.error("Invalid specification for fake data");
+      return;
+    }
     
-    // TODO Configure the data target (last parameter)
-    final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), null);
+    // Configure the data target
+    final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), spec);
     
     // Write the header
     writer.writeHeader();
     
     // Iterate over the data for exporting
     for (int i = 0; i < runCount; ++i) {
-      // TODO Write out the data
-      // Database.executeSelect(rs, writer);
+      // Write out the data
+      writer.writeObject(spec);
     }
     
     // Write the footer
@@ -194,6 +199,24 @@ public final class DataProcessor
       return new TomlDBFileWriter(outType, rsmd);
     } else {
       return new XmlDBFileWriter(outType, rsmd);
+    }
+  }
+  
+  
+  private static DBFileWriter getFileWriter(final ContentType cType,
+                                            final String outType,
+                                            final FakeSpecParser spec) {
+    // Create the appropriate file writer object
+    if (cType == ContentType.JSON) {
+      return new JsonDBFileWriter(outType, spec);
+    } else if (cType == ContentType.CSV) {
+      return new CsvDBFileWriter(outType, spec);
+    } else if (cType == ContentType.YAML) {
+      return new YamlDBFileWriter(outType, spec);
+    } else if (cType == ContentType.TOML) {
+      return new TomlDBFileWriter(outType, spec);
+    } else {
+      return new XmlDBFileWriter(outType, spec);
     }
   }
 }
