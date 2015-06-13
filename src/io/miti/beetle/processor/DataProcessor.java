@@ -61,10 +61,11 @@ public final class DataProcessor
   
   public void saveFakeData() {
     
-    // Check the output file type
-    ContentType cType = ContentType.getById(session.getTargetTypeId());
-    if (cType != ContentType.JSON) {
-      Logger.error("Only supported export formats: JSON");
+    final ContentType cType = ContentType.getById(session.getTargetTypeId());
+    if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
+        (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
+        (cType != ContentType.XML)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML");
       return;
     }
     
@@ -99,7 +100,7 @@ public final class DataProcessor
   
   public void importSQL() {
     
-    ContentType cType = ContentType.getById(session.getTargetTypeId());
+    final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
         (cType != ContentType.XML)) {
