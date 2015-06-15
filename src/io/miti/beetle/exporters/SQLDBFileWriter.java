@@ -41,7 +41,7 @@ public class SQLDBFileWriter extends DBFileWriter
   @Override
   public void writeObject(final FakeSpecParser spec) {
     
-    // TODO
+    // Write the start of the line (table name, columns names)
     writeStartOfLine();
     
     // Iterate over the data
@@ -56,7 +56,7 @@ public class SQLDBFileWriter extends DBFileWriter
       
       // Add a comma if we have more data to write
       if (i < (nodeCount - 1)) {
-        sb.append(",");
+        sb.append(", ");
       }
       
       writeString();
@@ -70,7 +70,7 @@ public class SQLDBFileWriter extends DBFileWriter
   @Override
   public void writeObject(final ResultSet rs) {
     
-    // TODO
+    // Write the start of the line (table name, columns names)
     writeStartOfLine();
     
     // Iterate over the data
@@ -84,7 +84,7 @@ public class SQLDBFileWriter extends DBFileWriter
       
       // Add a comma if we have more data to write
       if (i < (nodeCount - 1)) {
-        sb.append(",");
+        sb.append(", ");
       }
       
       writeString();
@@ -94,8 +94,26 @@ public class SQLDBFileWriter extends DBFileWriter
     sb.append(EOL);
   }
   
+  
   private void writeStartOfLine() {
-    // TODO
+    
+    // Start the line
+    // TODO Get the table name
+    sb.append("insert into ").append("TODO").append(" (");
+    
+    // Write the row of column names
+    try {
+      final int colCount = nodes.size();
+      sb.append(nodes.get(0).getName());
+      for (int i = 1; i < colCount; ++i) {
+        sb.append(", ").append(nodes.get(i).getName());
+      }
+      sb.append(EOL);
+    } catch (Exception ex) {
+      System.err.println("Exception writing CSV header: " + ex.getMessage());
+    }
+    
+    sb.append(") values").append(EOL).append("  (");
   }
   
   
