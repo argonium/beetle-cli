@@ -31,27 +31,27 @@ public final class DbType implements FetchDatabaseRecords, IUpdateable,
   /**
    * The table column ID.
    */
-  private int id;
+  private int id = -1;
 
   /**
    * The table column NAME.
    */
-  private String name;
+  private String name = null;
 
   /**
    * The table column REF.
    */
-  private String ref;
+  private String ref = null;
 
   /**
    * The table column DRIVER.
    */
-  private String driver;
+  private String driver = null;
 
   /**
    * The table column JAR_NAME.
    */
-  private String jarName;
+  private String jarName = null;
 
 
   /**
