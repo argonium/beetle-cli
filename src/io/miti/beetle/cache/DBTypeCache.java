@@ -76,6 +76,21 @@ public final class DBTypeCache {
   }
   
   
+  public void add(final String name, final String ref, final String driver) {
+    // Create the database type
+    DbType dbt = new DbType();
+    dbt.setName(name);
+    dbt.setRef(ref);
+    dbt.setDriver(driver);
+    
+    // Save it to the database
+    dbt.insert();
+    
+    // Save to the local cache
+    list.add(dbt);
+  }
+  
+  
   /**
    * Print the list of objects in the cache.
    */
