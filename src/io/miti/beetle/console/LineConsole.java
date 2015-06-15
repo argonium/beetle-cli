@@ -204,7 +204,7 @@ public final class LineConsole
     } else if (line.equals("help")) {
       printHelp();
     } else if (validateCommand(cmds, 2, "help")) {
-      printHelp(line.substring(5).trim());
+      printHelp(cmds.get(1));
     } else if (validateCommand(cmds, 2, "list", "dbtypes")) {
       listDatabaseTypes();
     } else if (validateCommand(cmds, 2, "list", "userdbs")) {
