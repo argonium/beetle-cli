@@ -12,12 +12,12 @@ import java.util.List;
 
 public class SQLDBFileWriter extends DBFileWriter
 {
-  public SQLDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
-    super(sFilename, pRSMD);
+  public SQLDBFileWriter(final String sFilename, final String sData, final ResultSetMetaData pRSMD) {
+    super(sFilename, sData, pRSMD);
   }
   
-  public SQLDBFileWriter(final String sFilename, final FakeSpecParser spec) {
-    super(sFilename, spec);
+  public SQLDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
+    super(sFilename, sData, spec);
   }
 
 
@@ -97,9 +97,8 @@ public class SQLDBFileWriter extends DBFileWriter
   
   private void writeStartOfLine() {
     
-    // Start the line
-    // TODO Get the table name
-    sb.append("insert into ").append("TODO").append(" (");
+    // Start the line (fileData has the table name)
+    sb.append("insert into ").append(fileData).append(" (");
     
     // Write the row of column names
     try {

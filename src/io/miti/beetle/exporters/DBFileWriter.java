@@ -25,6 +25,7 @@ public abstract class DBFileWriter
 {
   protected StringBuilder sb = null;
   protected String filename = null;
+  protected String fileData = null;
   protected File file = null;
   
   private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -47,10 +48,11 @@ public abstract class DBFileWriter
    * @param sFilename the output filename
    * @param pRSMD the database result set metadata (column names, etc.)
    */
-  public DBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
+  public DBFileWriter(final String sFilename, final String sFileData, final ResultSetMetaData pRSMD) {
     
     // Initialize this class
     init(sFilename);
+    fileData = sFileData;
     
     // Save just the info we need - column names and types - into an array
     initializeNodeList(pRSMD);
@@ -63,10 +65,11 @@ public abstract class DBFileWriter
    * @param sFilename the output filename
    * @param specData the parsed fake-data spec
    */
-  public DBFileWriter(final String sFilename, final FakeSpecParser specData) {
+  public DBFileWriter(final String sFilename, final String sFileData, final FakeSpecParser specData) {
     
     // Initialize this class
     init(sFilename);
+    fileData = sFileData;
     
     // Save just the info we need - column names and types - into an array
     initializeNodeList(specData);

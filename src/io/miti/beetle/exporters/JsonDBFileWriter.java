@@ -13,12 +13,12 @@ public class JsonDBFileWriter extends DBFileWriter
 {
   private boolean isFirstRow = true;
   
-  public JsonDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
-    super(sFilename, pRSMD);
+  public JsonDBFileWriter(final String sFilename, final String sData, final ResultSetMetaData pRSMD) {
+    super(sFilename, sData, pRSMD);
   }
   
-  public JsonDBFileWriter(final String sFilename, final FakeSpecParser spec) {
-    super(sFilename, spec);
+  public JsonDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
+    super(sFilename, sData, spec);
   }
 
 
