@@ -46,14 +46,14 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   private String targetName = null;
 
   /**
-   * The table column SOURCE_DELIM.
+   * The table column SOURCE_DATA.
    */
-  private String sourceDelim = null;
+  private String sourceData = null;
 
   /**
-   * The table column TARGET_DELIM.
+   * The table column TARGET_DATA.
    */
-  private String targetDelim = null;
+  private String targetData = null;
 
 
   /**
@@ -88,8 +88,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
         // obj.id = rs.getInt(1);
         obj.sourceTypeId = rs.getInt(1);
         obj.targetTypeId = rs.getInt(2);
-        obj.sourceDelim = rs.getString(3);
-        obj.targetDelim = rs.getString(4);
+        obj.sourceData = rs.getString(3);
+        obj.targetData = rs.getString(4);
         obj.sourceId = rs.getInt(5);
         obj.targetId = rs.getInt(6);
         obj.sourceName = rs.getString(7);
@@ -134,8 +134,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     
     // Build our query
     StringBuffer buf = new StringBuffer(100);
-    buf.append("SELECT SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
-    buf.append("TARGET_DELIM, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME ");
+    buf.append("SELECT SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DATA, ");
+    buf.append("TARGET_DATA, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME ");
     buf.append("from SESSION");
 
     // Check if there's a where clause to append
@@ -163,8 +163,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public void insert() {
     StringBuilder sb = new StringBuilder(200);
     sb.append("INSERT into SESSION (");
-    sb.append("SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DELIM, ");
-    sb.append("TARGET_DELIM, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME");
+    sb.append("SOURCE_TYPE_ID, TARGET_TYPE_ID, SOURCE_DATA, ");
+    sb.append("TARGET_DATA, SOURCE_ID, TARGET_ID, SOURCE_NAME, TARGET_NAME");
     sb.append(") values (");
     sb.append("?, ?, ?, ?, ?, ?, ?, ?");
     sb.append(")");
@@ -183,8 +183,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public void setInsertFields(final PreparedStatement ps) throws SQLException {
     ps.setInt(1, sourceTypeId);
     ps.setInt(2, targetTypeId);
-    ps.setString(3, sourceDelim);
-    ps.setString(4, targetDelim);
+    ps.setString(3, sourceData);
+    ps.setString(4, targetData);
     ps.setInt(5, sourceId);
     ps.setInt(6, targetId);
     ps.setString(7, sourceName);
@@ -199,7 +199,7 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     StringBuilder sb = new StringBuilder(200);
     sb.append("UPDATE SESSION set ");
     sb.append("SOURCE_TYPE_ID = ?, TARGET_TYPE_ID = ?, ");
-    sb.append("SOURCE_DELIM = ?, TARGET_DELIM = ?, ");
+    sb.append("SOURCE_DATA = ?, TARGET_DATA = ?, ");
     sb.append("SOURCE_ID = ?, TARGET_ID = ?, ");
     sb.append("SOURCE_NAME = ?, TARGET_NAME = ? ");
     // sb.append("where id = ?");
@@ -217,8 +217,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public void setUpdateFields(final PreparedStatement ps) throws SQLException {
     ps.setInt(1, sourceTypeId);
     ps.setInt(2, targetTypeId);
-    ps.setString(3, sourceDelim);
-    ps.setString(4, targetDelim);
+    ps.setString(3, sourceData);
+    ps.setString(4, targetData);
     ps.setInt(5, sourceId);
     ps.setInt(6, targetId);
     ps.setString(7, sourceName);
@@ -378,42 +378,42 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
 
 
   /**
-   * Get the value for sourceDelim.
+   * Get the value for sourceData.
    *
-   * @return the sourceDelim
+   * @return the sourceData
    */
-  public String getSourceDelim() {
-    return sourceDelim;
+  public String getSourceData() {
+    return sourceData;
   }
 
 
   /**
-   * Update the value for sourceDelim.
+   * Update the value for sourceData.
    *
-   * @param pSourceDelim the new value for sourceDelim
+   * @param pSourceData the new value for sourceData
    */
-  public void setSourceDelim(final String pSourceDelim) {
-    sourceDelim = pSourceDelim;
+  public void setSourceData(final String pSourceData) {
+    sourceData = pSourceData;
   }
 
 
   /**
-   * Get the value for targetDelim.
+   * Get the value for targetData.
    *
-   * @return the targetDelim
+   * @return the targetData
    */
-  public String getTargetDelim() {
-    return targetDelim;
+  public String getTargetData() {
+    return targetData;
   }
 
 
   /**
-   * Update the value for targetDelim.
+   * Update the value for targetData.
    *
-   * @param pTargetDelim the new value for targetDelim
+   * @param pTargetData the new value for targetData
    */
-  public void setTargetDelim(final String pTargetDelim) {
-    targetDelim = pTargetDelim;
+  public void setTargetData(final String pTargetData) {
+    targetData = pTargetData;
   }
 
 
@@ -427,8 +427,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
   public String toString() {
     return "Session [id=" + id + ", sourceTypeId=" + sourceTypeId
         + ", sourceId=" + sourceId + ", targetTypeId=" + targetTypeId
-        + ", targetId=" + targetId + ", sourceDelim=" + sourceDelim
-        + ", targetDelim=" + targetDelim + "]";
+        + ", targetId=" + targetId + ", sourceData=" + sourceData
+        + ", targetData=" + targetData + "]";
   }
   
   
@@ -439,8 +439,8 @@ public final class Session implements FetchDatabaseRecords, IInsertable,
     id = -1;
     sourceTypeId = -1;
     targetTypeId = -1;
-    sourceDelim = null;
-    targetDelim = null;
+    sourceData = null;
+    targetData = null;
     sourceId = -1;
     targetId = -1;
     sourceName = null;

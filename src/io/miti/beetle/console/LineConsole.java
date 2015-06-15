@@ -107,11 +107,11 @@ public final class LineConsole
   
   public void setSession(final Session pSession) {
     session.setId(pSession.getId());
-    session.setSourceDelim(pSession.getSourceDelim());
+    session.setSourceData(pSession.getSourceData());
     session.setSourceId(pSession.getSourceId());
     session.setSourceName(pSession.getSourceName());
     session.setSourceTypeId(pSession.getSourceTypeId());
-    session.setTargetDelim(pSession.getTargetDelim());
+    session.setTargetData(pSession.getTargetData());
     session.setTargetId(pSession.getTargetId());
     session.setTargetName(pSession.getTargetName());
     session.setTargetTypeId(pSession.getTargetTypeId());
