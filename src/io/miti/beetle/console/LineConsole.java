@@ -315,10 +315,10 @@ public final class LineConsole
   
   
   private void printSession() {
-    String line1 = String.format("Source ID: %d  Source Type: %s  Source Name: %s",
-        session.getSourceId(), ContentType.getById(session.getSourceTypeId()), session.getSourceName());
-    String line2 = String.format("Target ID: %d  Target Type: %s  Target Name: %s",
-        session.getTargetId(), ContentType.getById(session.getTargetTypeId()), session.getTargetName());
+    String line1 = String.format("Source ID: %d  Type: %s  Name: %s  Data: %s",
+        session.getSourceId(), ContentType.getById(session.getSourceTypeId()), session.getSourceName(), session.getSourceData());
+    String line2 = String.format("Target ID: %d  Type: %s  Name: %s  Data: %s",
+        session.getTargetId(), ContentType.getById(session.getTargetTypeId()), session.getTargetName(), session.getTargetData());
     
     System.out.println(line1);
     System.out.println(line2);
