@@ -12,6 +12,7 @@ import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.exporters.CsvDBFileWriter;
 import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.exporters.JsonDBFileWriter;
+import io.miti.beetle.exporters.SQLDBFileWriter;
 import io.miti.beetle.exporters.TomlDBFileWriter;
 import io.miti.beetle.exporters.XmlDBFileWriter;
 import io.miti.beetle.exporters.YamlDBFileWriter;
@@ -64,8 +65,8 @@ public final class DataProcessor
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
-        (cType != ContentType.XML)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML");
+        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL");
       return;
     }
     
@@ -103,8 +104,8 @@ public final class DataProcessor
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
-        (cType != ContentType.XML)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML");
+        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL");
       return;
     }
     
@@ -198,6 +199,8 @@ public final class DataProcessor
       return new YamlDBFileWriter(outType, rsmd);
     } else if (cType == ContentType.TOML) {
       return new TomlDBFileWriter(outType, rsmd);
+    } else if (cType == ContentType.SQL_FILE) {
+      return new SQLDBFileWriter(outType, rsmd);
     } else {
       return new XmlDBFileWriter(outType, rsmd);
     }
@@ -216,6 +219,8 @@ public final class DataProcessor
       return new YamlDBFileWriter(outType, spec);
     } else if (cType == ContentType.TOML) {
       return new TomlDBFileWriter(outType, spec);
+    } else if (cType == ContentType.SQL_FILE) {
+      return new SQLDBFileWriter(outType, spec);
     } else {
       return new XmlDBFileWriter(outType, spec);
     }

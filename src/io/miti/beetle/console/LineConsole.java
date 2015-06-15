@@ -231,6 +231,8 @@ public final class LineConsole
       exportJSON(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "toml")) {
       exportTOML(cmds.get(2));
+    } else if (validateCommand(cmds, 4, "export", "sql")) {
+      exportSQLFile(cmds.get(2), cmds.get(3));
     } else if (validateCommand(cmds, 3, "export", "yaml")) {
       exportYAML(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "xml")) {
@@ -363,6 +365,13 @@ public final class LineConsole
   private void exportTOML(final String filename) {
     session.setTargetTypeId(ContentType.TOML.getId());
     session.setTargetName(filename);
+  }
+  
+  
+  private void exportSQLFile(final String filename, final String tableName) {
+    session.setTargetTypeId(ContentType.SQL_FILE.getId());
+    session.setTargetName(filename);
+    session.setTargetData(tableName);
   }
   
   
@@ -1274,7 +1283,7 @@ public final class LineConsole
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
-        "parse fake <specification>",
+        "parse fake <specification>", "export sql <filename> <tablename>",
         "help <start of a command>", "jar <filename>" };
     
     // Deprecated
