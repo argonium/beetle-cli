@@ -11,12 +11,12 @@ import java.util.List;
 
 public class XmlDBFileWriter extends DBFileWriter
 {
-  public XmlDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
-    super(sFilename, pRSMD);
+  public XmlDBFileWriter(final String sFilename, final String sData, final ResultSetMetaData pRSMD) {
+    super(sFilename, sData, pRSMD);
   }
   
-  public XmlDBFileWriter(final String sFilename, final FakeSpecParser spec) {
-    super(sFilename, spec);
+  public XmlDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
+    super(sFilename, sData, spec);
   }
 
 

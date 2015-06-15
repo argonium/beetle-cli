@@ -11,12 +11,12 @@ import java.util.List;
 
 public class YamlDBFileWriter extends DBFileWriter
 {
-  public YamlDBFileWriter(final String sFilename, final ResultSetMetaData pRSMD) {
-    super(sFilename, pRSMD);
+  public YamlDBFileWriter(final String sFilename, final String sData, final ResultSetMetaData pRSMD) {
+    super(sFilename, sData, pRSMD);
   }
   
-  public YamlDBFileWriter(final String sFilename, final FakeSpecParser spec) {
-    super(sFilename, spec);
+  public YamlDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
+    super(sFilename, sData, spec);
   }
 
 
