@@ -207,6 +207,8 @@ public final class LineConsole
       printHelp(cmds.get(1));
     } else if (validateCommand(cmds, 2, "list", "dbtypes")) {
       listDatabaseTypes();
+    } else if (validateCommand(cmds, 5, "add", "dbtype")) {
+      addDBType(cmds.get(2), cmds.get(3), cmds.get(4));
     } else if (validateCommand(cmds, 2, "list", "userdbs")) {
       listUserDatabases();
     } else if (validateCommand(cmds, 5, "add", "userdb")) {
@@ -290,6 +292,12 @@ public final class LineConsole
   }
   
   
+  private void addDBType(final String name, final String ref, final String driver) {
+    // Add the database type to the cache
+    DBTypeCache.get().add(name, ref, driver);
+  }
+
+
   private void parseFakeSpec(final String spec) {
     final FakeSpecParser fsp = new FakeSpecParser();
     final boolean rc = fsp.parse(spec);
@@ -1280,6 +1288,7 @@ public final class LineConsole
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>",
+        "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
