@@ -80,7 +80,8 @@ public final class DataProcessor
     }
     
     // Configure the data target
-    final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), spec);
+    final DBFileWriter writer = getFileWriter(cType,
+        session.getTargetName(), session.getTargetData(), spec);
     
     // Write the header
     writer.writeHeader();
@@ -149,7 +150,8 @@ public final class DataProcessor
             ResultSetMetaData rsmd = rs.getMetaData();
             
             // Configure the data target
-            final DBFileWriter writer = getFileWriter(cType, session.getTargetName(), rsmd);
+            final DBFileWriter writer = getFileWriter(cType,
+                session.getTargetName(), session.getTargetData(), rsmd);
             
             // Write the header
             writer.writeHeader();
@@ -188,41 +190,43 @@ public final class DataProcessor
   
   
   private static DBFileWriter getFileWriter(final ContentType cType,
-                                            final String outType,
+                                            final String outName,
+                                            final String outData,
                                             final ResultSetMetaData rsmd) {
     // Create the appropriate file writer object
     if (cType == ContentType.JSON) {
-      return new JsonDBFileWriter(outType, rsmd);
+      return new JsonDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.CSV) {
-      return new CsvDBFileWriter(outType, rsmd);
+      return new CsvDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.YAML) {
-      return new YamlDBFileWriter(outType, rsmd);
+      return new YamlDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.TOML) {
-      return new TomlDBFileWriter(outType, rsmd);
+      return new TomlDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.SQL_FILE) {
-      return new SQLDBFileWriter(outType, rsmd);
+      return new SQLDBFileWriter(outName, outData, rsmd);
     } else {
-      return new XmlDBFileWriter(outType, rsmd);
+      return new XmlDBFileWriter(outName, outData, rsmd);
     }
   }
   
   
   private static DBFileWriter getFileWriter(final ContentType cType,
-                                            final String outType,
+                                            final String outName,
+                                            final String outData,
                                             final FakeSpecParser spec) {
     // Create the appropriate file writer object
     if (cType == ContentType.JSON) {
-      return new JsonDBFileWriter(outType, spec);
+      return new JsonDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.CSV) {
-      return new CsvDBFileWriter(outType, spec);
+      return new CsvDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.YAML) {
-      return new YamlDBFileWriter(outType, spec);
+      return new YamlDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.TOML) {
-      return new TomlDBFileWriter(outType, spec);
+      return new TomlDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.SQL_FILE) {
-      return new SQLDBFileWriter(outType, spec);
+      return new SQLDBFileWriter(outName, outData, spec);
     } else {
-      return new XmlDBFileWriter(outType, spec);
+      return new XmlDBFileWriter(outName, outData, spec);
     }
   }
 }
