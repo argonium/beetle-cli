@@ -280,17 +280,17 @@ if you want 1000 rows of sample data, use the command "run 1000".
 
 ## Compiling and running the application
 To compile the application from the command-line, you'll need
-Apache Ant installed and in the classpath.  Use the command:
+Apache Ant installed and in the path.  Use the command:
 
     ant clean dist
-    
- This will generate beetle.jar.  To run it, run:
- 
-     java -jar beetle.jar
- 
- The file beetle.jar is self-contained.  Nothing else is needed
- to run Beetle.
- 
- The first time you run Beetle, it'll create the necessary database
- used by the application to persist information.
+
+This will generate beetle.jar.  To run it, run:
+
+    java -jar beetle.jar
+
+The application is entirely contained within beetle.jar.
+Nothing else is needed to run Beetle.
+
+The first time you run Beetle, it'll create the necessary database
+used by the application to persist information.
  
