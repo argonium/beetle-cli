@@ -70,7 +70,7 @@ driver is.  To see the list of supported database types, run this
 command (shown with sample output):
 
 ```
--&gt; list dbtypes
+-> list dbtypes
 ID   Name         Class                                           Jar File
 1    Derby        org.apache.derby.jdbc.EmbeddedDriver            
 2    H2           org.h2.Driver     
@@ -97,7 +97,7 @@ for use as a source database.
 If your database is not of one of the types listed above, you'll
 need to add a reference.  Run this command:
 
-    add dbtype &lt;Name&gt; &lt;JDBC reference&gt; &lt;Driver class name&gt;
+    add dbtype <Name> <JDBC reference> <Driver class name>
 
 The name is just the name you want to use to refer to the database type,
 the JDBC reference is the second string in the JDBC URL for that database,
@@ -205,3 +205,72 @@ It's often helpful to be able to produce a file with fake data,
 for testing purposes, for example.  Beetle supports these types
 of data fields:
 
+| Function | Description | Sample value |
+--- | --- | ---
+bconst:<value> | Constant boolean | 'bconst:false' always produces 'false'
+bool | Random boolean | true
+car | Car make and model | Mini Cooper
+city | City name | Albany
+color | Color | Blue
+country | Country | Turkey
+date | Date | 04/15/1962
+datetime | Date and time | 12/15/2001 21:42:16
+dconst:<value> | Constant double | 'dconst:37.9' always produces '37.9'
+double | Random double | 37.1651
+email | Email address | alskd@gmail.com
+firstname | First name | Alan
+fullname | Full name | Jennifer Thomas
+gender | Gender | male
+iconst:<value> | Constant integer | 'iconst:17' always produces '17'
+id | ID field, starts with 1 | 5
+int | Random integer | 15
+ipaddress | IP address | 127.25.19.250
+maritalstatus | Marital status | Married
+phone | Phone number | 571-295-1234
+sconst:<value>	| Constant string | 'sconst:Hello' always produces 'Hello'
+ssn | Social security number | 123-45-6789
+state | US state | Idaho
+streetaddress | Street address | 123 Main St.
+surname | Surname | Simmons
+time | Time | 15:37:53
+word | Word (not always pronounceable) | asdkfj
+zip | ZIP Code | 12345
+
+The format for a specification is:
+
+  COLNAME@function,COLNAME@function,....
+
+For example, here is a sample run:
+
+```
+-> fake ID@id,STUDENT_NAME@fullname,DOB@datetime,EMAIL@email
+-> export json students.json
+-> print session
+Source ID: 1  Type: FAKE  Name: ID@id,STUDENT_NAME@fullname,DOB@datetime,EMAIL@email  Data: null
+Target ID: -1  Type: JSON  Name: students.json  Data: MY_USERS
+-> run 3
+-> cat students.json
+[
+  {
+    "ID": 1,
+    "STUDENT_NAME": "Bertha Phelps",
+    "DOB": "09/29/1900 08:14:41",
+    "EMAIL": "xqvzlh@fastmail.com"
+  },
+  {
+    "ID": 2,
+    "STUDENT_NAME": "Joanna Mann",
+    "DOB": "08/14/1938 20:56:35",
+    "EMAIL": "yflvy@fastmail.com"
+  },
+  {
+    "ID": 3,
+    "STUDENT_NAME": "Levi Francis",
+    "DOB": "06/19/1971 18:32:10",
+    "EMAIL": "lriahl@lycos.com"
+  }
+]
+```
+
+You will normally want to run this command multiple times.  For example,
+if you want 1000 rows of sample data, use the command "run 1000".
