@@ -240,6 +240,9 @@ The format for a specification is:
 
     COLNAME@function,COLNAME@function,....
 
+The 'COLNAME' field is the name you want for that output column,
+and 'function' is the function name given in the above table. 
+
 For example, here is a sample run:
 
 ```
