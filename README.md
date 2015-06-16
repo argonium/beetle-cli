@@ -207,7 +207,7 @@ of data fields:
 
 | Function | Description | Sample value |
 --- | --- | ---
-bconst:<value> | Constant boolean | 'bconst:false' always produces 'false'
+bconst:&lt;value&gt; | Constant boolean | 'bconst:false' always produces 'false'
 bool | Random boolean | true
 car | Car make and model | Mini Cooper
 city | City name | Albany
@@ -215,19 +215,19 @@ color | Color | Blue
 country | Country | Turkey
 date | Date | 04/15/1962
 datetime | Date and time | 12/15/2001 21:42:16
-dconst:<value> | Constant double | 'dconst:37.9' always produces '37.9'
+dconst:&lt;value&gt; | Constant double | 'dconst:37.9' always produces '37.9'
 double | Random double | 37.1651
 email | Email address | alskd@gmail.com
 firstname | First name | Alan
 fullname | Full name | Jennifer Thomas
 gender | Gender | male
-iconst:<value> | Constant integer | 'iconst:17' always produces '17'
+iconst:&lt;value&gt; | Constant integer | 'iconst:17' always produces '17'
 id | ID field, starts with 1 | 5
 int | Random integer | 15
 ipaddress | IP address | 127.25.19.250
 maritalstatus | Marital status | Married
 phone | Phone number | 571-295-1234
-sconst:<value>	| Constant string | 'sconst:Hello' always produces 'Hello'
+sconst:&lt;value&gt; | Constant string | 'sconst:Hello' always produces 'Hello'
 ssn | Social security number | 123-45-6789
 state | US state | Idaho
 streetaddress | Street address | 123 Main St.
@@ -238,7 +238,7 @@ zip | ZIP Code | 12345
 
 The format for a specification is:
 
-  COLNAME@function,COLNAME@function,....
+    COLNAME@function,COLNAME@function,....
 
 For example, here is a sample run:
 
@@ -247,7 +247,7 @@ For example, here is a sample run:
 -> export json students.json
 -> print session
 Source ID: 1  Type: FAKE  Name: ID@id,STUDENT_NAME@fullname,DOB@datetime,EMAIL@email  Data: null
-Target ID: -1  Type: JSON  Name: students.json  Data: MY_USERS
+Target ID: -1  Type: JSON  Name: students.json  Data: null
 -> run 3
 -> cat students.json
 [
