@@ -47,6 +47,7 @@ This is the list of supported commands:
 * list userdbs - List the known user-defined databases
 * mem - Print memory usage statistics
 * parse fake &lt;specification&gt; - Parse the specification and print the output
+* pbcopy &lt;filename&gt; - Copy a file's contents to the clipboard
 * print session - Print input / output information on the session
 * quit - Exit the application
 * reset session - Clear out the session
