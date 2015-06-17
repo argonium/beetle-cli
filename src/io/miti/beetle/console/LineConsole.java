@@ -1,11 +1,18 @@
 package io.miti.beetle.console;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,7 +49,7 @@ public final class LineConsole
   private static List<String> supportedCommands = null;
   private static final boolean useSmartREPL = true;
   private final Session session;
-
+  
   static {
     populateSupportedCommands();
   }
@@ -227,6 +234,8 @@ public final class LineConsole
       generateFakeData(cmds.get(1));
     } else if (validateCommand(cmds, 3, "parse", "fake")) {
       parseFakeSpec(cmds.get(2));
+    } else if (validateCommand(cmds, 2, "pbcopy")) {
+      pbCopy(cmds.get(1));
     } else if (validateCommand(cmds, 3, "export", "csv")) {
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
@@ -289,6 +298,37 @@ public final class LineConsole
     }
 
     return true;
+  }
+  
+  
+  private void pbCopy(final String fname) {
+    // Verify the file exists
+    final File file = new File(fname);
+    if (!file.exists() || !file.isFile()) {
+      Logger.error("The input file was not found");
+      return;
+    }
+    
+    // Get a path variable to the file
+    final Path path = Paths.get(fname);
+    StringSelection text = null;
+    try {
+      // Read the file contents into a byte array
+      final byte[] bytes = Files.readAllBytes(path);
+      
+      // Create a string selection from the text
+      text = new StringSelection(new String(bytes, StandardCharsets.UTF_8));
+    } catch (IOException e) {
+      Logger.error(e);
+      text = null;
+    }
+    
+    // Verify we read the file contents OK
+    if (text != null) {
+      // Copy the file text to the clipboard
+      final Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+      clpbrd.setContents(text, null);
+    }
   }
   
   
@@ -1287,7 +1327,7 @@ public final class LineConsole
         "list dbtypes", "set dbtype <id> jar <filename>", "import db query <query>",
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
-        "export csv <filename>", "export json <filename>",
+        "export csv <filename>", "export json <filename>", "pbcopy <filename>",
         "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "print session", "reset session", "run [count]", "import db file <filename>",
