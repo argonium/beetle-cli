@@ -188,6 +188,7 @@ public abstract class DBFileWriter
     
     switch (nClassType) {
       case Types.BOOLEAN:
+      case Types.BIT:
         return Boolean.class;
       
       case Types.TIME_WITH_TIMEZONE:
@@ -197,7 +198,6 @@ public abstract class DBFileWriter
       case Types.TIMESTAMP:
         return java.util.Date.class;
       
-      case Types.BIT:
       case Types.TINYINT:
       case Types.SMALLINT:
       case Types.INTEGER:
