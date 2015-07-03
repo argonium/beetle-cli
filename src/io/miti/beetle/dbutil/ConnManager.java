@@ -1,10 +1,13 @@
 package io.miti.beetle.dbutil;
 
-import io.miti.beetle.app.Beetle;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.util.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -18,7 +21,8 @@ import java.util.Set;
 
 public final class ConnManager
 {
-  // private static final String FILENAME = "connhistory.txt";
+  /** Parameters of the method to add an URL to the System classes. */
+  private static final Class<?>[] parameters = new Class[]{URL.class};
 
   private static final ConnManager mgr = new ConnManager();
 
@@ -310,12 +314,23 @@ public final class ConnManager
       // Add the JAR file to the classpath
       final URL fileUrl = jar.toURI().toURL();
       Logger.debug("Loading the JAR URL " + fileUrl.toString());
-      final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, this.getClass().getClassLoader());
+      try {
+        addURL(fileUrl);
+      } catch (IOException e) {
+        Logger.error(e);
+      }
+      // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, this.getClass().getClassLoader());
       // final URLClassLoader loader = new URLClassLoader(new URL[] {fileUrl}, this.getClass().getClassLoader());
       // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
       
       // Load the class
-      Class.forName(dbType.getDriver(), true, loader);
+      // Class.forName(dbType.getDriver(), true, loader);
+      try {
+        Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(dbType.getDriver()).getConstructor(String.class);
+        cs.newInstance();
+      } catch (Exception exc) {
+        Logger.error(exc);
+      }
       
       Logger.debug("JAR added and class loaded");
       
@@ -325,12 +340,25 @@ public final class ConnManager
       // Store the loaded class as being loaded in the classpath
       // TODO Only do this if the class was successfully loaded
       loadedClasses.add(dbType.getDriver());
-    } catch (ClassNotFoundException e) {
-      Logger.error("Error loading class " + dbType.getDriver() + ": " + e.getMessage());
+//    } catch (ClassNotFoundException e) {
+//      Logger.error("Error loading class " + dbType.getDriver() + ": " + e.getMessage());
     } catch (MalformedURLException mue) {
       Logger.error("Malformed URL exception loading class " + dbType.getDriver() + ": " + mue.getMessage());
     }
     
     return result;
+  }
+  
+  private static void addURL(final URL u) throws IOException {
+    URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    Class<?> sysclass = URLClassLoader.class;
+    try {
+        Method method = sysclass.getDeclaredMethod("addURL", parameters);
+        method.setAccessible(true);
+        method.invoke(sysloader,new Object[]{ u }); 
+    } catch (Throwable t) {
+        t.printStackTrace();
+        throw new IOException("Error, could not add URL to system classloader");
+    }        
   }
 }
