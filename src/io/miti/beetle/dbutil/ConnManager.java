@@ -324,13 +324,18 @@ public final class ConnManager
       // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
       
       // Load the class
-      // Class.forName(dbType.getDriver(), true, loader);
       try {
-        Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(dbType.getDriver()).getConstructor(String.class);
-        cs.newInstance();
-      } catch (Exception exc) {
-        Logger.error(exc);
+        Class.forName(dbType.getDriver(), true, ClassLoader.getSystemClassLoader());
+      } catch (ClassNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
+//      try {
+//        Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(dbType.getDriver()).getConstructor(String.class);
+//        cs.newInstance();
+//      } catch (Exception exc) {
+//        Logger.error(exc);
+//      }
       
       Logger.debug("JAR added and class loaded");
       
