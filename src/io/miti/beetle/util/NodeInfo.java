@@ -29,4 +29,9 @@ public final class NodeInfo
   public void setClazz(Class<?> clazz) {
     this.clazz = clazz;
   }
+
+  @Override
+  public String toString() {
+    return "Name=" + name + ", clazz=" + clazz;
+  }
 }
