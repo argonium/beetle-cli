@@ -298,6 +298,7 @@ public final class ConnManager
     boolean result = false;
     try {
       // Add the JAR file to the classpath
+      Logger.debug("Adding JAR file to classpath: " + jar.getAbsolutePath());
       URLClassLoader loader = URLClassLoader.newInstance(new URL[] {jar.toURI().toURL()});
       
       // Load the class
