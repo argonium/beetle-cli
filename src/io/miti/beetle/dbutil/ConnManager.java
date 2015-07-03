@@ -310,12 +310,14 @@ public final class ConnManager
       // Add the JAR file to the classpath
       final URL fileUrl = jar.toURI().toURL();
       Logger.debug("Loading the JAR URL " + fileUrl.toString());
-      // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl});
+      final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, this.getClass().getClassLoader());
       // final URLClassLoader loader = new URLClassLoader(new URL[] {fileUrl}, this.getClass().getClassLoader());
-      final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
+      // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
       
       // Load the class
       Class.forName(dbType.getDriver(), true, loader);
+      
+      Logger.debug("JAR added and class loaded");
       
       // If we reach here, the result is true
       result = true;
