@@ -1,5 +1,6 @@
 package io.miti.beetle.dbutil;
 
+import io.miti.beetle.app.Beetle;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.util.Logger;
 
@@ -302,10 +303,16 @@ public final class ConnManager
       Logger.debug("Adding JAR file to classpath: " + jar.getAbsolutePath());
       Logger.debug("Expecting to find class " + dbType.getDriver());
       
+      // TODO This doesn't work, either adding the JAR or loading the class.
+      // Inputs: Name of JAR file, and name of class to load.
+      // Output: JAR added to classpath, and class loaded.
+      
       // Add the JAR file to the classpath
       final URL fileUrl = jar.toURI().toURL();
+      Logger.debug("Loading the JAR URL " + fileUrl.toString());
       // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl});
-      final URLClassLoader loader = new URLClassLoader(new URL[] {fileUrl}, this.getClass().getClassLoader());
+      // final URLClassLoader loader = new URLClassLoader(new URL[] {fileUrl}, this.getClass().getClassLoader());
+      final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
       
       // Load the class
       Class.forName(dbType.getDriver(), true, loader);
