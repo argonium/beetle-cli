@@ -174,6 +174,7 @@ public abstract class DBFileWriter
       }
     } catch (SQLException se) {
       Logger.error(se);
+      Logger.error("* Retrieving column #" + index);
     }
     
     return "";
