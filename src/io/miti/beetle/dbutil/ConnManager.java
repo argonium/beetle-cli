@@ -117,9 +117,6 @@ public final class ConnManager
       }
 
       conn = null;
-      url = null;
-      user = null;
-      pw = null;
     }
   }
 
