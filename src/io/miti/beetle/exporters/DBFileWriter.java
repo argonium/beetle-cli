@@ -133,6 +133,9 @@ public abstract class DBFileWriter
         // Save the node data
         final NodeInfo node = new NodeInfo(name, clazz);
         nodes.add(node);
+        
+        // Log the info
+        Logger.debug("Node #" + i + ": " + node.toString());
       } catch (SQLException e) {
         Logger.error("Error getting metadata column info: " + e.getMessage());
       }
