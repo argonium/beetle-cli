@@ -1120,13 +1120,16 @@ public final class LineConsole
       if (!file.exists()) {
         System.out.println("The JAR file could not be found");
       } else if (!file.isFile()) {
-        System.out
-            .println("The specified directory cannot be added to the class path");
+        System.out.println("The specified directory cannot be added to the class path");
       } else {
         // Add the jar to the class path
         try {
-          URL urlJar = file.toURI().toURL();
-          URLClassLoader.newInstance(new URL[] { urlJar });
+          final URL urlJar = file.toURI().toURL();
+          try {
+            ConnManager.addURL(urlJar);
+          } catch (IOException e) {
+            Logger.error(e);
+          }
           System.out.println("Successful");
         } catch (MalformedURLException e) {
           System.out.println("Exception: " + e.getMessage());

@@ -5,8 +5,6 @@ import io.miti.beetle.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -224,7 +222,6 @@ public final class ConnManager
     }
 
     try {
-      Logger.debug("Full URL is " + url);
       final UrlInfo urlInfo = UrlInfo.createFromString(url);
       Logger.debug("Connecting to URL " + urlInfo.url);
       
@@ -305,48 +302,38 @@ public final class ConnManager
     try {
       // Print some debug information
       Logger.debug("Adding JAR file to classpath: " + jar.getAbsolutePath());
-      Logger.debug("Expecting to find class " + dbType.getDriver());
-      
-      // TODO This doesn't work, either adding the JAR or loading the class.
-      // Inputs: Name of JAR file, and name of class to load.
-      // Output: JAR added to classpath, and class loaded.
       
       // Add the JAR file to the classpath
       final URL fileUrl = jar.toURI().toURL();
       Logger.debug("Loading the JAR URL " + fileUrl.toString());
       try {
         addURL(fileUrl);
+        result = true;
       } catch (IOException e) {
+        result = false;
         Logger.error(e);
       }
-      // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, this.getClass().getClassLoader());
-      // final URLClassLoader loader = new URLClassLoader(new URL[] {fileUrl}, this.getClass().getClassLoader());
-      // final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl}, Beetle.class.getClassLoader());
       
       // Load the class
-      try {
-        Class.forName(dbType.getDriver(), true, ClassLoader.getSystemClassLoader());
-      } catch (ClassNotFoundException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      if (result) {
+        try {
+          Logger.debug("Loading class " + dbType.getDriver());
+          Class.forName(dbType.getDriver(), true, ClassLoader.getSystemClassLoader());
+          
+          // If we reach here, the result is true
+          result = true;
+          
+          Logger.debug("JAR added and class loaded");
+        } catch (ClassNotFoundException e) {
+          result = false;
+          Logger.error(e);
+        }
       }
-//      try {
-//        Constructor<?> cs = ClassLoader.getSystemClassLoader().loadClass(dbType.getDriver()).getConstructor(String.class);
-//        cs.newInstance();
-//      } catch (Exception exc) {
-//        Logger.error(exc);
-//      }
-      
-      Logger.debug("JAR added and class loaded");
-      
-      // If we reach here, the result is true
-      result = true;
       
       // Store the loaded class as being loaded in the classpath
-      // TODO Only do this if the class was successfully loaded
-      loadedClasses.add(dbType.getDriver());
-//    } catch (ClassNotFoundException e) {
-//      Logger.error("Error loading class " + dbType.getDriver() + ": " + e.getMessage());
+      if (result) {
+        loadedClasses.add(dbType.getDriver());
+      }
     } catch (MalformedURLException mue) {
       Logger.error("Malformed URL exception loading class " + dbType.getDriver() + ": " + mue.getMessage());
     }
@@ -354,15 +341,22 @@ public final class ConnManager
     return result;
   }
   
-  private static void addURL(final URL u) throws IOException {
-    URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
-    Class<?> sysclass = URLClassLoader.class;
+  
+  /**
+   * Add the JAR file's URL to the classpath.
+   * 
+   * @param u the JAR URL to add
+   * @throws IOException on error
+   */
+  public static void addURL(final URL u) throws IOException {
+    final URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
+    final Class<?> sysclass = URLClassLoader.class;
     try {
         Method method = sysclass.getDeclaredMethod("addURL", parameters);
         method.setAccessible(true);
         method.invoke(sysloader,new Object[]{ u }); 
-    } catch (Throwable t) {
-        t.printStackTrace();
+    } catch (Exception e) {
+        Logger.error(e);
         throw new IOException("Error, could not add URL to system classloader");
     }        
   }
