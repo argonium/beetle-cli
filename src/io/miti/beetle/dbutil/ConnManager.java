@@ -263,6 +263,12 @@ public final class ConnManager
   }
 
 
+  /**
+   * Add a JAR file to the class path and load the driver class.
+   * 
+   * @param dbType the type of database
+   * @return the success flag
+   */
   public boolean addDriverClass(final DbType dbType) {
     if (dbType == null) {
       Logger.error("No DB type found for the selected database");
@@ -277,6 +283,7 @@ public final class ConnManager
     
     // See if we've already loaded this class
     if (loadedClasses.contains(dbType.getDriver())) {
+      Logger.debug("Skipping the driver class since it's already loaded");
       return true;
     }
     
