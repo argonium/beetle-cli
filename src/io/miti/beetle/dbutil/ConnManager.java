@@ -297,9 +297,13 @@ public final class ConnManager
     // Load the class
     boolean result = false;
     try {
-      // Add the JAR file to the classpath
+      // Print some debug information
       Logger.debug("Adding JAR file to classpath: " + jar.getAbsolutePath());
-      URLClassLoader loader = URLClassLoader.newInstance(new URL[] {jar.toURI().toURL()});
+      Logger.debug("Expecting to find class " + dbType.getDriver());
+      
+      // Add the JAR file to the classpath
+      final URL fileUrl = jar.toURI().toURL();
+      final URLClassLoader loader = URLClassLoader.newInstance(new URL[] {fileUrl});
       
       // Load the class
       Class.forName(dbType.getDriver(), true, loader);
@@ -308,6 +312,7 @@ public final class ConnManager
       result = true;
       
       // Store the loaded class as being loaded in the classpath
+      // TODO Only do this if the class was successfully loaded
       loadedClasses.add(dbType.getDriver());
     } catch (ClassNotFoundException e) {
       Logger.error("Error loading class " + dbType.getDriver() + ": " + e.getMessage());
