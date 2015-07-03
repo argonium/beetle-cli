@@ -17,6 +17,8 @@ import java.util.Set;
 
 public final class Database
 {
+  private static boolean useUserNameForSchema = false;
+  
   /**
    * Default constructor. Private.
    */
@@ -225,7 +227,7 @@ public final class Database
       // Specify the type of object; in this case we want tables
       String[] types = { "TABLE" };
       ResultSet resultSet = dbmd.getTables(conn.getCatalog(),
-          tPattern, tPattern, types);
+          getSchemaName(dbmd), tPattern, types);
 
       // Get the table names
       while (resultSet.next()) {
@@ -326,7 +328,7 @@ public final class Database
       DatabaseMetaData dbmd = conn.getMetaData();
 
       // Get the table info
-      ResultSet rs = dbmd.getColumns(conn.getCatalog(), null,
+      ResultSet rs = dbmd.getColumns(conn.getCatalog(), getSchemaName(dbmd),
           table.toUpperCase(), null);
 
       // Iterate over all column info for the table
@@ -409,7 +411,7 @@ public final class Database
       DatabaseMetaData dbmd = conn.getMetaData();
 
       // Get the primary key column names
-      ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), null,
+      ResultSet rs = dbmd.getPrimaryKeys(conn.getCatalog(), getSchemaName(dbmd),
           table);
 
       // Iterate over all column info for the table
@@ -541,5 +543,17 @@ public final class Database
     }
 
     return schemas;
+  }
+  
+  private static String getSchemaName(final DatabaseMetaData dbmd) throws SQLException {
+    return (useUserNameForSchema ? dbmd.getUserName() : null);
+  }
+  
+  public static void useUserNameForSchema(final boolean bUseUserNameForSchema) {
+    useUserNameForSchema = bUseUserNameForSchema;
+  }
+  
+  public static boolean useUserNameForSchema() {
+    return useUserNameForSchema;
   }
 }

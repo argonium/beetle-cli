@@ -224,6 +224,12 @@ public final class LineConsole
       deleteUserDatabase(cmds.get(2));
     } else if (validateCommand(cmds, 3, "connect", "userdb")) {
       connectUserDatabase(cmds.get(2));
+    } else if (validateCommand(cmds, 2, "meta", "username")) {
+      System.out.println("Using the username for database metadata schema name? " + Database.useUserNameForSchema());
+    } else if (validateCommand(cmds, 3, "meta", "username", "on")) {
+      Database.useUserNameForSchema(true);
+    } else if (validateCommand(cmds, 3, "meta", "username", "off")) {
+      Database.useUserNameForSchema(false);
     } else if (validateCommand(cmds, 4, "import", "db", "table")) {
       importUserTable(cmds.get(3));
     } else if (validateCommand(cmds, 4, "import", "db", "query")) {
@@ -1326,6 +1332,7 @@ public final class LineConsole
         "cat <file>", "head <file>", "dir [<path>]", "list userdbs",
         "list dbtypes", "set dbtype <id> jar <filename>", "import db query <query>",
         "clear dbtype <id> jar", "add userdb <name> <url> <user>",
+        "meta username", "meta username on", "meta username off",
         "delete userdb <id>", "connect userdb <id>", "import db table <name>",
         "export csv <filename>", "export json <filename>", "pbcopy <filename>",
         "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
