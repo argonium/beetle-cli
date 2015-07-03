@@ -222,7 +222,10 @@ public final class ConnManager
     }
 
     try {
-      UrlInfo urlInfo = UrlInfo.createFromString(url);
+      Logger.debug("Full URL is " + url);
+      final UrlInfo urlInfo = UrlInfo.createFromString(url);
+      Logger.debug("Connecting to URL " + urlInfo.url);
+      
       conn = DriverManager.getConnection(urlInfo.url, user, pw);
       if (conn == null) {
         System.err.println("Error: The generated connection is null");
@@ -240,7 +243,8 @@ public final class ConnManager
     if ((schema == null) || schema.trim().isEmpty()) {
       return;
     }
-
+    
+    Logger.debug("Connecting to schema " + schema);
     Statement statement = null;
     try {
       statement = conn.createStatement();

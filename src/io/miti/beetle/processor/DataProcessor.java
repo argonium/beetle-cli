@@ -122,6 +122,7 @@ public final class DataProcessor
     ConnManager.get().addDriverClass(dbType);
     
     // Open a connection to the database
+    Logger.debug("Initializing the database " + userDb.getUrl());
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
