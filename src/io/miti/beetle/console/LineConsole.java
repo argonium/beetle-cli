@@ -326,6 +326,9 @@ public final class LineConsole
       return;
     }
     
+    // Set the name of the output file
+    final String outfname = "group-" + file.getName();
+    
     // Get the list of keys (0-based)
     final int keys[] = parseKeyList(keyList);
     if (keys == null) {
@@ -333,7 +336,7 @@ public final class LineConsole
       return;
     }
     
-    // TODO Call a method to group the data
+    // TODO Call a method to group the data.  Will need a CSV parser.
   }
   
   
