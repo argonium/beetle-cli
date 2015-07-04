@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import io.miti.beetle.app.ArgumentParser;
 import io.miti.beetle.cache.DBTypeCache;
@@ -272,6 +272,8 @@ public final class LineConsole
       describeTable(cmds.get(2));
     } else if (validateCommand(cmds, 2, "list", "tables")) {
       printTables();
+    } else if (validateCommand(cmds, 3, "csvgroup")) {
+      groupCSVFile(cmds.get(1), cmds.get(2));
     } else if (line.equals("dir")) {
       printDirPath(".", false);
     } else if (validateCommand(cmds, 2, "dir")) {
@@ -307,6 +309,80 @@ public final class LineConsole
   }
   
   
+  /**
+   * Group the data in a CSV file.
+   * 
+   * @param fname the name of the input file
+   * @param keyList the list of key field IDs (1-based)
+   */
+  private void groupCSVFile(final String fname, final String keyList) {
+    // Get the input file
+    final File file = new File(fname);
+    if (!file.exists()) {
+      System.out.println("Input file not found");
+      return;
+    } else if (file.isDirectory()) {
+      System.out.println("Input must be a file, not a directory");
+      return;
+    }
+    
+    // Get the list of keys (0-based)
+    final int keys[] = parseKeyList(keyList);
+    if (keys == null) {
+      System.out.println("Invalid key list");
+      return;
+    }
+    
+    // TODO Call a method to group the data
+  }
+  
+  
+  /**
+   * Parse a string into a list of integers, changing from 1-based
+   * to 0-based.
+   * 
+   * @param keyList a list of IDs (e.g., "1,2,5")
+   * @return the IDs as an array
+   */
+  private int[] parseKeyList(final String keyList) {
+    
+    // Parse the list
+    List<Integer> list = new ArrayList<Integer>(5);
+    StringTokenizer st = new StringTokenizer(keyList, ",");
+    boolean result = true;
+    while (st.hasMoreTokens()) {
+      String token = st.nextToken();
+      final int val = Utility.getStringAsInteger(token, -1, -1);
+      if ((val < 1) || (val > 100)) {
+        result = false;
+        break;
+      }
+      list.add(Integer.valueOf(val));
+    }
+    
+    // Check for an error
+    if (!result) {
+      return null;
+    }
+    
+    // Convert the list to an array
+    Logger.debug("Found " + list.size() + " key IDs");
+    final int keys[] = new int[list.size()];
+    int index = 0;
+    for (Integer key : list) {
+      keys[index++] = key.intValue() - 1;
+    }
+    
+    // Debugging
+    final int len = keys.length;
+    for (int i = 0; i < len; ++i) {
+      Logger.debug("Key[" + i + "] = " + keys[i]);
+    }
+    
+    return keys;
+  }
+
+
   private void pbCopy(final String fname) {
     // Verify the file exists
     final File file = new File(fname);
@@ -1343,7 +1419,8 @@ public final class LineConsole
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
-        "help <start of a command>", "jar <filename>" };
+        "help <start of a command>", "jar <filename>",
+        "csvgroup <filename> <list of key field IDs>" };
     
     // Deprecated
     // "count tables", "export data <table name> [<where-clause>]", "dbinfo", "list schemas", 
