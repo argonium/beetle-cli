@@ -30,6 +30,7 @@ import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
+import io.miti.beetle.processor.CSVJoiner;
 import io.miti.beetle.processor.DataProcessor;
 import io.miti.beetle.util.Content;
 import io.miti.beetle.util.FakeNode;
@@ -328,6 +329,7 @@ public final class LineConsole
     
     // Set the name of the output file
     final String outfname = "group-" + file.getName();
+    final File outputFile = new File(outfname);
     
     // Get the list of keys (0-based)
     final int keys[] = parseKeyList(keyList);
@@ -336,7 +338,8 @@ public final class LineConsole
       return;
     }
     
-    // TODO Call a method to group the data.  Will need a CSV parser.
+    // Call a method to group the data
+    new CSVJoiner().join(file, outputFile, keys);
   }
   
   
