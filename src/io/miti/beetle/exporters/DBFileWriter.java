@@ -76,6 +76,18 @@ public abstract class DBFileWriter
   }
   
   
+  /**
+   * Simple constructor to handle just having a filename.
+   * 
+   * @param sFilename the name of the output file
+   */
+  public DBFileWriter(final String sFilename) {
+    init(sFilename);
+    fileData = null;
+    nodes = null;
+  }
+  
+  
   private void init(final String sFilename) {
     sb = new StringBuilder(100);
     file = new File(sFilename);

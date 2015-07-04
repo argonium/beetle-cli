@@ -18,20 +18,26 @@ public class CsvDBFileWriter extends DBFileWriter
   public CsvDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
     super(sFilename, sData, spec);
   }
+  
+  public CsvDBFileWriter(final String sFilename) {
+    super(sFilename);
+  }
 
 
   @Override
   public void writeHeader() {
     // Write the row of column names
-    try {
-      final int colCount = nodes.size();
-      sb.append(nodes.get(0).getName());
-      for (int i = 1; i < colCount; ++i) {
-        sb.append(',').append(nodes.get(i).getName());
+    if (nodes != null) {
+      try {
+        final int colCount = nodes.size();
+        sb.append(nodes.get(0).getName());
+        for (int i = 1; i < colCount; ++i) {
+          sb.append(',').append(nodes.get(i).getName());
+        }
+        sb.append(EOL);
+      } catch (Exception ex) {
+        System.err.println("Exception writing CSV header: " + ex.getMessage());
       }
-      sb.append(EOL);
-    } catch (Exception ex) {
-      System.err.println("Exception writing CSV header: " + ex.getMessage());
     }
     
     writeString();
@@ -83,6 +89,33 @@ public class CsvDBFileWriter extends DBFileWriter
       
       // Add a comma if we have more data to write
       if (i < (nodeCount - 1)) {
+        sb.append(",");
+      }
+      
+      writeString();
+    }
+    
+    sb.append(EOL);
+  }
+  
+  
+  /**
+   * Simple method to write out a list of strings.
+   * 
+   * @param items the list of values
+   */
+  public void writeObject(final List<String> items) {
+    
+    // Iterate over the data
+    final int count = items.size();
+    for (int i = 0; i < count; ++i) {
+      final String item = items.get(i);
+      
+      // Write out the value
+      sb.append(outputValue(item, String.class));
+      
+      // Add a comma if we have more data to write
+      if (i < (count - 1)) {
         sb.append(",");
       }
       
