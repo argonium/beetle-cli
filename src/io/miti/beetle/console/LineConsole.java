@@ -340,6 +340,7 @@ public final class LineConsole
     
     // Call a method to group the data
     new CSVJoiner().join(file, outputFile, keys);
+    System.out.println("Output written to " + outfname);
   }
   
   
