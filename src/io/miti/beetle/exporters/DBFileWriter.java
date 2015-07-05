@@ -114,6 +114,11 @@ public abstract class DBFileWriter
   }
   
   
+  public void addEOL() {
+    sb.append(EOL);
+  }
+  
+  
   private void initializeNodeList(final ResultSetMetaData pRSMD) {
     // Check if the metadata has results
     if (pRSMD == null) {

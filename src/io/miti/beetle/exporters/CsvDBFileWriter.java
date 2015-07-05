@@ -126,6 +126,12 @@ public class CsvDBFileWriter extends DBFileWriter
   }
   
   
+  public void writeString(final String str) {
+    sb.append(str);
+    writeString();
+  }
+  
+  
   private String outputValue(final Object obj, final Class<?> clazz) {
     // Handle the different values
     if (obj == null) {
@@ -157,7 +163,7 @@ public class CsvDBFileWriter extends DBFileWriter
    * @param str the input string
    * @return the quoted string
    */
-  private static String quoteString(final String str)
+  public static String quoteString(final String str)
   {
     // Check the input
     if (str == null)
