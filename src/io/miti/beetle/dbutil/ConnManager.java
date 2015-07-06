@@ -14,7 +14,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 public final class ConnManager
@@ -30,34 +29,48 @@ public final class ConnManager
   
   private Set<String> loadedClasses = new HashSet<String>(10);
 
-  private Set<String> history = new java.util.LinkedHashSet<String>(5);
-
   private Connection conn = null;
-
-
+  
+  
+  /**
+   * Default constructor.
+   */
   private ConnManager() {
-    // loadHistory();
+    super();
   }
-
-
+  
+  
+  /**
+   * Get the single instance of this class.
+   * 
+   * @return the single instance of this class
+   */
   public static ConnManager get() {
     return mgr;
   }
-
-
+  
+  
+  /**
+   * Initialize with a URL.
+   * 
+   * @param sUrl the JDBC URL
+   */
   public void init(final String sUrl) {
     url = sUrl;
   }
-
-
+  
+  
+  /**
+   * Initialize with a JDBC URL, user name and password.
+   * 
+   * @param sUrl the JDBC URL
+   * @param sUser the user name
+   * @param sPass the password
+   */
   public void init(final String sUrl, final String sUser, final String sPass) {
     url = sUrl;
     user = sUser;
     pw = sPass;
-
-    if (url != null) {
-      addToHistory();
-    }
   }
 
 
@@ -79,8 +92,13 @@ public final class ConnManager
   public void setPassword(final String sPass) {
     pw = sPass;
   }
-
-
+  
+  
+  /**
+   * If the connection is null, attempt to connect now.
+   * 
+   * @return the connection
+   */
   public Connection getConn() {
     if (conn == null) {
       initConnection();
@@ -88,13 +106,24 @@ public final class ConnManager
 
     return conn;
   }
-
-
+  
+  
+  /**
+   * Return whether the connection is not null.
+   * 
+   * @return if the connection is not null
+   */
   public boolean isValid() {
     return (conn != null);
   }
-
-
+  
+  
+  /**
+   * Whether whether the connection is not null and valid for the timeout.
+   * 
+   * @param timeout the time (in seconds) to wait for the connection to be valid
+   * @return whether the connection is valid for the timeout
+   */
   public boolean isValid(final int timeout) {
     if (conn == null) {
       return false;
@@ -109,8 +138,11 @@ public final class ConnManager
 
     return timed;
   }
-
-
+  
+  
+  /**
+   * If the connection is not null, close it and null it out.
+   */
   public void close() {
     if (conn != null) {
       try {
@@ -124,98 +156,21 @@ public final class ConnManager
   }
 
 
-  public boolean isNull() {
-    return (conn == null);
-  }
-
-
+  /**
+   * Close the connection (if open), and then connect.
+   * 
+   * @return whether the connection is not null
+   */
   public boolean create() {
     close();
     initConnection();
     return (conn != null);
   }
-
-
-  private void addToHistory() {
-
-    // Save the new URL
-    history.add(url);
-
-    // Update the file
-    // writeHistoryFile();
-  }
-
-
-//  private void writeHistoryFile() {
-//
-//    if ((history == null) || history.isEmpty()) {
-//      return;
-//    }
-//
-//    final File file = new File(FILENAME);
-//    if (file.exists() && file.isDirectory()) {
-//      return;
-//    }
-//
-//    if (file.exists()) {
-//      file.delete();
-//    }
-//
-//    List<String> names = new ArrayList<String>(history.size());
-//    for (String item : history) {
-//      names.add(item);
-//    }
-//    Collections.sort(names);
-//
-//    try {
-//      PrintWriter writer = new PrintWriter(file, "UTF-8");
-//      for (String name : names) {
-//        writer.println(name);
-//      }
-//      writer.close();
-//    } catch (FileNotFoundException e) {
-//      e.printStackTrace();
-//    } catch (UnsupportedEncodingException e) {
-//      e.printStackTrace();
-//    }
-//  }
-
-
-  public Iterator<String> getHistory() {
-    return history.iterator();
-  }
-
-
-  public boolean hasHistory() {
-    return (!history.isEmpty());
-  }
-
-
-//  private void loadHistory() {
-//    File file = new File(FILENAME);
-//    if (!file.exists() || file.isDirectory()) {
-//      return;
-//    }
-//
-//    try {
-//      BufferedReader in = new BufferedReader(new InputStreamReader(
-//          new FileInputStream(file), StandardCharsets.UTF_8));
-//      String line = null;
-//      while ((line = in.readLine()) != null) {
-//        if (!line.startsWith("#")) {
-//          history.add(line);
-//        }
-//      }
-//
-//      in.close();
-//    } catch (FileNotFoundException e) {
-//      e.printStackTrace();
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
-//  }
-
-
+  
+  
+  /**
+   * If the connect is not null, connect now.
+   */
   private void initConnection() {
     if (conn != null) {
       return;
@@ -236,9 +191,16 @@ public final class ConnManager
       System.err.println("Exception in connection: " + e.getMessage());
     }
   }
-
-
-  public static boolean connectToSchema(String schema, final Connection conn) {
+  
+  
+  /**
+   * Connect to a specific schema.
+   * 
+   * @param schema schema name
+   * @param conn the connection
+   * @return success flag
+   */
+  public static boolean connectToSchema(final String schema, final Connection conn) {
     if ((schema == null) || schema.trim().isEmpty()) {
       return true;
     }

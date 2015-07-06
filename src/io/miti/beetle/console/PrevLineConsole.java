@@ -252,17 +252,17 @@ public final class PrevLineConsole
 
 
   private void printDBInfo() {
-    if (ConnManager.get().isNull()) {
-      System.out.println("You are not connected to a database");
-      return;
-    }
-
-    final String url = ConnManager.get().getUrl();
-    final boolean isValid = ConnManager.get().isValid(3);
-    System.out.println("You are connected to " + url);
-    if (!isValid) {
-      System.out.println("The connection is no longer valid");
-    }
+//    if (ConnManager.get().isNull()) {
+//      System.out.println("You are not connected to a database");
+//      return;
+//    }
+//
+//    final String url = ConnManager.get().getUrl();
+//    final boolean isValid = ConnManager.get().isValid(3);
+//    System.out.println("You are connected to " + url);
+//    if (!isValid) {
+//      System.out.println("The connection is no longer valid");
+//    }
   }
 
 
@@ -532,40 +532,40 @@ public final class PrevLineConsole
 
 
   private void selectConnection(final ConsoleReader console) {
-    if (!ConnManager.get().hasHistory()) {
-      System.out.println("No connection history found");
-    } else {
-      // Print the list
-      List<String> history = new ArrayList<String>(10);
-      int i = 0;
-      Iterator<String> iter = ConnManager.get().getHistory();
-      while (iter.hasNext()) {
-        String name = iter.next();
-        String msg = String.format("#%d - %s", (i + 1), name);
-        System.out.println(msg);
-        history.add(name);
-        ++i;
-      }
-
-      // Let the user select a connection
-      final int selection = getSelection(console);
-      if ((selection < 1) || (selection > history.size())) {
-        System.out.println("Illegal selection");
-      } else {
-        // Get the selected URL
-        final String url = history.get(selection - 1);
-        System.out.println("Selected " + url);
-
-        // Try to put this in the console buffer
-        // final String buffer = "connect " + url;
-
-        // Open a connection
-        List<String> cmds = new ArrayList<String>(2);
-        cmds.add("");
-        cmds.add(url);
-        connect(cmds, console);
-      }
-    }
+//    if (!ConnManager.get().hasHistory()) {
+//      System.out.println("No connection history found");
+//    } else {
+//      // Print the list
+//      List<String> history = new ArrayList<String>(10);
+//      int i = 0;
+//      Iterator<String> iter = ConnManager.get().getHistory();
+//      while (iter.hasNext()) {
+//        String name = iter.next();
+//        String msg = String.format("#%d - %s", (i + 1), name);
+//        System.out.println(msg);
+//        history.add(name);
+//        ++i;
+//      }
+//
+//      // Let the user select a connection
+//      final int selection = getSelection(console);
+//      if ((selection < 1) || (selection > history.size())) {
+//        System.out.println("Illegal selection");
+//      } else {
+//        // Get the selected URL
+//        final String url = history.get(selection - 1);
+//        System.out.println("Selected " + url);
+//
+//        // Try to put this in the console buffer
+//        // final String buffer = "connect " + url;
+//
+//        // Open a connection
+//        List<String> cmds = new ArrayList<String>(2);
+//        cmds.add("");
+//        cmds.add(url);
+//        connect(cmds, console);
+//      }
+//    }
   }
 
 
@@ -623,14 +623,14 @@ public final class PrevLineConsole
 
 
   private void printConnectionHistory() {
-    Iterator<String> history = ConnManager.get().getHistory();
-    if (!history.hasNext()) {
-      System.out.println("No connection history found");
-    } else {
-      while (history.hasNext()) {
-        System.out.println(history.next());
-      }
-    }
+//    Iterator<String> history = ConnManager.get().getHistory();
+//    if (!history.hasNext()) {
+//      System.out.println("No connection history found");
+//    } else {
+//      while (history.hasNext()) {
+//        System.out.println(history.next());
+//      }
+//    }
   }
 
 
