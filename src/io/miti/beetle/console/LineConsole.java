@@ -263,6 +263,8 @@ public final class LineConsole
       printSession();
     } else if (validateCommand(cmds, 2, "reset", "session")) {
       resetSession();
+    } else if (validateCommand(cmds, 3, "select", "schema")) {
+      selectSchema(cmds.get(2));
     } else if (line.equals("run")) {
       runSession();
     } else if (validateCommand(cmds, 2, "run")) {
@@ -308,6 +310,43 @@ public final class LineConsole
   }
   
   
+  /**
+   * Select a specific schema.
+   * 
+   * @param schema the schema name
+   */
+  private void selectSchema(final String schema) {
+    
+    // Find the user DB with the specified ID
+    final UserDb userDb = UserDBCache.get().find(session.getSourceId());
+    if (userDb == null) {
+      Logger.error("Error: Invalid database ID in the session");
+      return;
+    }
+    
+    // Make sure the JDBC DB's driver class is loaded
+    final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
+    ConnManager.get().addDriverClass(dbType);
+    
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // Check the DB connection
+    if (!ConnManager.get().isValid()) {
+      System.out.println("No database connection found");
+    } else {
+      boolean rc = ConnManager.connectToSchema(schema, ConnManager.get().getConn());
+      if (!rc) {
+        Logger.error("Unable to connect to schema");
+      }
+    }
+  }
+
+
   /**
    * Group the data in a CSV file.
    * 
@@ -1208,7 +1247,8 @@ public final class LineConsole
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
         "help <start of a command>", "jar <filename>", "list schemas",
-        "csvgroup <filename> <list of key field IDs>", "count tables" };
+        "csvgroup <filename> <list of key field IDs>", "count tables",
+        "select schema <schema name>" };
     
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
