@@ -329,6 +329,7 @@ public final class LineConsole
     ConnManager.get().addDriverClass(dbType);
     
     // Open a connection to the database
+    // TODO Verify this doesn't break anything.  Change create() to getConn()?
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
