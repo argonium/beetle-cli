@@ -238,25 +238,29 @@ public final class ConnManager
   }
 
 
-  private static void connectToSchema(String schema, final Connection conn) {
+  public static boolean connectToSchema(String schema, final Connection conn) {
     if ((schema == null) || schema.trim().isEmpty()) {
-      return;
+      return true;
     }
     
     Logger.debug("Connecting to schema " + schema);
     Statement statement = null;
+    boolean result = false;
     try {
       statement = conn.createStatement();
       statement.execute("set search_path to '" + schema + "'");
+      result = true;
     } catch (SQLException ex) {
-      ex.printStackTrace();
+      Logger.error(ex);
     } finally {
       try {
         statement.close();
       } catch (SQLException e) {
-        e.printStackTrace();
+        Logger.error(e);
       }
     }
+    
+    return result;
   }
 
 
