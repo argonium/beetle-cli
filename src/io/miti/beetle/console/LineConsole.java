@@ -285,16 +285,14 @@ public final class LineConsole
       printTime();
     } else if (line.startsWith("time ")) {
       timeCommand(line.substring(5), console);
-//    } else if (validateCommand(cmds, 2, "count", "tables")) {
-//      countTables();
+    } else if (validateCommand(cmds, 2, "count", "tables")) {
+      countTables();
 //    } else if (validateCommand(cmds, 3, "count", "rows")) {
 //      countTableRows(cmds.get(2));
     } else if (line.equals("gc")) {
       gc();
     } else if (line.equals("mem")) {
       mem();
-//    } else if (line.equals("dbinfo")) {
-//      printDBInfo();
     } else if (validateCommand(cmds, 2, "cat")) {
       catFile(cmds.get(1));
     } else if (validateCommand(cmds, 2, "head")) {
@@ -945,6 +943,47 @@ public final class LineConsole
 
 
   /**
+   * Print the number of database tables.
+   */
+  private void countTables() {
+
+    // Check the database connection
+    if (session.getSourceId() < 0) {
+      System.out.println("No database connection found");
+      return;
+    }
+    
+    // Find the user DB with the specified ID
+    final UserDb userDb = UserDBCache.get().find(session.getSourceId());
+    if (userDb == null) {
+      Logger.error("Error: Invalid database ID in the session");
+      return;
+    }
+    
+    // Make sure the JDBC DB's driver class is loaded
+    final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
+    ConnManager.get().addDriverClass(dbType);
+    
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // Get the list of tables in the session schema
+    final List<String> tables = Database.getTableNames(null);
+    if (tables == null) {
+      System.out.println("No tables were found (list is null)");
+    } else if (tables.size() < 1) {
+      System.out.println("No tables were found");
+    } else {
+      System.out.println("Number of database tables: " + tables.size());
+    }
+  }
+
+
+  /**
    * Print the list of schemas.
    */
   private void printSchemas() {
@@ -1020,59 +1059,6 @@ public final class LineConsole
   private void ver() {
     System.out.println(ArgumentParser.VER_ROOT_STR);
   }
-
-
-//  private void connect(final List<String> cmds, final ConsoleReader console) {
-//    final int numCmds = cmds.size();
-//    if ((numCmds < 2) || (numCmds > 4)) {
-//      System.out.println("Format: connect <url> [<user> [<pw>]]");
-//    }
-//
-//    final String url = cmds.get(1);
-//
-//    // Get the user name. If it's not specified, skip the rest.
-//    final String user = (numCmds > 2) ? cmds.get(2) : getUserName(console);
-//    if ((user == null) || (user.trim().isEmpty())) {
-//      System.out
-//          .println("User name not specified.  Aborting connection attempt.");
-//      return;
-//    }
-//
-//    final String pw = (numCmds > 3) ? cmds.get(3) : getPassword(console);
-//
-//    ConnManager.get().init(url, user, pw);
-//    // System.out.println(ConnManager.get().toString());
-//
-//    // If requested by the user at startup, load the appropriate class
-//    // name based on the URL
-//    // if (loadClassNames) {
-//    // JdbcManager.get().loadClassByUrl(url);
-//    // }
-//
-//    ConnManager.get().create();
-//    // if (!result) {
-//    // System.out.println("Error creating database connection");
-//    // }
-//  }
-
-
-//  private String getUserName(final ConsoleReader console) {
-//    if (console == null) {
-//      final String str = System.console().readLine("User: ");
-//      return str;
-//    }
-//
-//    console.setPrompt("User: ");
-//    String user = null;
-//    try {
-//      user = console.readLine();
-//    } catch (IOException e) {
-//      System.out.println("Exception reading user: " + e.getMessage());
-//    }
-//
-//    setPrompt(console);
-//    return user;
-//  }
 
 
   private String getPassword(final ConsoleReader console) {
@@ -1222,12 +1208,7 @@ public final class LineConsole
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
         "help <start of a command>", "jar <filename>", "list schemas",
-        "csvgroup <filename> <list of key field IDs>" };
-    
-    // Deprecated
-    // "count tables", "export data <table name> [<where-clause>]", "dbinfo", "list schemas", 
-    // "check database", "connect <URL> [<user> [<pw>]]", "close database",  "count rows <table>",
-    // "connections", "select connection", "export schema <filename>",
+        "csvgroup <filename> <list of key field IDs>", "count tables" };
     
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
