@@ -279,8 +279,8 @@ public final class LineConsole
       printDirPath(".", false);
     } else if (validateCommand(cmds, 2, "dir")) {
       printDirPath(cmds.get(1), false);
-//    } else if (validateCommand(cmds, 2, "list", "schemas")) {
-//      printSchemas();
+    } else if (validateCommand(cmds, 2, "list", "schemas")) {
+      printSchemas();
     } else if (line.equals("time")) {
       printTime();
     } else if (line.startsWith("time ")) {
@@ -741,232 +741,6 @@ public final class LineConsole
   }
 
 
-//  private void printDBInfo() {
-//    if (ConnManager.get().isNull()) {
-//      System.out.println("You are not connected to a database");
-//      return;
-//    }
-//
-//    final String url = ConnManager.get().getUrl();
-//    final boolean isValid = ConnManager.get().isValid(3);
-//    System.out.println("You are connected to " + url);
-//    if (!isValid) {
-//      System.out.println("The connection is no longer valid");
-//    }
-//  }
-
-
-//  private void countTableRows(final String table) {
-//    // Check the DB connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//    } else {
-//      final String query = "select count(*) from " + table;
-//      int count = Database.executeSelectToReturnInt(query);
-//      String sCount = Utility.formatLong((long) count);
-//      String msg = String.format("The number of rows in table %s is %s", table,
-//          sCount);
-//      System.out.println(msg);
-//    }
-//  }
-
-
-//  private void exportTableData(final String tableName, final String whereClause) {
-//    // Check the DB connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//    } else {
-//      // Verify this table exists
-//      List<String> info = Database.getTableNames(tableName);
-//      if ((info == null) || info.isEmpty() || (info.size() > 1)) {
-//        System.out.println("Error getting table data");
-//        return;
-//      }
-//
-//      // Get the column names
-//      List<List<String>> results = Database.getColumns(tableName, true);
-//      if ((results == null) || results.isEmpty()) {
-//        System.out.println("Error getting column information");
-//        return;
-//      }
-//
-//      System.out.println("Exporting table data for " + tableName + "...");
-//
-//      // Build the query
-//      StringBuilder sb = new StringBuilder(100);
-//      StringBuilder sbHeaders = new StringBuilder(100);
-//      sb.append("select ");
-//      final int size = results.size();
-//      for (int i = 0; i < size; ++i) {
-//        if (i > 0) {
-//          sb.append(", ");
-//          sbHeaders.append(",");
-//        }
-//        sb.append(results.get(i).get(1));
-//        sbHeaders.append(results.get(i).get(1));
-//      }
-//      sb.append(" from ").append(tableName);
-//
-//      // If there's a where/order-by clause, add it
-//      if ((whereClause != null) && !whereClause.trim().isEmpty()) {
-//        sb.append(" ").append(whereClause.trim());
-//      }
-//
-//      // Select the data
-//      List<List<String>> data = Database.executeSelect(sb.toString(), size);
-//
-//      // Create the output file
-//      final String fname = tableName + ".csv";
-//
-//      // Save it to a CSV file
-//      try {
-//        PrintWriter pw = new PrintWriter(fname, "UTF-8");
-//        pw.println(sbHeaders.toString());
-//        for (List<String> row : data) {
-//          pw.println(getAsCSVLine(row));
-//        }
-//
-//        pw.flush();
-//        pw.close();
-//      } catch (FileNotFoundException e) {
-//        e.printStackTrace();
-//      } catch (UnsupportedEncodingException e) {
-//        e.printStackTrace();
-//      }
-//
-//      System.out.println("Data saved to " + fname);
-//    }
-//  }
-
-
-//  private String getAsCSVLine(List<String> row) {
-//    StringBuilder sb = new StringBuilder(100);
-//    if ((row == null) || row.isEmpty()) {
-//      return "";
-//    }
-//
-//    boolean firstField = true;
-//    for (String field : row) {
-//      if (!firstField) {
-//        sb.append(",");
-//      }
-//      firstField = false;
-//      sb.append(Utility.quoteString(field));
-//    }
-//
-//    return sb.toString();
-//  }
-
-
-//  private void countTables() {
-//    // Check the DB connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//    } else {
-//      final List<String> tables = Database.getTableNames(null);
-//      if (tables == null) {
-//        System.out.println("No tables were found (list is null)");
-//      } else {
-//        System.out.println("Number of database tables: " + tables.size());
-//      }
-//    }
-//  }
-
-
-//  private void exportSchema(final String filename) {
-//    // Check the DB connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//    } else {
-//      System.out.println("Generating the list of tables...");
-//
-//      // Get the list of database tables
-//      final List<String> tables = Database.getTableNames(null);
-//      if (tables == null) {
-//        System.out.println("No tables were found (list is null)");
-//        return;
-//      } else if (tables.size() < 1) {
-//        System.out.println("No tables were found");
-//        return;
-//      }
-//
-//      // Print out the list of database tables
-//      Collections.sort(tables);
-//
-//      final String lineEnd = "\r\n";
-//      StringBuilder sb = new StringBuilder(500);
-//      sb.append("<?xml version=\"1.0\"?>").append(lineEnd);
-//      sb.append("<tables>").append(lineEnd);
-//      sb.append("  <lastrun>")
-//          .append(Long.toString(System.currentTimeMillis()))
-//          .append("</lastrun>").append(lineEnd);
-//
-//      // Iterate over the table
-//      for (String table : tables) {
-//        sb.append("  <table id=\"").append(table.toUpperCase()).append("\">")
-//            .append(lineEnd);
-//
-//        // Get the info
-//        List<List<String>> results = Database.getColumns(table, true);
-//        if (results == null) {
-//          continue;
-//        } else if (results.size() < 1) {
-//          continue;
-//        }
-//
-//        // Add the columns
-//        final int size = results.size();
-//        for (int i = 0; i < size; ++i) {
-//          List<String> points = results.get(i);
-//
-//          // Output the current column info
-//          final String colOrder = (points.size() > 0) ? points.get(0) : "";
-//          final String colName = (points.size() > 1) ? points.get(1) : "";
-//          final String colType = (points.size() > 2) ? points.get(2) : "";
-//          String isNullable = (points.size() > 3) ? points.get(3) : "false";
-//          isNullable = (isNullable.contains("NOT NULL") ? "0" : "1");
-//          String isPK = (points.size() > 4) ? points.get(4) : "";
-//          isPK = (isPK.contains("PK")) ? "1" : "0";
-//
-//          String msg = String
-//              .format(
-//                  "    <col order=\"%s\" type=\"%s\" nullable=\"%s\" pk=\"%s\">%s</col>%s",
-//                  colOrder, colType, isNullable, isPK, colName, lineEnd);
-//          sb.append(msg);
-//        }
-//
-//        sb.append("  </table>").append(lineEnd);
-//      }
-//      sb.append("</tables>").append(lineEnd);
-//
-//      // Get the output file name
-//      File file = new File(filename);
-//      if ((file.exists()) && file.isDirectory()) {
-//        System.out.println("The output file name is a directory. Stopping.");
-//        return;
-//      }
-//
-//      // Write out the data
-//      boolean result = false;
-//      try {
-//        BufferedWriter bf = new BufferedWriter(new FileWriter(file));
-//        bf.write(sb.toString());
-//        bf.close();
-//        bf = null;
-//        result = true;
-//      } catch (IOException ioe) {
-//        System.err.println(ioe.getMessage());
-//        System.out.println("Exception while saving the data: "
-//            + ioe.getMessage());
-//      }
-//
-//      if (result) {
-//        System.out.println("Database information saved to file");
-//      }
-//    }
-//  }
-
-
   /**
    * Print the first 10 lines of a file.
    * 
@@ -1127,30 +901,6 @@ public final class LineConsole
   }
 
 
-  // Get the list of database schemas
-//  private void printSchemas() {
-//
-//    // Check the database connection
-//    if (!ConnManager.get().isValid()) {
-//      System.out.println("No database connection found");
-//      return;
-//    }
-//
-//    final List<String> schemas = Database.getSchemas();
-//    if (schemas == null) {
-//      System.out.println("No schemas were found (list is null)");
-//    } else if (schemas.size() < 1) {
-//      System.out.println("No schemas were found");
-//    } else {
-//      // Print out the list
-//      Collections.sort(schemas);
-//      for (String schema : schemas) {
-//        System.out.println(schema);
-//      }
-//    }
-//  }
-
-
   // Get the list of database tables
   private void printTables() {
 
@@ -1189,6 +939,51 @@ public final class LineConsole
       Collections.sort(tables);
       for (String table : tables) {
         System.out.println(table);
+      }
+    }
+  }
+
+
+  /**
+   * Print the list of schemas.
+   */
+  private void printSchemas() {
+
+    // Check the database connection
+    if (session.getSourceId() < 0) {
+      System.out.println("No database connection found");
+      return;
+    }
+    
+    // Find the user DB with the specified ID
+    final UserDb userDb = UserDBCache.get().find(session.getSourceId());
+    if (userDb == null) {
+      Logger.error("Error: Invalid database ID in the session");
+      return;
+    }
+    
+    // Make sure the JDBC DB's driver class is loaded
+    final DbType dbType = DBTypeCache.get().find(userDb.getDbTypeId());
+    ConnManager.get().addDriverClass(dbType);
+    
+    // Open a connection to the database
+    ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
+    if (!ConnManager.get().create()) {
+      Logger.error("Unable to connect to database " + userDb.getUrl());
+      return;
+    }
+    
+    // Get the list of schemas
+    final List<String> schemas = Database.getSchemas();
+    if (schemas == null) {
+      System.out.println("No schemas were found (list is null)");
+    } else if (schemas.size() < 1) {
+      System.out.println("No schemas were found");
+    } else {
+      // Print out the list of database schemas
+      Collections.sort(schemas);
+      for (String schema : schemas) {
+        System.out.println(schema);
       }
     }
   }
@@ -1426,7 +1221,7 @@ public final class LineConsole
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
-        "help <start of a command>", "jar <filename>",
+        "help <start of a command>", "jar <filename>", "list schemas",
         "csvgroup <filename> <list of key field IDs>" };
     
     // Deprecated
