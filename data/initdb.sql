@@ -42,10 +42,10 @@ create table if not exists session (
 	target_type_id int not null,
 	source_id int not null,
 	target_id int not null,
-	source_name varchar2(100),
-	target_name varchar2(100),
-	source_data varchar2(100),
-	target_data varchar2(100)
+	source_name varchar2(500),
+	target_name varchar2(500),
+	source_data varchar2(500),
+	target_data varchar2(500)
 );
 
 -- Set the support data types (SQL, Hadoop, CSV)
