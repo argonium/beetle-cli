@@ -88,6 +88,11 @@ public abstract class DBFileWriter
   }
   
   
+  public void setFileData(final String pFileData) {
+    fileData = pFileData;
+  }
+  
+  
   public void init(final String sFilename) {
     sb = new StringBuilder(100);
     file = new File(sFilename);
@@ -127,7 +132,7 @@ public abstract class DBFileWriter
   }
   
   
-  private void initializeNodeList(final ResultSetMetaData pRSMD) {
+  public void initializeNodeList(final ResultSetMetaData pRSMD) {
     // Check if the metadata has results
     if (pRSMD == null) {
       return;
