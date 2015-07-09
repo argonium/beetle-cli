@@ -88,7 +88,7 @@ public abstract class DBFileWriter
   }
   
   
-  private void init(final String sFilename) {
+  public void init(final String sFilename) {
     sb = new StringBuilder(100);
     file = new File(sFilename);
     filename = sFilename;
@@ -104,13 +104,21 @@ public abstract class DBFileWriter
   }
   
   
-  private void initializeNodeList(final FakeSpecParser specData) {
+  public void initializeNodeList(final FakeSpecParser specData) {
+    
+    resetNodes();
+    
     // Save the column names and classes into NodeList
     final List<FakeNode> fakeNodes = specData.getNodes();
     nodes = new ArrayList<NodeInfo>();
     for (FakeNode fake : fakeNodes) {
       nodes.add(new NodeInfo(fake.getName(), fake.getClazz()));
     }
+  }
+  
+  
+  public void addString(final String str) {
+    sb.append(str);
   }
   
   
@@ -124,6 +132,8 @@ public abstract class DBFileWriter
     if (pRSMD == null) {
       return;
     }
+    
+    resetNodes();
     
     // Get the number of columns
     int count = 0;
@@ -160,6 +170,14 @@ public abstract class DBFileWriter
   }
   
   
+  private void resetNodes() {
+    if (nodes != null) {
+      nodes.clear();
+      nodes = null;
+    }
+  }
+
+
   public Object getValueFromSpec(final FakeNode fake) {
     return FakeType.getValue(fake);
   }
@@ -168,7 +186,7 @@ public abstract class DBFileWriter
   public Object getValueFromRow(final ResultSet rs, Class<?> clazz, final int index) {
     // Check the output class
     if (clazz == null) {
-      // Unsupported data type
+      // Unsupported datresetNodesa type
       return "";
     }
     
