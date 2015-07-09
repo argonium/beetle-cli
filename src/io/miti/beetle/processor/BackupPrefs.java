@@ -116,6 +116,7 @@ public final class BackupPrefs
   private void addDeleteStatements(final SQLDBFileWriter writer) {
     // Iterate over the tables
     writer.addString("-- Drop data from the existing tables");
+    writer.addEOL();
     for (String table : tables) {
       writer.addString("delete from " + table + ";");
       writer.addEOL();
