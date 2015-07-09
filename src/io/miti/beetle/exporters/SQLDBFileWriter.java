@@ -19,6 +19,10 @@ public class SQLDBFileWriter extends DBFileWriter
   public SQLDBFileWriter(final String sFilename, final String sData, final FakeSpecParser spec) {
     super(sFilename, sData, spec);
   }
+  
+  public SQLDBFileWriter(final String sFilename) {
+    super(sFilename);
+  }
 
 
   @Override
