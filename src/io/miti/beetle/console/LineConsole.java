@@ -30,6 +30,7 @@ import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
+import io.miti.beetle.processor.BackupPrefs;
 import io.miti.beetle.processor.CSVJoiner;
 import io.miti.beetle.processor.DataProcessor;
 import io.miti.beetle.util.Content;
@@ -275,6 +276,8 @@ public final class LineConsole
       describeTable(cmds.get(2));
     } else if (validateCommand(cmds, 2, "list", "tables")) {
       printTables();
+    } else if (validateCommand(cmds, 3, "backup", "database")) {
+      backupPrefsDB(cmds.get(2));
     } else if (validateCommand(cmds, 3, "csvgroup")) {
       groupCSVFile(cmds.get(1), cmds.get(2));
     } else if (line.equals("dir")) {
@@ -307,6 +310,20 @@ public final class LineConsole
     }
 
     return true;
+  }
+  
+  
+  private void backupPrefsDB(final String filename) {
+    
+    // Check the input file
+    final File file = new File(filename);
+    if (file.exists() && file.isDirectory()) {
+      System.out.println("The output filename exists as a database.  Skipping.");
+      return;
+    }
+    
+    // Back up the preferences database to a SQL script
+    new BackupPrefs().backupDatabase(filename);
   }
   
   
@@ -1249,7 +1266,7 @@ public final class LineConsole
         "parse fake <specification>", "export sql <filename> <tablename>",
         "help <start of a command>", "jar <filename>", "list schemas",
         "csvgroup <filename> <list of key field IDs>", "count tables",
-        "select schema <schema name>" };
+        "select schema <schema name>", "backup database <filename>" };
     
     supportedCommands = Arrays.asList(array);
     Collections.sort(supportedCommands);
