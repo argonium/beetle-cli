@@ -123,7 +123,7 @@ public class SQLDBFileWriter extends DBFileWriter
   private String outputValue(final Object obj, final Class<?> clazz) {
     // Handle the different values
     if (obj == null) {
-      return "";
+      return "null";
     }
     
     if (obj instanceof Boolean) {
