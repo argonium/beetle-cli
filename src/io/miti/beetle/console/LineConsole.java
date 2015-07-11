@@ -315,17 +315,18 @@ public final class LineConsole
   }
   
   
-  private void backupPrefsDB(final String filename) {
+  private boolean backupPrefsDB(final String filename) {
     
     // Check the input file
     final File file = new File(filename);
     if (file.exists() && file.isDirectory()) {
-      System.out.println("The output filename exists as a database.  Skipping.");
-      return;
+      System.out.println("The output filename exists as a directory.  Skipping.");
+      return false;
     }
     
     // Back up the preferences database to a SQL script
-    new BackupPrefs().backupDatabase(filename);
+    boolean result = new BackupPrefs().backupDatabase(filename);
+    return result;
   }
   
   
@@ -334,13 +335,13 @@ public final class LineConsole
    * 
    * @param schema the schema name
    */
-  private void selectSchema(final String schema) {
+  private boolean selectSchema(final String schema) {
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -352,18 +353,22 @@ public final class LineConsole
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
     // Check the DB connection
     if (!ConnManager.get().isValid()) {
       System.out.println("No database connection found");
+      return false;
     } else {
       boolean rc = ConnManager.connectToSchema(schema, ConnManager.get().getConn());
       if (!rc) {
         Logger.error("Unable to connect to schema");
+        return false;
       }
     }
+    
+    return true;
   }
 
 
@@ -373,15 +378,15 @@ public final class LineConsole
    * @param fname the name of the input file
    * @param keyList the list of key field IDs (1-based)
    */
-  private void groupCSVFile(final String fname, final String keyList) {
+  private boolean groupCSVFile(final String fname, final String keyList) {
     // Get the input file
     final File file = new File(fname);
     if (!file.exists()) {
       System.out.println("Input file not found");
-      return;
+      return false;
     } else if (file.isDirectory()) {
       System.out.println("Input must be a file, not a directory");
-      return;
+      return false;
     }
     
     // Set the name of the output file
@@ -392,12 +397,13 @@ public final class LineConsole
     final int keys[] = parseKeyList(keyList);
     if (keys == null) {
       System.out.println("Invalid key list");
-      return;
+      return false;
     }
     
     // Call a method to group the data
     new CSVJoiner().join(file, outputFile, keys);
     System.out.println("Output written to " + outfname);
+    return true;
   }
   
   
@@ -447,17 +453,18 @@ public final class LineConsole
   }
 
 
-  private void pbCopy(final String fname) {
+  private boolean pbCopy(final String fname) {
     // Verify the file exists
     final File file = new File(fname);
     if (!file.exists() || !file.isFile()) {
       Logger.error("The input file was not found");
-      return;
+      return false;
     }
     
     // Get a path variable to the file
     final Path path = Paths.get(fname);
     StringSelection text = null;
+    boolean result = true;
     try {
       // Read the file contents into a byte array
       final byte[] bytes = Files.readAllBytes(path);
@@ -467,6 +474,7 @@ public final class LineConsole
     } catch (IOException e) {
       Logger.error(e);
       text = null;
+      result = false;
     }
     
     // Verify we read the file contents OK
@@ -475,24 +483,29 @@ public final class LineConsole
       final Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
       clpbrd.setContents(text, null);
     }
+    
+    return result;
   }
   
   
-  private void addDBType(final String name, final String ref, final String driver) {
+  private boolean addDBType(final String name, final String ref, final String driver) {
     // Add the database type to the cache
     DBTypeCache.get().add(name, ref, driver);
+    return true;
   }
 
 
-  private void parseFakeSpec(final String spec) {
+  private boolean parseFakeSpec(final String spec) {
     final FakeSpecParser fsp = new FakeSpecParser();
     final boolean rc = fsp.parse(spec);
     System.out.println("The parsing was " + (rc ? "" : "un") + "successful");
     final List<FakeNode> nodes = fsp.getNodes();
     if (nodes == null) {
       System.out.println("The list of nodes is null");
+      return false;
     } else if (nodes.isEmpty()) {
       System.out.println("The list of nodes is empty");
+      return false;
     } else {
       // Get the data as a list of list of strings
       final List<List<String>> table = fsp.getNodesAsListList();
@@ -502,15 +515,18 @@ public final class LineConsole
       List<String> fmtd = fmt.format(3, table);
       System.out.print(ListFormatter.getTextLine(fmtd));
     }
+    
+    return true;
   }
   
   
-  private void resetSession() {
+  private boolean resetSession() {
     session.reset();
+    return true;
   }
   
   
-  private void printSession() {
+  private boolean printSession() {
     String line1 = String.format("Source ID: %d  Type: %s  Name: %s  Data: %s",
         session.getSourceId(), ContentType.getById(session.getSourceTypeId()), session.getSourceName(), session.getSourceData());
     String line2 = String.format("Target ID: %d  Type: %s  Name: %s  Data: %s",
@@ -518,20 +534,23 @@ public final class LineConsole
     
     System.out.println(line1);
     System.out.println(line2);
+    
+    return true;
   }
   
   
-  private void runSession() {
+  private boolean runSession() {
     new DataProcessor(session).run();
+    return true;
   }
   
   
-  private void runSession(final String sRunCount) {
+  private boolean runSession(final String sRunCount) {
     // Get the number of times to run (only used for fake data)
     final int nRunCount = Utility.getStringAsInteger(sRunCount, -1, -1);
     if (nRunCount < 1) {
       Logger.error("The run count must be at least 1");
-      return;
+      return false;
     }
     
     // Reset the ID and incrementor fields
@@ -541,110 +560,125 @@ public final class LineConsole
     final DataProcessor dp = new DataProcessor(session);
     dp.setRunCount(nRunCount);
     dp.run();
+    
+    return true;
   }
   
   
-  private void exportJSON(final String filename) {
+  private boolean exportJSON(final String filename) {
     session.setTargetTypeId(ContentType.JSON.getId());
     session.setTargetName(filename);
+    return true;
   }
   
   
-  private void exportMarkdown(final String filename) {
+  private boolean exportMarkdown(final String filename) {
     session.setTargetTypeId(ContentType.MARKDOWN.getId());
     session.setTargetName(filename);
+    return true;
   }
   
   
-  private void exportCSV(final String filename) {
+  private boolean exportCSV(final String filename) {
     session.setTargetTypeId(ContentType.CSV.getId());
     session.setTargetName(filename);
+    return true;
   }
   
   
-  private void exportTOML(final String filename) {
+  private boolean exportTOML(final String filename) {
     session.setTargetTypeId(ContentType.TOML.getId());
     session.setTargetName(filename);
+    return true;
   }
   
   
-  private void exportSQLFile(final String filename, final String tableName) {
+  private boolean exportSQLFile(final String filename, final String tableName) {
     session.setTargetTypeId(ContentType.SQL_FILE.getId());
     session.setTargetName(filename);
     session.setTargetData(tableName);
+    return true;
   }
   
   
-  private void exportYAML(final String filename) {
+  private boolean exportYAML(final String filename) {
     session.setTargetTypeId(ContentType.YAML.getId());
     session.setTargetName(filename);
+    return true;
   }
   
   
-  private void exportXML(final String filename) {
+  private boolean exportXML(final String filename) {
     session.setTargetTypeId(ContentType.XML.getId());
     session.setTargetName(filename);
+    return true;
   }
 
 
-  private void importUserTable(final String tname) {
+  private boolean importUserTable(final String tname) {
     session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName("select * from " + tname);
+    return true;
   }
   
   
-  private void generateFakeData(final String spec) {
+  private boolean generateFakeData(final String spec) {
     session.setSourceTypeId(ContentType.FAKE.getId());
     session.setSourceName(spec);
+    return true;
   }
   
   
-  private void importUserFile(final String fname) {
+  private boolean importUserFile(final String fname) {
     // Open the specified file
     final File file = new File(fname);
     if (!file.exists() || !file.isFile()) {
       Logger.error("The specified file was not found");
-      return;
+      return false;
     }
     
     // Read the contents
     String text = Content.getFileAsText(file);
     if ((text == null) || text.isEmpty()) {
       Logger.error("No contents found in file");
-      return;
+      return false;
     }
     
     // Verify this is a 'select' statement
     final String testQuery = text.trim().toLowerCase();
     if (!testQuery.startsWith("select ")) {
       Logger.error("Only SELECT statements are allowed");
-      return;
+      return false;
     }
     
     // Save the query
     session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName(text);
+    
+    return true;
   }
   
   
-  private void importUserQuery(final String query) {
+  private boolean importUserQuery(final String query) {
     
     // Check there is a query
     if ((query == null) || query.trim().isEmpty()) {
       Logger.error("The query is null or empty");
-      return;
+      return false;
     }
     
     // Verify this is a 'select' statement
     final String testQuery = query.trim().toLowerCase();
     if (!testQuery.startsWith("select ")) {
       Logger.error("Only SELECT statements are allowed");
-      return;
+      return false;
     }
     
     // Save the query
     session.setSourceTypeId(ContentType.SQL.getId());
     session.setSourceName(query);
+    
+    return true;
   }
   
   
@@ -674,12 +708,12 @@ public final class LineConsole
   }
   
   
-  private void deleteUserDatabase(final String dbId) {
+  private boolean deleteUserDatabase(final String dbId) {
     // Get the numeric ID
     int id = Utility.getStringAsInteger(dbId, -1, -1);
     if (id < 0) {
       System.err.println("Error: Invalid ID specified");
-      return;
+      return false;
     }
 
     // Delete the object (if found)
@@ -689,10 +723,12 @@ public final class LineConsole
     } else {
       System.err.println("No matching reference found");
     }
+    
+    return result;
   }
 
 
-  private void addUserDatabase(final List<String> cmds,
+  private boolean addUserDatabase(final List<String> cmds,
       final ConsoleReader console) {
     // Format: add userdb <name> <URL> <user ID>
     final String dbName = cmds.get(2);
@@ -710,15 +746,17 @@ public final class LineConsole
     UserDBCache.get().add(userDb);
 
     System.out.println("User database created.  ID = " + userDb.getId());
+    
+    return true;
   }
 
 
-  private void clearDBTypeJar(final String sTypeID) {
+  private boolean clearDBTypeJar(final String sTypeID) {
     // Get the numeric ID
     int id = Utility.getStringAsInteger(sTypeID, -1, -1);
     if (id < 0) {
       System.err.println("Error: Invalid ID specified");
-      return;
+      return false;
     }
 
     // Clear the jar setting for the object
@@ -728,22 +766,24 @@ public final class LineConsole
     } else {
       System.err.println("Error occurred");
     }
+    
+    return result;
   }
 
 
-  private void setDBTypeJar(final String sTypeID, final String jarName) {
+  private boolean setDBTypeJar(final String sTypeID, final String jarName) {
     // Get the numeric ID
     int id = Utility.getStringAsInteger(sTypeID, -1, -1);
     if (id < 0) {
       System.err.println("Error: Invalid ID specified");
-      return;
+      return false;
     }
 
     // Check the file
     File file = new File(jarName);
     if (file.isDirectory() || !file.exists()) {
       System.err.println("Error: The JAR file was not found");
-      return;
+      return false;
     }
 
     // Save the jar name and update the database
@@ -752,15 +792,19 @@ public final class LineConsole
       match.setJarName(jarName);
       if (!match.update()) {
         System.err.println("Error updating the table");
+        return false;
       }
       System.out.println("DBType row updated");
     } else {
       System.err.println("No matching DBType found");
+      return false;
     }
+    
+    return true;
   }
 
 
-  private void listUserDatabases() {
+  private boolean listUserDatabases() {
     List<UserDb> list = UserDBCache.get().getList();
     if ((list == null) || list.isEmpty()) {
       System.out.println("No user databases found");
@@ -771,10 +815,12 @@ public final class LineConsole
           new String[] { "ID", "Name", "URL", "User" });
       System.out.print(table);
     }
+    
+    return true;
   }
 
 
-  private void listDatabaseTypes() {
+  private boolean listDatabaseTypes() {
     List<DbType> list = DBTypeCache.get().getList();
     if ((list == null) || list.isEmpty()) {
       System.out.println("No database supported");
@@ -785,10 +831,12 @@ public final class LineConsole
           new String[] { "ID", "Name", "Class", "Jar File" });
       System.out.print(table);
     }
+    
+    return true;
   }
 
 
-  private void timeCommand(final String cmdToTime, final ConsoleReader console) {
+  private boolean timeCommand(final String cmdToTime, final ConsoleReader console) {
     // Record the starting time
     final long start = System.currentTimeMillis();
 
@@ -801,6 +849,8 @@ public final class LineConsole
 
     // Print the time string
     System.out.println("Elapsed Time: " + span);
+    
+    return true;
   }
 
 
@@ -809,8 +859,8 @@ public final class LineConsole
    * 
    * @param fname the filename
    */
-  public void headFile(final String fname) {
-    printLocalFile(fname, 10);
+  public boolean headFile(final String fname) {
+    return printLocalFile(fname, 10);
   }
 
 
@@ -819,8 +869,8 @@ public final class LineConsole
    * 
    * @param fname the filename
    */
-  public void catFile(final String fname) {
-    printLocalFile(fname, -1);
+  public boolean catFile(final String fname) {
+    return printLocalFile(fname, -1);
   }
 
 
@@ -830,19 +880,22 @@ public final class LineConsole
    * @param source the filename
    * @param rowCount the number of rows to print
    */
-  private void printLocalFile(final String source, final int rowCount) {
+  private boolean printLocalFile(final String source, final int rowCount) {
 
     // Open the file
     final File file = new File(source);
     if (!file.exists()) {
       System.out.println("Error: The file does not exist");
+      return false;
     } else if (!file.isFile()) {
       System.out.println("Error: The input file is a directory");
+      return false;
     } else {
       // Read the file
       final String text = Content.getFileAsText(file, rowCount);
       if (text.isEmpty()) {
         System.out.println("The file is empty");
+        return false;
       } else {
         // See if the file ends with a newline or carriage return.
         // If it does, just print it. Else, println it.
@@ -855,16 +908,18 @@ public final class LineConsole
         }
       }
     }
+    
+    return true;
   }
   
   
-  public void describeTable(final String table) {
+  public boolean describeTable(final String table) {
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -875,39 +930,44 @@ public final class LineConsole
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
     // Check the DB connection
+    boolean result = true;
     if (!ConnManager.get().isValid()) {
       System.out.println("No database connection found");
+      return false;
     } else {
       // Get the info
       List<List<String>> results = Database.getColumns(table, true);
       if (results == null) {
         System.out.println("No table description found (result is null)");
-        return;
+        result = false;
       } else if (results.size() < 1) {
         System.out.println("No table description found");
-        return;
+        result = false;
+      } else {
+  
+        // Add a header row
+        List<String> labels = new ArrayList<String>(5);
+        labels.add("#");
+        labels.add("Name");
+        labels.add("Type");
+        labels.add("Nullable?");
+        labels.add("PK?");
+        results.add(0, labels);
+  
+        // Format and print the list
+        ListFormatter fmt = new ListFormatter(results);
+        List<String> fmtd = fmt.format(5, results);
+        System.out.print(ListFormatter.getTextLine(fmtd));
       }
-
-      // Add a header row
-      List<String> labels = new ArrayList<String>(5);
-      labels.add("#");
-      labels.add("Name");
-      labels.add("Type");
-      labels.add("Nullable?");
-      labels.add("PK?");
-      results.add(0, labels);
-
-      // Format and print the list
-      ListFormatter fmt = new ListFormatter(results);
-      List<String> fmtd = fmt.format(5, results);
-      System.out.print(ListFormatter.getTextLine(fmtd));
     }
     
     ConnManager.get().close();
+    
+    return result;
   }
 
 
