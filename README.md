@@ -13,7 +13,8 @@ The first two options support the same output file formats:
 * TOML
 * YAML
 * XML
-* Markdown (Github flavored, supporting tables)
+* TSV (tab-separated values)
+* Markdown (Github-flavored, supporting tables)
 * SQL (INSERT statements)
 
 This is the list of supported commands:
@@ -37,6 +38,7 @@ This is the list of supported commands:
 * export markdown &lt;filename&gt; - Set the session to export data to Markdown
 * export sql &lt;filename&gt; &lt;tablename&gt; -  - Set the session to export data to SQL
 * export toml &lt;filename&gt; - Set the session to export data to TOML
+* export tsv &lt;filename&gt; - Set the session to export data to tab-separated values
 * export xml &lt;filename&gt; - Set the session to export data to XML
 * export yaml &lt;filename&gt; - Set the session to export data to YAML
 * fake &lt;specification&gt; - Set the session input to fake data

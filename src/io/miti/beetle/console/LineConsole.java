@@ -248,6 +248,8 @@ public final class LineConsole
       exportCSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "json")) {
       exportJSON(cmds.get(2));
+    } else if (validateCommand(cmds, 3, "export", "tsv")) {
+      exportTSV(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "markdown")) {
       exportMarkdown(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "toml")) {
@@ -567,6 +569,13 @@ public final class LineConsole
   
   private boolean exportJSON(final String filename) {
     session.setTargetTypeId(ContentType.JSON.getId());
+    session.setTargetName(filename);
+    return true;
+  }
+  
+  
+  private boolean exportTSV(final String filename) {
+    session.setTargetTypeId(ContentType.TSV.getId());
     session.setTargetName(filename);
     return true;
   }
@@ -1357,7 +1366,7 @@ public final class LineConsole
         "export csv <filename>", "export json <filename>", "pbcopy <filename>",
         "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
-        "export markdown <filename>",
+        "export markdown <filename>", "export tsv <filename>",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
