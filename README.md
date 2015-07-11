@@ -292,7 +292,40 @@ row will be different.
 
 
 ## Grouping lines in a CSV file having the same key
-TODO
+When working with a CSV file, it is sometimes useful to group together the
+data from those lines sharing the same key, where the key is composed of
+one or more fields from each row.  This command will collapse the file
+so that all rows having the same key are converted into a single row in
+the output file, with the non-key fields appended to the first row having
+that key value.  For example, if our input file "data.csv" has this data:
+
+    Key3,Value1,Key1,Key2,Value2,Value3
+    key-a3,val-a1,key-a1,key-a2,val-a2,val-a3
+    key-a3,val-b1,key-a1,key-a2,val-b2,val-b3
+    key-a3,val-c1,key-a1,key-a2,val-c2,val-c3
+    key-d3,val-d1,key-d1,key-d2,val-d2,val-d3
+    key-d3,val-e1,key-d1,key-d2,val-e2,val-e3
+
+Then we can run this command:
+
+    -> csvgroup data.csv 3,4,1
+ 
+This tells Beetle that we want to group the data using a key of fields #3,
+#4 and #1.  The output is a file named "group-data.csv", and looks like this:
+
+    Key1,Key2,Key3,Value1,Value2,Value3
+    key-a1,key-a2,key-a3,val-a1,val-a2,val-a3,val-b1,val-b2,val-b3,val-c1,val-c2,val-c3
+    key-d1,key-d2,key-d3,val-d1,val-d2,val-d3,val-e1,val-e2,val-e3
+
+The grouping will rearrange the columns to match the order of the keys.
+No database connection is required for this command.
+
+This command can be helpful after creating a CSV file using a SQL Select
+statement, and you want some fields grouped together.
+
+Any header row is not treated differently than the rest of the file.
+Since the values for the header's key fields are usually not duplicated
+in the next line, this is generally not a problem.
 
 
 ## Compiling and running the application
