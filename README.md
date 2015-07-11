@@ -1,26 +1,31 @@
 # Beetle CLI
 Beetle is a command-line application (Java) that started as an ETL tool (hence the
-"ETL" in the name), but now provides two pieces of functionality:
+"ETL" in the name), but now provides three pieces of functionality:
 
 * Execute a SQL query and save the results to an output file
 * Generate fake data and save the results to an output file
+* Group together the lines in a CSV file having the same key
 
-Both options support the same output file formats:
+The first two options support the same output file formats:
 
 * CSV
 * JSON
 * TOML
 * YAML
 * XML
+* Markdown (Github flavored, supporting tables)
 * SQL (INSERT statements)
 
 This is the list of supported commands:
 
 * add dbtype &lt;name&gt; &lt;JDBC reference&gt; &lt;JDBC driver class name&gt; - Add a new database type
 * add userdb &lt;name&gt; &lt;url&gt; &lt;user&gt; - Add a JDBC database reference
-* cat &lt;file&gt; - Print a local file
+* backup database &lt;filename&gt; - Backup the preferences database to a SQL file 
+* cat &lt;file&gt; - Print a local file to the console
 * clear dbtype &lt;id&gt; jar - Clear the JAR reference for a database type
 * connect userdb &lt;id&gt; - Connect to the specified user database
+* count tables - Count the number of tables in the connected database
+* csvgroup &lt;filename&gt; &lt;comma-separated list of indexes for key columns&gt; - Group together the rows in a CSV input file having the same key
 * debug - Print whether we're in debug mode or not
 * debug off - Disable debug mode
 * debug on - Enable debug mode
@@ -29,6 +34,7 @@ This is the list of supported commands:
 * dir [&lt;path&gt;] - Print the directory listing for an optional directory (default is '.')
 * export csv &lt;filename&gt; - Set the session to export data to CSV
 * export json &lt;filename&gt; - Set the session to export data to JSON
+* export markdown &lt;filename&gt; - Set the session to export data to Markdown
 * export sql &lt;filename&gt; &lt;tablename&gt; -  - Set the session to export data to SQL
 * export toml &lt;filename&gt; - Set the session to export data to TOML
 * export xml &lt;filename&gt; - Set the session to export data to XML
@@ -43,9 +49,13 @@ This is the list of supported commands:
 * import db table &lt;name&gt; - Set the session input to the database table
 * jar &lt;filename&gt; - Add the JAR file to the classpath
 * list dbtypes - List the known types of databases
+* list schemas - List the schemas in the connected database
 * list tables - List the tables in the connected database
 * list userdbs - List the known user-defined databases
 * mem - Print memory usage statistics
+* meta username - Print the value used for the JDBC schema name in metadata calls
+* meta username on - Use the username for the JDBC schema name in metadata calls
+* meta username off - Use 'null' for the JDBC schema name in metadata calls
 * parse fake &lt;specification&gt; - Parse the specification and print the output
 * pbcopy &lt;filename&gt; - Copy a file's contents to the clipboard
 * print session - Print input / output information on the session
@@ -277,7 +287,13 @@ Target ID: -1  Type: JSON  Name: students.json  Data: null
 ```
 
 You will normally want to run this command multiple times.  For example,
-if you want 1000 rows of sample data, use the command "run 1000".
+if you want 1000 rows of sample data, use the command "run 1000".  Each
+row will be different.
+
+
+## Grouping lines in a CSV file having the same key
+TODO
+
 
 ## Compiling and running the application
 To compile the application from the command-line, you'll need
@@ -294,4 +310,3 @@ Nothing else is needed to run Beetle.
 
 The first time you run Beetle, it'll create the necessary database
 used by the application to persist information.
- 
