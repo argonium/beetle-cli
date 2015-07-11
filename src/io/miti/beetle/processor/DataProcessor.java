@@ -12,6 +12,7 @@ import io.miti.beetle.dbutil.Database;
 import io.miti.beetle.exporters.CsvDBFileWriter;
 import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.exporters.JsonDBFileWriter;
+import io.miti.beetle.exporters.MarkdownDBFileWriter;
 import io.miti.beetle.exporters.SQLDBFileWriter;
 import io.miti.beetle.exporters.TomlDBFileWriter;
 import io.miti.beetle.exporters.XmlDBFileWriter;
@@ -65,8 +66,9 @@ public final class DataProcessor
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
-        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL");
+        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
+        (cType != ContentType.MARKDOWN)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, Markdown");
       return;
     }
     
@@ -105,8 +107,9 @@ public final class DataProcessor
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
-        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL");
+        (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
+        (cType != ContentType.MARKDOWN)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, Markdown");
       return;
     }
     
@@ -205,8 +208,12 @@ public final class DataProcessor
       return new TomlDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.SQL_FILE) {
       return new SQLDBFileWriter(outName, outData, rsmd);
-    } else {
+    } else if (cType == ContentType.MARKDOWN) {
+      return new MarkdownDBFileWriter(outName, outData, rsmd);
+    } else if (cType == ContentType.XML) {
       return new XmlDBFileWriter(outName, outData, rsmd);
+    } else {
+      return null;
     }
   }
   
@@ -226,8 +233,12 @@ public final class DataProcessor
       return new TomlDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.SQL_FILE) {
       return new SQLDBFileWriter(outName, outData, spec);
-    } else {
+    } else if (cType == ContentType.MARKDOWN) {
+      return new MarkdownDBFileWriter(outName, outData, spec);
+    } else if (cType == ContentType.XML) {
       return new XmlDBFileWriter(outName, outData, spec);
+    } else {
+      return null;
     }
   }
 }
