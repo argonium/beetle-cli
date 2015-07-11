@@ -310,8 +310,8 @@ Then we can run this command:
 
     -> csvgroup data.csv 3,4,1
  
-This tells Beetle that we want to group the data using a key of fields #3,
-#4 and #1.  The output is a file named "group-data.csv", and looks like this:
+This tells Beetle that we want to group the data using a key of fields #3, #4
+and #1.  The output is a file named "group-data.csv", and looks like this:
 
     Key1,Key2,Key3,Value1,Value2,Value3
     key-a1,key-a2,key-a3,val-a1,val-a2,val-a3,val-b1,val-b2,val-b3,val-c1,val-c2,val-c3
