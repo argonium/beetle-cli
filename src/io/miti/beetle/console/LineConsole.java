@@ -682,19 +682,20 @@ public final class LineConsole
   }
   
   
-  private void connectUserDatabase(final String dbId) {
+  private boolean connectUserDatabase(final String dbId) {
 
     // Get the numeric ID
     int id = Utility.getStringAsInteger(dbId, -1, -1);
     if (id < 0) {
       System.err.println("Error: Invalid ID specified");
-      return;
+      return false;
     }
 
     // Find a match (by ID)
     final UserDb userDb = UserDBCache.get().find(id);
     if (userDb == null) {
       System.out.println("No match found");
+      return false;
     } else {
       // If the DB type is configured with a valid JAR file, save
       // the user DB ID in the session
@@ -703,8 +704,11 @@ public final class LineConsole
         session.setSourceId(id);
       } else {
         System.out.println("No DB type found for ID " + userDb.getDbTypeId());
+        return false;
       }
     }
+    
+    return true;
   }
   
   
