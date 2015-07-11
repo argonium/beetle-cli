@@ -14,6 +14,7 @@ import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.exporters.JsonDBFileWriter;
 import io.miti.beetle.exporters.MarkdownDBFileWriter;
 import io.miti.beetle.exporters.SQLDBFileWriter;
+import io.miti.beetle.exporters.TabDBFileWriter;
 import io.miti.beetle.exporters.TomlDBFileWriter;
 import io.miti.beetle.exporters.XmlDBFileWriter;
 import io.miti.beetle.exporters.YamlDBFileWriter;
@@ -67,8 +68,8 @@ public final class DataProcessor
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
         (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
-        (cType != ContentType.MARKDOWN)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, Markdown");
+        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown");
       return;
     }
     
@@ -108,8 +109,8 @@ public final class DataProcessor
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
         (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
-        (cType != ContentType.MARKDOWN)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, Markdown");
+        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown");
       return;
     }
     
@@ -202,6 +203,8 @@ public final class DataProcessor
       return new JsonDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.CSV) {
       return new CsvDBFileWriter(outName, outData, rsmd);
+    } else if (cType == ContentType.TSV) {
+      return new TabDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.YAML) {
       return new YamlDBFileWriter(outName, outData, rsmd);
     } else if (cType == ContentType.TOML) {
@@ -227,6 +230,8 @@ public final class DataProcessor
       return new JsonDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.CSV) {
       return new CsvDBFileWriter(outName, outData, spec);
+    } else if (cType == ContentType.TSV) {
+      return new TabDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.YAML) {
       return new YamlDBFileWriter(outName, outData, spec);
     } else if (cType == ContentType.TOML) {
