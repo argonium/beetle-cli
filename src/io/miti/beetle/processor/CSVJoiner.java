@@ -150,7 +150,7 @@ public class CSVJoiner
       }
       
       // Add the quoted string
-      key.append(CsvDBFileWriter.quoteString(keyField));
+      key.append(CsvDBFileWriter.quoteString(keyField, ','));
     }
     
     // Check the result
@@ -168,7 +168,7 @@ public class CSVJoiner
         }
         
         // Add the quoted string
-        val.append(CsvDBFileWriter.quoteString(list.get(i)));
+        val.append(CsvDBFileWriter.quoteString(list.get(i), ','));
       }
     }
     
