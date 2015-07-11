@@ -1,7 +1,8 @@
 package io.miti.beetle.model;
 
 public enum ContentType {
-  SQL(1), SQL_FILE(2), HADOOP(3), CSV(4), JSON(5), YAML(6), TEXT(7), TOML(8), XML(9), FAKE(10);
+  SQL(1), SQL_FILE(2), HADOOP(3), CSV(4), JSON(5), YAML(6),
+  TEXT(7), TOML(8), XML(9), FAKE(10), MARKDOWN(11);
   
   private int id = -1;
   
