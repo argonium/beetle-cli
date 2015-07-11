@@ -976,12 +976,12 @@ public final class LineConsole
    * 
    * @param path the directory path
    */
-  public void printDirPath(final String path, final boolean useLongPath) {
+  public boolean printDirPath(final String path, final boolean useLongPath) {
     final File dir = new File(path);
     final File[] files = dir.listFiles();
     if ((files == null) || (files.length < 1)) {
       System.out.println("No files found in the directory");
-      return;
+      return true;
     }
 
     // Convert the list into another list, for better formatting
@@ -998,6 +998,8 @@ public final class LineConsole
         "name", "len", "lastModified" }, new String[] { "Name", "Size",
         "Last Modified" });
     System.out.print(table);
+    
+    return true;
   }
 
 
@@ -1025,19 +1027,19 @@ public final class LineConsole
 
 
   // Get the list of database tables
-  private void printTables() {
+  private boolean printTables() {
 
     // Check the database connection
     if (session.getSourceId() < 0) {
       System.out.println("No database connection found");
-      return;
+      return false;
     }
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -1048,7 +1050,7 @@ public final class LineConsole
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
     // Get the list of tables in the session schema
@@ -1064,25 +1066,27 @@ public final class LineConsole
         System.out.println(table);
       }
     }
+    
+    return true;
   }
 
 
   /**
    * Print the number of database tables.
    */
-  private void countTables() {
+  private boolean countTables() {
 
     // Check the database connection
     if (session.getSourceId() < 0) {
       System.out.println("No database connection found");
-      return;
+      return false;
     }
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -1093,7 +1097,7 @@ public final class LineConsole
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
     // Get the list of tables in the session schema
@@ -1105,25 +1109,27 @@ public final class LineConsole
     } else {
       System.out.println("Number of database tables: " + tables.size());
     }
+    
+    return true;
   }
 
 
   /**
    * Print the list of schemas.
    */
-  private void printSchemas() {
+  private boolean printSchemas() {
 
     // Check the database connection
     if (session.getSourceId() < 0) {
       System.out.println("No database connection found");
-      return;
+      return false;
     }
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -1134,7 +1140,7 @@ public final class LineConsole
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
     // Get the list of schemas
@@ -1150,39 +1156,50 @@ public final class LineConsole
         System.out.println(schema);
       }
     }
+    
+    return true;
   }
 
 
-  private void loadJar(final String jarName) {
+  private boolean loadJar(final String jarName) {
     // Confirm the filename
     if (!jarName.toLowerCase().endsWith(".jar")) {
       System.out.println("Only JAR files can be added to the class path");
+      return false;
     } else {
       final File file = new File(jarName);
       if (!file.exists()) {
         System.out.println("The JAR file could not be found");
+        return false;
       } else if (!file.isFile()) {
         System.out.println("The specified directory cannot be added to the class path");
+        return false;
       } else {
         // Add the jar to the class path
+        boolean result = true;
         try {
           final URL urlJar = file.toURI().toURL();
           try {
             ConnManager.addURL(urlJar);
           } catch (IOException e) {
             Logger.error(e);
+            result = false;
           }
           System.out.println("Successful");
         } catch (MalformedURLException e) {
-          System.out.println("Exception: " + e.getMessage());
+          Logger.error(e);
+          result = false;
         }
+        
+        return result;
       }
     }
   }
 
 
-  private void ver() {
+  private boolean ver() {
     System.out.println(ArgumentParser.VER_ROOT_STR);
+    return true;
   }
 
 
@@ -1215,16 +1232,17 @@ public final class LineConsole
   /**
    * Print the current time.
    */
-  private void printTime() {
+  private boolean printTime() {
     final String dateStr = Utility.getDateTimeString();
     System.out.println("Current date/time: " + dateStr);
+    return true;
   }
 
 
   /**
    * Print memory usage information.
    */
-  private void mem() {
+  private boolean mem() {
 
     // Save the memory statistics
     final long freeMem = Runtime.getRuntime().freeMemory();
@@ -1235,16 +1253,20 @@ public final class LineConsole
     System.out.println("Free memory:  " + Utility.formatLong(freeMem));
     System.out.println("Max memory:   " + Utility.formatLong(maxMem));
     System.out.println("Total memory: " + Utility.formatLong(totalMem));
+    
+    return true;
   }
 
 
   /**
    * Run the Java garbage collector.
    */
-  private void gc() {
+  private boolean gc() {
     System.gc();
     System.gc();
     System.gc();
+    
+    return true;
   }
 
 
@@ -1297,7 +1319,7 @@ public final class LineConsole
    * 
    * @param filter the start of commands we want to print
    */
-  private void printHelp(final String filter) {
+  private boolean printHelp(final String filter) {
 
     final List<String> cmds = new ArrayList<String>(20);
     for (String cmd : supportedCommands) {
@@ -1311,6 +1333,8 @@ public final class LineConsole
     } else {
       printList(cmds);
     }
+    
+    return true;
   }
 
 
@@ -1381,7 +1405,8 @@ public final class LineConsole
   /**
    * Print the list of supported commands.
    */
-  private void printHelp() {
+  private boolean printHelp() {
     printList(supportedCommands);
+    return true;
   }
 }
