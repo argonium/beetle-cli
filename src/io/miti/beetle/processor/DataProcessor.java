@@ -117,13 +117,33 @@ public final class DataProcessor
   }
   
   
+  /**
+   * Generate a Java class based on a fake data spec.
+   * 
+   * @param spec the fake spec
+   */
   private void writeJavaClass(final FakeSpecParser spec) {
-    generateJavaClass(new File("."), session.getTargetData(), session.getTargetName(), spec.getNodes());
+    generateJavaClass(new File("."), session.getTargetData(),
+        session.getTargetName(), spec.getNodes(), session.getTargetName());
   }
   
   
+  /**
+   * Generate a Java class for a database table.
+   */
   private void writeJavaClassFromSQL() {
-    // TODO
+    
+    // Generate the class name
+    final String className =
+        Utility.toTitleCaseWithSplit(session.getTargetName().toLowerCase(),
+            '_', true, true);
+    
+    // TODO Populate by getting the metadata for the table name
+    List<FakeNode> nodes = null;
+    
+    // Call the method
+    generateJavaClass(new File("."), session.getTargetData(),
+        session.getTargetName(), nodes, className);
   }
 
 
@@ -288,12 +308,10 @@ public final class DataProcessor
   private void generateJavaClass(final File outputDir,
                                  final String packageName,
                                  final String tableName,
-                                 final List<FakeNode> nodes)
+                                 final List<FakeNode> nodes,
+                                 final String className)
   {
     final String lineSep = DBFileWriter.EOL;
-    
-    // Generate the class name from the table name
-    final String className = tableName;
     
     // The output file
     File file = new File(outputDir, className + ".java");
