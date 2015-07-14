@@ -345,6 +345,11 @@ public final class DataProcessor
         out.write("package " + packageName + ";" + lineSep + lineSep);
       }
       
+      // If there are any Date fields, import the class now
+      if (hasDateFields(nodes)) {
+        out.write("import java.util.Date;" + lineSep + lineSep);
+      }
+      
       // Write the class comment
       out.write("/**" + lineSep);
       out.write(" * Java class to encapsulate the " + tableName + " object." + lineSep);
@@ -440,5 +445,24 @@ public final class DataProcessor
         out = null;
       }
     }
+  }
+  
+  
+  /**
+   * Return whether the list of nodes has any of type Date.
+   * 
+   * @param nodes the list of nodes
+   * @return if any have a type of Date
+   */
+  private static boolean hasDateFields(final List<FakeNode> nodes) {
+    boolean result = false;
+    for (FakeNode node : nodes) {
+      if (node.getClazz().equals(java.util.Date.class)) {
+        result = true;
+        break;
+      }
+    }
+    
+    return result;
   }
 }
