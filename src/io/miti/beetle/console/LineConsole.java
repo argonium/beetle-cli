@@ -324,11 +324,6 @@ public final class LineConsole
 
     return true;
   }
-  
-  
-  private void exportJava(final String tableName, final String packageName) {
-    // TODO
-  }
 
 
   private boolean backupPrefsDB(final String filename) {
@@ -585,6 +580,13 @@ public final class LineConsole
     session.setTargetTypeId(ContentType.JSON.getId());
     session.setTargetName(filename);
     return true;
+  }
+  
+  
+  private void exportJava(final String tableName, final String packageName) {
+    session.setTargetTypeId(ContentType.JAVA.getId());
+    session.setTargetName(tableName);
+    session.setTargetData(packageName);
   }
   
   
