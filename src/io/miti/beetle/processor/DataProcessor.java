@@ -53,25 +53,28 @@ public final class DataProcessor
   }
   
   
-  public void run() {
+  public boolean run() {
     // Check the session
     if (session == null) {
       Logger.error("Error: The session is null or invalid");
-      return;
+      return false;
     }
     
     // Check for SQL imports
+    boolean rc = false;
     if (session.getSourceTypeId() == ContentType.SQL.getId()) {
-      importSQL();
+      rc = importSQL();
     } else if (session.getSourceTypeId() == ContentType.FAKE.getId()) {
-      saveFakeData();
+      rc = saveFakeData();
     } else {
       Logger.error("Error: Only SQL imports are supported for now; type = " + session.getSourceTypeId());
     }
+    
+    return rc;
   }
   
   
-  public void saveFakeData() {
+  public boolean saveFakeData() {
     
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
@@ -80,7 +83,7 @@ public final class DataProcessor
         (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV) &&
         (cType != ContentType.JAVA)) {
       Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown, Java");
-      return;
+      return false;
     }
     
     // Parse the specification in the source name.
@@ -89,11 +92,12 @@ public final class DataProcessor
     final FakeSpecParser spec = new FakeSpecParser();
     if (!spec.parse(session.getSourceName())) {
       Logger.error("Invalid specification for fake data");
-      return;
+      return false;
     }
     
+    boolean result = false;
     if (cType == ContentType.JAVA) {
-      writeJavaClass(spec);
+      result = writeJavaClass(spec);
     } else {
       // Configure the data target
       final DBFileWriter writer = getFileWriter(cType,
@@ -113,7 +117,11 @@ public final class DataProcessor
       
       // Force out any pending data
       writer.writeString(true);
+      
+      result = true;
     }
+    
+    return result;
   }
   
   
@@ -122,16 +130,17 @@ public final class DataProcessor
    * 
    * @param spec the fake spec
    */
-  private void writeJavaClass(final FakeSpecParser spec) {
-    generateJavaClass(new File("."), session.getTargetData(),
+  private boolean writeJavaClass(final FakeSpecParser spec) {
+    boolean rc = generateJavaClass(new File("."), session.getTargetData(),
         session.getTargetName(), spec.getNodes(), session.getTargetName());
+    return rc;
   }
   
   
   /**
    * Generate a Java class for a database table.
    */
-  private void writeJavaClassFromSQL() {
+  private boolean writeJavaClassFromSQL() {
     
     // Generate the class name
     final String className =
@@ -140,18 +149,25 @@ public final class DataProcessor
     
     // Populate by getting the metadata for the table name
     List<FakeNode> nodes = Database.getColumnInfo(session.getTargetName());
+    if ((nodes == null) || (nodes.isEmpty())) {
+      Logger.error("No column information found for table " + session.getTargetName());
+      return false;
+    }
+    
+    // Update the field names
     for (FakeNode node : nodes) {
       final String name = Utility.generateFieldFromColumn(node.getName());
       node.setName(name);
     }
     
     // Call the method
-    generateJavaClass(new File("."), session.getTargetData(),
+    boolean rc = generateJavaClass(new File("."), session.getTargetData(),
         session.getTargetName(), nodes, className);
+    return rc;
   }
 
 
-  public void importSQL() {
+  public boolean importSQL() {
     
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
@@ -160,14 +176,14 @@ public final class DataProcessor
         (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV) &&
         (cType != ContentType.JAVA)) {
       Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown, Java");
-      return;
+      return false;
     }
     
     // Find the user DB with the specified ID
     final UserDb userDb = UserDBCache.get().find(session.getSourceId());
     if (userDb == null) {
       Logger.error("Error: Invalid database ID in the session");
-      return;
+      return false;
     }
     
     // Make sure the JDBC DB's driver class is loaded
@@ -179,11 +195,12 @@ public final class DataProcessor
     ConnManager.get().init(userDb.getUrl(), userDb.getUserId(), userDb.getUserPw());
     if (!ConnManager.get().create()) {
       Logger.error("Unable to connect to database " + userDb.getUrl());
-      return;
+      return false;
     }
     
+    boolean rc = false;
     if (cType == ContentType.JAVA) {
-      writeJavaClassFromSQL();
+      rc = writeJavaClassFromSQL();
     } else {
       // Get the metadata
       PreparedStatement stmt = null;
@@ -225,6 +242,8 @@ public final class DataProcessor
               // Close the result set
               rs.close();
               rs = null;
+              
+              rc = true;
             } else {
               Logger.error("The database result set is null");
             }
@@ -244,6 +263,8 @@ public final class DataProcessor
     
     // Close the connection
     ConnManager.get().close();
+    
+    return rc;
   }
   
   
@@ -309,7 +330,7 @@ public final class DataProcessor
    * @param tableName the table name
    * @param nodes the list of columns and types
    */
-  private void generateJavaClass(final File outputDir,
+  private boolean generateJavaClass(final File outputDir,
                                  final String packageName,
                                  final String tableName,
                                  final List<FakeNode> nodes,
@@ -322,6 +343,7 @@ public final class DataProcessor
     
     // Write to the file
     BufferedWriter out = null;
+    boolean rc = false;
     try
     {
       // Open the output writer
@@ -422,6 +444,8 @@ public final class DataProcessor
       // Close the writer
       out.close();
       out = null;
+      
+      rc = true;
     }
     catch (IOException e)
     {
@@ -443,6 +467,8 @@ public final class DataProcessor
         out = null;
       }
     }
+    
+    return rc;
   }
   
   

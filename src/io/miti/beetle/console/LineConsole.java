@@ -551,8 +551,11 @@ public final class LineConsole
   
   
   private boolean runSession() {
-    new DataProcessor(session).run();
-    return true;
+    boolean rc = new DataProcessor(session).run();
+    if (rc) {
+      System.out.println("Processing completed");
+    }
+    return rc;
   }
   
   
