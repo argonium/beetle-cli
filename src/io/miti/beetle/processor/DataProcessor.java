@@ -68,8 +68,9 @@ public final class DataProcessor
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
         (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
-        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown");
+        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV) &&
+        (cType != ContentType.JAVA)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown, Java");
       return;
     }
     
@@ -109,8 +110,9 @@ public final class DataProcessor
     if ((cType != ContentType.JSON) && (cType != ContentType.CSV) &&
         (cType != ContentType.YAML) && (cType != ContentType.TOML) &&
         (cType != ContentType.XML) && (cType != ContentType.SQL_FILE) &&
-        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV)) {
-      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown");
+        (cType != ContentType.MARKDOWN) && (cType != ContentType.TSV) &&
+        (cType != ContentType.JAVA)) {
+      Logger.error("Only supported export formats: CSV, JSON, YAML, TOML, XML, SQL, TSV, Markdown, Java");
       return;
     }
     
