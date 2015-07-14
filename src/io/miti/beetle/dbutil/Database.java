@@ -421,10 +421,7 @@ public final class Database
         // Save the column info
         final String colName = rs.getString("COLUMN_NAME");
         final int dataType = rs.getInt("DATA_TYPE");
-        final String colType = rs.getString("TYPE_NAME");
-        
-        final Class<?> colClass = getClassForType(dataType, colType);
-        
+        final Class<?> colClass = DBFileWriter.getJavaClassFromSqlType(dataType);
         FakeNode node = new FakeNode(colName, colClass);
 
         // Add it to our list
@@ -440,19 +437,6 @@ public final class Database
 
     // Return the column info
     return listColumns;
-  }
-  
-  
-  /**
-   * Get the class for the column.
-   * 
-   * @param dataType the data type
-   * @param colType the column type
-   * @return the class for this column
-   */
-  private static Class<?> getClassForType(final int dataType, final String colType) {
-    // TODO
-    return String.class;
   }
 
 
