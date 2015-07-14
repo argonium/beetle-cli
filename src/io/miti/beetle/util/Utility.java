@@ -700,4 +700,167 @@ public final class Utility
     // Return the string
     return (sb.toString());
   }
+  
+  
+  /**
+   * Generate the class variable name from the column name.
+   * 
+   * @param columnName the column name
+   * @return the corresponding class variable name
+   */
+  public static String generateFieldFromColumn(final String columnName)
+  {
+    // Check for upper-case runs in the column name
+    final String colName = checkForUC(columnName);
+    
+    // Save the length
+    final int colLen = colName.length();
+    
+    // This is the string that gets returned
+    StringBuilder sb = new StringBuilder(colLen);
+    
+    // Iterate over the characters in the string
+    boolean makeLower = true;
+    for (int i = 0; i < colLen; ++i)
+    {
+      // Save the current character
+      final char ch = colName.charAt(i);
+      
+      // If it's not a letter or a digit, skip it
+      if (!Character.isLetterOrDigit(ch))
+      {
+        // Make the next character uppercase if
+        // the string builder already has some
+        // characters
+        makeLower = (sb.length() == 0);
+        
+        // Go to the next character
+        continue;
+      }
+      
+      // Is this character uppercase?
+      boolean isLower = Character.isLowerCase(ch);
+      if (!isLower && (sb.length() > 0))
+      {
+        // It is, and the output string is not empty,
+        // so make the character uppercase
+        makeLower = false;
+      }
+      
+      // Add the character to the string, after modifying the case
+      if (makeLower)
+      {
+        sb.append(Character.toLowerCase(ch));
+      }
+      else
+      {
+        sb.append(Character.toUpperCase(ch));
+      }
+      
+      // By default, the next character will be made lowercase
+      makeLower = true;
+    }
+    
+    // Return the string
+    return sb.toString();
+  }
+  
+  
+  /**
+   * Check for a run of uppercase characters.
+   * 
+   * @param inputName the string to check
+   * @return modified input string
+   */
+  private static String checkForUC(final String inputName)
+  {
+    // See if the string has a non-uppercase letter
+    boolean bHasNonUC = false;
+    final int nLen = inputName.length();
+    for (int i = 0; i < nLen; ++i)
+    {
+      // Check the character
+      if (!Character.isUpperCase(inputName.charAt(i)))
+      {
+        // We found a character that's either not a letter,
+        // or it's lowercase, so save the state and break
+        bHasNonUC = true;
+        break;
+      }
+    }
+    
+    // Check if a non-UC letter was found
+    if (!bHasNonUC)
+    {
+      // None were found, so just return the string in all lower-case
+      return (inputName.toLowerCase());
+    }
+    
+    // Go through the string, looking for runs of uppercase letters
+    StringBuilder sb = new StringBuilder(inputName);
+    for (int i = 0; (i < nLen); ++i)
+    {
+      // Find the next uppercase character
+      final char ch = sb.charAt(i);
+      if (Character.isUpperCase(ch))
+      {
+        // Find the end of the run
+        int j = i + i;
+        boolean bContinue = true;
+        while (bContinue && (j < nLen))
+        {
+          if (!Character.isUpperCase(sb.charAt(j)))
+          {
+            bContinue = false;
+          }
+          else
+          {
+            ++j;
+          }
+        }
+        
+        if (!bContinue)
+        {
+          if (Character.isLowerCase(sb.charAt(j)))
+          {
+            putInLowerCase(sb, i + 1, j - 1);
+          }
+          else
+          {
+            putInLowerCase(sb, i + 1, j);
+          }
+        }
+        else
+        {
+          // Hit the end of the line
+          putInLowerCase(sb, i + 1, j);
+        }
+        
+        i = j;
+      }
+    }
+    
+    // Return the string
+    return sb.toString();
+  }
+  
+  
+  /**
+   * Put the input string in lowercase.
+   * 
+   * @param str the input string
+   * @param nStart the start of the run
+   * @param nEnd the end (exclusive) of the run
+   */
+  private static void putInLowerCase(final StringBuilder str,
+                                     final int nStart,
+                                     final int nEnd)
+  {
+    final int nLen = str.length();
+    final int end = Math.min(nEnd, nLen);
+    for (int i = nStart; i < end; ++i)
+    {
+      str.setCharAt(i, Character.toLowerCase(str.charAt(i)));
+    }
+  }
 }
