@@ -2,6 +2,7 @@ package io.miti.beetle.dbutil;
 
 import io.miti.beetle.exporters.DBFileWriter;
 import io.miti.beetle.prefs.IUpdateable;
+import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.Logger;
 
 import java.sql.Connection;
@@ -396,6 +397,67 @@ public final class Database
 
   /**
    * Returns information about the columns in the table.
+   * 
+   * @param table the table name
+   * @param notePKs include whether the column is part of the primary key
+   * @return the list of table info
+   */
+  public static List<FakeNode> getColumnInfo(final String table) {
+    // This is the object that gets returned
+    List<FakeNode> listColumns = new ArrayList<FakeNode>(10);
+
+    // Get the info for all columns in this table
+    try {
+      // Get the database metadata
+      final Connection conn = ConnManager.get().getConn();
+      DatabaseMetaData dbmd = conn.getMetaData();
+
+      // Get the table info
+      ResultSet rs = dbmd.getColumns(conn.getCatalog(), getSchemaName(dbmd),
+          table.toUpperCase(), null);
+
+      // Iterate over all column info for the table
+      while (rs.next()) {
+        // Save the column info
+        final String colName = rs.getString("COLUMN_NAME");
+        final int dataType = rs.getInt("DATA_TYPE");
+        final String colType = rs.getString("TYPE_NAME");
+        
+        final Class<?> colClass = getClassForType(dataType, colType);
+        
+        FakeNode node = new FakeNode(colName.toLowerCase(), colClass);
+
+        // Add it to our list
+        listColumns.add(node);
+      }
+
+      // Close the result set
+      rs.close();
+      rs = null;
+    } catch (SQLException e) {
+      Logger.error(e);
+    }
+
+    // Return the column info
+    return listColumns;
+  }
+  
+  
+  /**
+   * Get the class for the column.
+   * 
+   * @param dataType the data type
+   * @param colType the column type
+   * @return the class for this column
+   */
+  private static Class<?> getClassForType(final int dataType, final String colType) {
+    // TODO
+    return String.class;
+  }
+
+
+  /**
+   * Returns the list of primary column names for the table.
    * 
    * @param table the table name
    * @return the list of table info
