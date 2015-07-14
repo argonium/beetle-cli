@@ -234,7 +234,7 @@ public abstract class DBFileWriter
   }
   
   
-  private Class<?> getJavaClassFromSqlType(final int nClassType) {
+  public static Class<?> getJavaClassFromSqlType(final int nClassType) {
     
     switch (nClassType) {
       case Types.BOOLEAN:
