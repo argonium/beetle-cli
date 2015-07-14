@@ -88,6 +88,16 @@ public abstract class DBFileWriter
   }
   
   
+  /**
+   * Return the list of nodes.
+   * 
+   * @return the list of nodes
+   */
+  public List<NodeInfo> getNodes() {
+    return nodes;
+  }
+  
+  
   public void setFileData(final String pFileData) {
     fileData = pFileData;
   }
