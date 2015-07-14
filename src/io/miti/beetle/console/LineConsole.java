@@ -83,6 +83,7 @@ public final class LineConsole
    */
   public void runSmartREPL() {
 
+    printIntro();
     try {
       // Instantiate the console reader for the JLine2 library
       ConsoleReader console = new ConsoleReader();
@@ -162,6 +163,8 @@ public final class LineConsole
    */
   public void runREPL() {
 
+    printIntro();
+
     // Get the system console, for reading input
     final Console console = System.console();
     while (true) {
@@ -172,6 +175,10 @@ public final class LineConsole
         break;
       }
     }
+  }
+  
+  public static void printIntro() {
+    System.out.println(ArgumentParser.VER_ROOT_STR + ".  Enter 'help' or press <tab> for help.");
   }
 
 
@@ -260,6 +267,8 @@ public final class LineConsole
       exportYAML(cmds.get(2));
     } else if (validateCommand(cmds, 3, "export", "xml")) {
       exportXML(cmds.get(2));
+    } else if (validateCommand(cmds, 4, "export", "java")) {
+      exportJava(cmds.get(2), cmds.get(3));
     } else if (validateCommand(cmds, 5, "set", "dbtype", null, "jar")) {
       setDBTypeJar(cmds.get(2), cmds.get(4));
     } else if (validateCommand(cmds, 4, "clear", "dbtype", null, "jar")) {
@@ -317,6 +326,11 @@ public final class LineConsole
   }
   
   
+  private void exportJava(final String tableName, final String packageName) {
+    // TODO
+  }
+
+
   private boolean backupPrefsDB(final String filename) {
     
     // Check the input file
@@ -1367,6 +1381,7 @@ public final class LineConsole
         "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "export markdown <filename>", "export tsv <filename>",
+        "export java <table name> <package name>",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
