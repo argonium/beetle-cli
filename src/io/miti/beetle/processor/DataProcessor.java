@@ -1,9 +1,16 @@
 package io.miti.beetle.processor;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 import io.miti.beetle.cache.DBTypeCache;
 import io.miti.beetle.cache.UserDBCache;
@@ -22,8 +29,10 @@ import io.miti.beetle.model.ContentType;
 import io.miti.beetle.model.DbType;
 import io.miti.beetle.model.Session;
 import io.miti.beetle.model.UserDb;
+import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.Logger;
+import io.miti.beetle.util.Utility;
 
 public final class DataProcessor
 {
@@ -109,7 +118,7 @@ public final class DataProcessor
   
   
   private void writeJavaClass(final FakeSpecParser spec) {
-    // TODO
+    generateJavaClass(new File("."), session.getTargetData(), session.getTargetName(), spec.getNodes());
   }
   
   
@@ -264,6 +273,148 @@ public final class DataProcessor
       return new XmlDBFileWriter(outName, outData, spec);
     } else {
       return null;
+    }
+  }
+  
+  
+  /**
+   * Generate the Java class for the table.
+   * 
+   * @param outputDir the output directory
+   * @param packageName the package name of the class
+   * @param tableName the table name
+   * @param nodes the list of columns and types
+   */
+  private void generateJavaClass(final File outputDir,
+                                 final String packageName,
+                                 final String tableName,
+                                 final List<FakeNode> nodes)
+  {
+    final String lineSep = DBFileWriter.EOL;
+    
+    // Generate the class name from the table name
+    final String className = tableName;
+    
+    // The output file
+    File file = new File(outputDir, className + ".java");
+    
+    // Write to the file
+    BufferedWriter out = null;
+    try
+    {
+      // Open the output writer
+      out = new BufferedWriter(new FileWriter(file));
+      
+      // Build the date
+      SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm:ss");
+      String dateStr = sdf.format(new Date());
+      
+      // Write the header comment
+      out.write("/*" + lineSep);
+      out.write(" * Java class for the " + tableName + " object." + lineSep);
+      out.write(" * Generated on " + dateStr + " by Beetle." + lineSep);
+      out.write(" */" + lineSep + lineSep);
+      
+      // Write the package name (if any)
+      if ((packageName != null) && (packageName.length() > 0))
+      {
+        out.write("package " + packageName + ";" + lineSep + lineSep);
+      }
+      
+      // Write the class comment
+      out.write("/**" + lineSep);
+      out.write(" * Java class to encapsulate the " + tableName + " object." + lineSep);
+      out.write(" *" + lineSep);
+      out.write(" * @version 1.0" + lineSep);
+      out.write(" */" + lineSep);
+      
+      // Write the class declaration
+      out.write("public final class " + className);
+      out.write(lineSep + "{" + lineSep);
+      
+      // Write the field declarations
+      for (FakeNode col : nodes)
+      {
+        out.write("  /**" + lineSep);
+        out.write("   * The field " + col.getName() + "." + lineSep);
+        out.write("   */" + lineSep);
+        out.write("  private " + col.getTypeAsJavaClass() + " " +
+                  col.getName() + " = " + col.getDefaultValue() + ";" +
+                  lineSep + "  " + lineSep);
+      }
+      
+      // Write the default constructor
+      out.write("  " + lineSep);
+      out.write("  /**" + lineSep);
+      out.write("   * Default constructor." + lineSep);
+      out.write("   */" + lineSep);
+      out.write("  public " + className + "()" + lineSep);
+      out.write("  {" + lineSep);
+      out.write("    super();" + lineSep);
+      out.write("  }" + lineSep);
+      
+      // Write the getters/setters
+      for (FakeNode col : nodes)
+      {
+        // The field name with the first character in uppercase
+        final String fieldInUC = Utility.setFirstCharacter(col.getName(), true);
+        
+        // Write the getter
+        out.write("  " + lineSep);
+        out.write("  " + lineSep);
+        out.write("  /**" + lineSep);
+        out.write("   * Get the value for " + col.getName() + "." + lineSep);
+        out.write("   *" + lineSep);
+        out.write("   * @return the " + col.getName() + lineSep);
+        out.write("   */" + lineSep);
+        out.write("  public " + col.getTypeAsJavaClass() + " get" +
+                  fieldInUC + "()" + lineSep);
+        out.write("  {" + lineSep);
+        out.write("    return " + col.getName() + ";" + lineSep);
+        out.write("  }" + lineSep);
+        
+        // Write the setter
+        out.write("  " + lineSep);
+        out.write("  " + lineSep);
+        out.write("  /**" + lineSep);
+        out.write("   * Update the value for " + col.getName() + "." + lineSep);
+        out.write("   *" + lineSep);
+        out.write("   * @param p" + fieldInUC + " the new value for " +
+                  col.getName() + lineSep);
+        out.write("   */" + lineSep);
+        out.write("  public void set" + fieldInUC + "(final " +
+                  col.getTypeAsJavaClass() + " p" + fieldInUC + ")" + lineSep);
+        out.write("  {" + lineSep);
+        out.write("    " + col.getName() + " = p" + fieldInUC + ";" + lineSep);
+        out.write("  }" + lineSep);
+      }
+      
+      // Write the class declaration
+      out.write("}" + lineSep);
+      
+      // Close the writer
+      out.close();
+      out = null;
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    finally
+    {
+      if (out != null)
+      {
+        try
+        {
+          out.close();
+        }
+        catch (IOException e)
+        {
+          e.printStackTrace();
+        }
+        
+        out = null;
+      }
     }
   }
 }
