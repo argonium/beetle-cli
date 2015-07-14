@@ -63,6 +63,8 @@ public final class FakeNode
       return "double";
     } else if (clazz.equals(Long.class)) {
       return "long";
+    } else if (clazz.equals(java.util.Date.class)) {
+      return "Date";
     }
     
     return "String";
