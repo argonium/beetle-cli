@@ -6,7 +6,7 @@ public final class ArgumentParser {
   public boolean loadClassNames = false;
 
   // Strings holding the version and build date
-  public static final String VER_ROOT_STR = "Beetle - v. 1.0";
+  public static final String VER_ROOT_STR = "Beetle - v. 1.2";
 
 
   /**
