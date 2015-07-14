@@ -33,7 +33,7 @@ public abstract class DBFileWriter
   // Save info about the result set - column names and types
   protected List<NodeInfo> nodes = null;
   
-  protected static final String EOL = "\r\n";
+  public static final String EOL = "\r\n";
 
 
   @SuppressWarnings("unused")
