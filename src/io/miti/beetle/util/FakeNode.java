@@ -55,4 +55,16 @@ public final class FakeNode
   public void setData(final Object pData) {
     data = pData;
   }
+
+  public String getTypeAsJavaClass() {
+    if (clazz.equals(Boolean.class)) {
+      return "boolean";
+    } else if (clazz.equals(Double.class)) {
+      return "double";
+    } else if (clazz.equals(Long.class)) {
+      return "long";
+    }
+    
+    return "String";
+  }
 }
