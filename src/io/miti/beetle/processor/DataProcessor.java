@@ -141,9 +141,7 @@ public final class DataProcessor
     // Populate by getting the metadata for the table name
     List<FakeNode> nodes = Database.getColumnInfo(session.getTargetName());
     for (FakeNode node : nodes) {
-      // TODO Doesn't handle jar_name correctly - should be jarName, not jarname
-      final String name = Utility.toTitleCaseWithSplit(node.getName().toLowerCase(),
-          '_', false, true);
+      final String name = Utility.generateFieldFromColumn(node.getName());
       node.setName(name);
     }
     
