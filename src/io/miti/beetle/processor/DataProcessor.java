@@ -83,27 +83,41 @@ public final class DataProcessor
       return;
     }
     
-    // Configure the data target
-    final DBFileWriter writer = getFileWriter(cType,
-        session.getTargetName(), session.getTargetData(), spec);
-    
-    // Write the header
-    writer.writeHeader();
-    
-    // Iterate over the data for exporting
-    for (int i = 0; i < runCount; ++i) {
-      // Write out the data
-      writer.writeObject(spec);
+    if (cType == ContentType.JAVA) {
+      writeJavaClass(spec);
+    } else {
+      // Configure the data target
+      final DBFileWriter writer = getFileWriter(cType,
+          session.getTargetName(), session.getTargetData(), spec);
+      
+      // Write the header
+      writer.writeHeader();
+      
+      // Iterate over the data for exporting
+      for (int i = 0; i < runCount; ++i) {
+        // Write out the data
+        writer.writeObject(spec);
+      }
+      
+      // Write the footer
+      writer.writeFooter();
+      
+      // Force out any pending data
+      writer.writeString(true);
     }
-    
-    // Write the footer
-    writer.writeFooter();
-    
-    // Force out any pending data
-    writer.writeString(true);
   }
   
   
+  private void writeJavaClass(final FakeSpecParser spec) {
+    // TODO
+  }
+  
+  
+  private void writeJavaClassFromSQL() {
+    // TODO
+  }
+
+
   public void importSQL() {
     
     final ContentType cType = ContentType.getById(session.getTargetTypeId());
@@ -135,60 +149,64 @@ public final class DataProcessor
       return;
     }
     
-    // Get the metadata
-    PreparedStatement stmt = null;
-    try {
-      // Prepare the statement
-      stmt = ConnManager.get().getConn().prepareStatement(session.getSourceName());
-      
-      // Verify it's not null
-      if (stmt != null) {
-        // Execute the statement and check the result
-        final boolean result = stmt.execute();
-        if (!result) {
-          Logger.error("The statement did not execute correctly");
-        } else {
-          // Get the result set of executing the query
-          ResultSet rs = stmt.getResultSet();
-          
-          // Verify the result set is not null
-          if (rs != null) {
-            // Get the metadata
-            ResultSetMetaData rsmd = rs.getMetaData();
-            
-            // Configure the data target
-            final DBFileWriter writer = getFileWriter(cType,
-                session.getTargetName(), session.getTargetData(), rsmd);
-            
-            // Write the header
-            writer.writeHeader();
-            
-            // Iterate over the data for exporting
-            Database.executeSelect(rs, writer);
-            
-            // Write the footer
-            writer.writeFooter();
-            
-            // Force out any pending data
-            writer.writeString(true);
-            
-            // Close the result set
-            rs.close();
-            rs = null;
-          } else {
-            Logger.error("The database result set is null");
-          }
-        }
+    if (cType == ContentType.JAVA) {
+      writeJavaClassFromSQL();
+    } else {
+      // Get the metadata
+      PreparedStatement stmt = null;
+      try {
+        // Prepare the statement
+        stmt = ConnManager.get().getConn().prepareStatement(session.getSourceName());
         
-        // Close the statement
-        stmt.close();
-        stmt = null;
-      } else {
-        Logger.error("The database statement is null");
+        // Verify it's not null
+        if (stmt != null) {
+          // Execute the statement and check the result
+          final boolean result = stmt.execute();
+          if (!result) {
+            Logger.error("The statement did not execute correctly");
+          } else {
+            // Get the result set of executing the query
+            ResultSet rs = stmt.getResultSet();
+            
+            // Verify the result set is not null
+            if (rs != null) {
+              // Get the metadata
+              ResultSetMetaData rsmd = rs.getMetaData();
+              
+              // Configure the data target
+              final DBFileWriter writer = getFileWriter(cType,
+                  session.getTargetName(), session.getTargetData(), rsmd);
+              
+              // Write the header
+              writer.writeHeader();
+              
+              // Iterate over the data for exporting
+              Database.executeSelect(rs, writer);
+              
+              // Write the footer
+              writer.writeFooter();
+              
+              // Force out any pending data
+              writer.writeString(true);
+              
+              // Close the result set
+              rs.close();
+              rs = null;
+            } else {
+              Logger.error("The database result set is null");
+            }
+          }
+          
+          // Close the statement
+          stmt.close();
+          stmt = null;
+        } else {
+          Logger.error("The database statement is null");
+        }
+      } catch (SQLException e) {
+        Logger.error("SQL Exception: " + e.getMessage());
+        e.printStackTrace();
       }
-    } catch (SQLException e) {
-      Logger.error("SQL Exception: " + e.getMessage());
-      e.printStackTrace();
     }
     
     // Close the connection
