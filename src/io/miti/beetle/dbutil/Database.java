@@ -425,7 +425,7 @@ public final class Database
         
         final Class<?> colClass = getClassForType(dataType, colType);
         
-        FakeNode node = new FakeNode(colName.toLowerCase(), colClass);
+        FakeNode node = new FakeNode(colName, colClass);
 
         // Add it to our list
         listColumns.add(node);

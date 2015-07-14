@@ -138,8 +138,14 @@ public final class DataProcessor
         Utility.toTitleCaseWithSplit(session.getTargetName().toLowerCase(),
             '_', true, true);
     
-    // TODO Populate by getting the metadata for the table name
-    List<FakeNode> nodes = null;
+    // Populate by getting the metadata for the table name
+    List<FakeNode> nodes = Database.getColumnInfo(session.getTargetName());
+    for (FakeNode node : nodes) {
+      // TODO Doesn't handle jar_name correctly - should be jarName, not jarname
+      final String name = Utility.toTitleCaseWithSplit(node.getName().toLowerCase(),
+          '_', false, true);
+      node.setName(name);
+    }
     
     // Call the method
     generateJavaClass(new File("."), session.getTargetData(),
