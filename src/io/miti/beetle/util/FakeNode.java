@@ -67,4 +67,16 @@ public final class FakeNode
     
     return "String";
   }
+  
+  public String getDefaultValue() {
+    if (clazz.equals(Boolean.class)) {
+      return "false";
+    } else if (clazz.equals(Double.class)) {
+      return "0.0";
+    } else if (clazz.equals(Long.class)) {
+      return "0L";
+    }
+    
+    return "null";
+  }
 }
