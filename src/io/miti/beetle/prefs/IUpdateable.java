@@ -1,12 +1,3 @@
-/**
- * @(#)IUpdateable.java
- * 
- * Created on Feb 02, 2010
- *
- * Copyright 2010 MobilVox, Inc. All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.prefs;
 
 /**

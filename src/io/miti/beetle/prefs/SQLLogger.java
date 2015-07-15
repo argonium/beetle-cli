@@ -1,12 +1,3 @@
-/**
- * @(#)SQLLogger.java
- * 
- * Created on Jan 25, 2010
- *
- * Copyright 2010 MobilVox, Inc. All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.prefs;
 
 import io.miti.beetle.util.Logger;
