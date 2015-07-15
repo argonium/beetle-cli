@@ -1,12 +1,3 @@
-/**
- * @(#)DatabaseEvent.java
- *
- * Created on Jan 18, 2010
- *
- * Copyright 2010 MobilVox, Inc.  All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.prefs;
 
 /**

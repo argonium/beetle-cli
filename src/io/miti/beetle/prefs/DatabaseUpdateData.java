@@ -1,12 +1,3 @@
-/*
- * @(#)DatabaseUpdateData.java
- * 
- * Created on Apr 8, 2008
- *
- * Copyright 2008 MobilVox, Inc. All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.prefs;
 
 import io.miti.beetle.util.Content;
