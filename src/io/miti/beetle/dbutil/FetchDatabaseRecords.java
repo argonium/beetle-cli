@@ -1,12 +1,3 @@
-/**
- * @(#)FetchDatabaseRecords.java
- * 
- * Created on May 3, 2007
- *
- * Copyright 2007 MobilVox, Inc. All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.dbutil;
 
 /**

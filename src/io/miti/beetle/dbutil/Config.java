@@ -1,12 +1,3 @@
-/**
- * @(#)Config.java
- * 
- * Created on Oct 30, 2007
- *
- * Copyright 2007 MobilVox, Inc. All rights reserved.
- * MOBILVOX PROPRIETARY/CONFIDENTIAL.
- */
-
 package io.miti.beetle.dbutil;
 
 import io.miti.beetle.prefs.PrefsDatabase;
