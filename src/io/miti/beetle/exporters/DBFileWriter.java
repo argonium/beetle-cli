@@ -1,5 +1,6 @@
 package io.miti.beetle.exporters;
 
+import io.miti.beetle.console.LineConsole;
 import io.miti.beetle.util.FakeNode;
 import io.miti.beetle.util.FakeSpecParser;
 import io.miti.beetle.util.FakeType;
@@ -219,8 +220,12 @@ public abstract class DBFileWriter
         return (rs.wasNull() ? null : value);
       } else if (clazz.equals(java.util.Date.class)) {
         final Timestamp ts = rs.getTimestamp(index);
-        final java.util.Date date = (ts == null) ? null : new java.util.Date(ts.getTime());
-        return date;
+        if (ts == null) {
+          return null;
+        }
+        
+        // Return the date as either a date string or as a long
+        return (LineConsole.keepDateFormatting() ? new java.util.Date(ts.getTime()) : ts.getTime());
       } else {
         // Unknown data type
         return "";
