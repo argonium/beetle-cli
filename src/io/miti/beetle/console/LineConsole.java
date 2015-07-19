@@ -51,6 +51,7 @@ public final class LineConsole
   private static List<String> supportedCommands = null;
   private static final boolean useSmartREPL = true;
   private final Session session;
+  private static boolean keepDateFormatting = true;
   
   static {
     populateSupportedCommands();
@@ -125,6 +126,10 @@ public final class LineConsole
     session.setTargetId(pSession.getTargetId());
     session.setTargetName(pSession.getTargetName());
     session.setTargetTypeId(pSession.getTargetTypeId());
+  }
+  
+  public static boolean keepDateFormatting() {
+    return keepDateFormatting;
   }
 
 
@@ -239,6 +244,12 @@ public final class LineConsole
       Database.useUserNameForSchema(true);
     } else if (validateCommand(cmds, 3, "meta", "username", "off")) {
       Database.useUserNameForSchema(false);
+    } else if (validateCommand(cmds, 2, "keep", "dates")) {
+      System.out.println("Export dates as a date string instead of a long value? " + keepDateFormatting);
+    } else if (validateCommand(cmds, 3, "keep", "dates", "on")) {
+      keepDateFormatting = true;
+    } else if (validateCommand(cmds, 3, "keep", "dates", "off")) {
+      keepDateFormatting = false;
     } else if (validateCommand(cmds, 4, "import", "db", "table")) {
       importUserTable(cmds.get(3));
     } else if (validateCommand(cmds, 4, "import", "db", "query")) {
@@ -1387,6 +1398,7 @@ public final class LineConsole
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "export markdown <filename>", "export tsv <filename>",
         "export java <table name> <package name>",
+        "keep dates", "keep dates on", "keep dates off",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
         "parse fake <specification>", "export sql <filename> <tablename>",
