@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -569,25 +568,25 @@ public final class PrevLineConsole
   }
 
 
-  private int getSelection(final ConsoleReader console) {
-    if (console == null) {
-      final String str = System.console().readLine("Select a number: ");
-      final int sel = Utility.getStringAsInteger(str, -1, -1);
-      return sel;
-    }
-
-    console.setPrompt("Select a number: ");
-    int sel = -1;
-    try {
-      String val = console.readLine();
-      sel = Utility.getStringAsInteger(val, -1, -1);
-    } catch (IOException e) {
-      System.out.println("Exception reading selection: " + e.getMessage());
-    }
-
-    setPrompt(console);
-    return sel;
-  }
+//  private int getSelection(final ConsoleReader console) {
+//    if (console == null) {
+//      final String str = System.console().readLine("Select a number: ");
+//      final int sel = Utility.getStringAsInteger(str, -1, -1);
+//      return sel;
+//    }
+//
+//    console.setPrompt("Select a number: ");
+//    int sel = -1;
+//    try {
+//      String val = console.readLine();
+//      sel = Utility.getStringAsInteger(val, -1, -1);
+//    } catch (IOException e) {
+//      System.out.println("Exception reading selection: " + e.getMessage());
+//    }
+//
+//    setPrompt(console);
+//    return sel;
+//  }
 
 
   private void describeTable(final String table) {
