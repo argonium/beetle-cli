@@ -97,16 +97,23 @@ public final class CSVExporter {
    * If using reflection to access fields, we can add fields to ignore
    * via this method.
    * 
-   * @param val a field name to ignore
+   * @param vals a field name to ignore
    * @return this
    */
-  // TODO Change to ...
-  public CSVExporter addToIgnoredFields(final String val) {
-    if ((val != null) && !val.isEmpty()) {
-      if (fieldsToIgnore == null) {
-        fieldsToIgnore = new HashSet<String>(5);
+  public CSVExporter addToIgnoredFields(final String... vals) {
+    
+    // Verify the array has some items
+    if ((vals != null) && (vals.length > 0)) {
+      // Iterate over the list of field names to ignore
+      for (String val : vals) {
+        // If we haven't initialized the set yet, do it now
+        if (fieldsToIgnore == null) {
+          fieldsToIgnore = new HashSet<String>(5);
+        }
+        
+        // Add the current field to the set
+        fieldsToIgnore.add(val);
       }
-      fieldsToIgnore.add(val);
     }
     
     return this;
@@ -625,7 +632,7 @@ public final class CSVExporter {
     
     // TODO More testing
     CSVExporter ce = new CSVExporter();
-    ce.addToIgnoredFields("serialVersionUID").addToIgnoredFields("x").addToIgnoredFields("y");
+    ce.addToIgnoredFields("serialVersionUID");
     ce.export(null, plist, null, true);
     // ce.export(null, plist, new String[]{"x val", "y val"}, new String[]{"x", "y"});
     // ce.export(null, plist, new String[]{"x val", "y val"}, false);
