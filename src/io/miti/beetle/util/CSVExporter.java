@@ -41,7 +41,7 @@ public final class CSVExporter {
   private Set<String> fieldsToIgnore = null;
   
   /** Whether to write null objects (in the list) to the output. */
-  private boolean writeNullObjects = false;
+  private boolean writeNullObjects = true;
   
   static {
     df = new DecimalFormat("#.################");
@@ -99,8 +99,8 @@ public final class CSVExporter {
   
   /**
    * When iterating over the list of objects passed to export(),
-   * null objects are included in the ouput if this is set to true.
-   * By default, this property is false.
+   * null objects are included in the output if this is set to true.
+   * By default, this property is true.
    * 
    * @param bWrite whether to include null objects in the output
    * @return this
@@ -274,7 +274,7 @@ public final class CSVExporter {
    * @param fields the names of the object's fields to write
    * @return success or failure
    */
-  private boolean export(final String fname, final Map<?, ?> map,
+  public boolean export(final String fname, final Map<?, ?> map,
       final String[] titles, final String[] fields) {
     // Initialize
     init(fname);
@@ -366,6 +366,11 @@ public final class CSVExporter {
    * @return the value as a string
    */
   private String getValueFromObject(final Object obj) {
+    
+    if (obj == null) {
+      return "";
+    }
+    
     String val = null;
     Class<?> clazz = obj.getClass();
     if (clazz.equals(Integer.class)) {
@@ -419,6 +424,7 @@ public final class CSVExporter {
    */
   private String getFieldsFromObject(final Object obj) {
     StringBuilder line = new StringBuilder(50);
+    boolean addedToLine = false;
     for (Field field : obj.getClass().getDeclaredFields()) {
       field.setAccessible(true);
       
@@ -437,11 +443,19 @@ public final class CSVExporter {
       }
       
       if (value != null) {
-        if (line.length() > 0) {
+        if (addedToLine) {
           line.append(delim);
         }
         
         line.append(quoteString(getValueFromObject(value)));
+        addedToLine = true;
+      } else if (writeNullObjects) {
+        if (addedToLine) {
+          line.append(delim);
+        }
+        
+        line.append("");
+        addedToLine = true;
       }
     }
     
@@ -682,38 +696,23 @@ public final class CSVExporter {
     }
   }
 
-  public static void main(String[] args) {
-    List<java.awt.Point> plist = new ArrayList<java.awt.Point>(100);
-    for (int i = 0; i < 20; ++i) {
-      plist.add(new java.awt.Point(i + 10, i * 2));
-    }
+  public static void main(final String[] args) {
     
-    Map<Integer, java.awt.Point> map = new java.util.HashMap<Integer, java.awt.Point>(5);
-    int i = 5;
-    map.put(i++, new java.awt.Point(i + 100, i + 101));
-    map.put(i++, new java.awt.Point(i + 100, i + 101));
-    map.put(i++, null);
-    map.put(i++, new java.awt.Point(i + 100, i + 101));
-    map.put(i++, new java.awt.Point(i + 100, i + 101));
-    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    List<Double> dlist = new java.util.ArrayList<Double>(5);
+    dlist.add(Double.valueOf(3.5));
+    dlist.add(Double.valueOf(12351.1623));
+    dlist.add(Double.valueOf(-13));
+    dlist.add(null);
+    dlist.add(Double.valueOf(130958209835.1235));
     
-//    List<String> slist = new java.util.ArrayList<String>(5);
-//    slist.add("Hello world");
-//    slist.add("Sam I am");
-//    slist.add("Hello, there");
-//    
-//    List<Double> dlist = new java.util.ArrayList<Double>(5);
-//    dlist.add(Double.valueOf(3.5));
-//    dlist.add(Double.valueOf(12351.1623));
-//    dlist.add(Double.valueOf(-13));
-//    dlist.add(null);
-//    dlist.add(Double.valueOf(130958209835.1235));
+    // TODO More testing, and change the writeNullObjects behavior.  The number of fields
+    // that get written can not vary with each line.
     
-    // TODO More testing, especially complex objects with intrinsics as Objects
+    // Export the data
     CSVExporter ce = new CSVExporter();
-    ce.writeNullObjects(true);
-    ce.export(null, map, new String[]{"x val", "y val"}, new String[]{"x", "y"});
-    // ce.export(null, plist, null, true);
+    // ce.writeNullObjects(true);
+    // ce.export(null, map, new String[]{"x val", "y val"}, new String[]{"x", "y"});
+    ce.export(null, dlist, null, true);
     // ce.export(null, plist, new String[]{"x val", "y val"}, new String[]{"x", "y"});
     // ce.export(null, plist, new String[]{"x val", "y val"}, false);
     // ce.export(null, plist, null, true);
