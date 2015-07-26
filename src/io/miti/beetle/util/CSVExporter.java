@@ -39,7 +39,6 @@ public final class CSVExporter {
   private Set<String> fieldsToIgnore = null;
   
   static {
-    // TODO
     df = new DecimalFormat("#.################");
   }
 
