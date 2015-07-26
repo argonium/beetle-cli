@@ -38,6 +38,9 @@ public final class CSVExporter {
   /** The list of fields to ignore. */
   private Set<String> fieldsToIgnore = null;
   
+  /** Whether to write null objects (in the list) to the output. */
+  private boolean writeNullObjects = false;
+  
   static {
     df = new DecimalFormat("#.################");
   }
@@ -89,6 +92,19 @@ public final class CSVExporter {
    */
   public CSVExporter useNativeEOL() {
     EOL = System.lineSeparator();
+    return this;
+  }
+  
+  /**
+   * When iterating over the list of objects passed to export(),
+   * null objects are included in the ouput if this is set to true.
+   * By default, this property is false.
+   * 
+   * @param bWrite whether to include null objects in the output
+   * @return this
+   */
+  public CSVExporter writeNullObjects(final boolean bWrite) {
+    writeNullObjects = bWrite;
     return this;
   }
   
@@ -294,7 +310,11 @@ public final class CSVExporter {
         val = quoteString(val);
       }
     } else {
-      val = "";
+      if (writeNullObjects) {
+        val = "";
+      } else {
+        return;
+      }
     }
     
     // The fields in the line need to be quoted before this call
@@ -631,7 +651,6 @@ public final class CSVExporter {
     
     // TODO More testing
     CSVExporter ce = new CSVExporter();
-    ce.addToIgnoredFields("serialVersionUID");
     ce.export(null, plist, null, true);
     // ce.export(null, plist, new String[]{"x val", "y val"}, new String[]{"x", "y"});
     // ce.export(null, plist, new String[]{"x val", "y val"}, false);
