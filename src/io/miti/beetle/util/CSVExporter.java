@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 public final class CSVExporter {
@@ -212,7 +214,8 @@ public final class CSVExporter {
     // Return the result
     return rc;
   }
-
+  
+  
   /**
    * Get the names of the fields from the data.
    * 
@@ -260,7 +263,42 @@ public final class CSVExporter {
     
     return array;
   }
+  
+  
+  /**
+   * Export the data in a map's values to a CSV file.
+   * 
+   * @param fname the output filename; if null, output goes to sdout
+   * @param map the map of objects whose values get written
+   * @param titles the Strings to write in the first line; if null, ignored
+   * @param fields the names of the object's fields to write
+   * @return success or failure
+   */
+  private boolean export(final String fname, final Map<?, ?> map,
+      final String[] titles, final String[] fields) {
+    // Initialize
+    init(fname);
 
+    // The result of the file write
+    boolean rc = true;
+
+    // Write the header
+    addLine(titles);
+
+    // Iterate over the map, and write the values
+    for (Entry<?, ?> entry : map.entrySet()) {
+      final Object obj = entry.getValue();
+      addRow(obj, fields);
+    }
+
+    // Flush the file
+    writeString(true);
+
+    // Return the result
+    return rc;
+  }
+  
+  
   /**
    * Export a list of data to a CSV file.
    * 
@@ -428,6 +466,19 @@ public final class CSVExporter {
    * @param fields the fields in the object
    */
   private void addRow(final Object object, final String[] fields) {
+    
+    // Check if the object is null
+    if (object == null) {
+      // If we are writing null objects, do so now
+      if (writeNullObjects) {
+        addLine("");
+      }
+      
+      // Stop processing this object
+      return;
+    }
+    
+    // Iterate over the fields in the object
     final int size = fields.length;
     List<String> line = new ArrayList<String>(5);
     for (int i = 0; i < size; ++i) {
@@ -637,6 +688,15 @@ public final class CSVExporter {
       plist.add(new java.awt.Point(i + 10, i * 2));
     }
     
+    Map<Integer, java.awt.Point> map = new java.util.HashMap<Integer, java.awt.Point>(5);
+    int i = 5;
+    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    map.put(i++, null);
+    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    map.put(i++, new java.awt.Point(i + 100, i + 101));
+    
 //    List<String> slist = new java.util.ArrayList<String>(5);
 //    slist.add("Hello world");
 //    slist.add("Sam I am");
@@ -649,9 +709,11 @@ public final class CSVExporter {
 //    dlist.add(null);
 //    dlist.add(Double.valueOf(130958209835.1235));
     
-    // TODO More testing
+    // TODO More testing, especially complex objects with intrinsics as Objects
     CSVExporter ce = new CSVExporter();
-    ce.export(null, plist, null, true);
+    ce.writeNullObjects(true);
+    ce.export(null, map, new String[]{"x val", "y val"}, new String[]{"x", "y"});
+    // ce.export(null, plist, null, true);
     // ce.export(null, plist, new String[]{"x val", "y val"}, new String[]{"x", "y"});
     // ce.export(null, plist, new String[]{"x val", "y val"}, false);
     // ce.export(null, plist, null, true);
