@@ -17,7 +17,7 @@ public final class CSVExporter {
   private String dir = ".";
   private String filename = null;
   private StringBuilder sb = null;
-  private final static String EOL = "\r\n";
+  private String EOL = "\r\n";
 
   public CSVExporter() {
   }
@@ -29,6 +29,16 @@ public final class CSVExporter {
 
   public CSVExporter setDirectory(final String dir) {
     this.dir = dir;
+    return this;
+  }
+  
+  public CSVExporter setEOL(final String eol) {
+    EOL = eol;
+    return this;
+  }
+  
+  public CSVExporter useNativeEOL() {
+    EOL = System.lineSeparator();
     return this;
   }
 
@@ -167,14 +177,14 @@ public final class CSVExporter {
     return outStr;
   }
 
-  public final void writeString() {
+  private final void writeString() {
     writeString(false);
   }
 
   /**
    * If the string buffer is big enough, flush it to disk.
    */
-  public final void writeString(final boolean forceWrite) {
+  private final void writeString(final boolean forceWrite) {
 
     // If nothing to write, nothing to do
     if (sb.length() == 0) {
