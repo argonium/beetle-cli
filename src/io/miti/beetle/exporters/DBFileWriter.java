@@ -278,9 +278,11 @@ public abstract class DBFileWriter
       case Types.NVARCHAR:
       case Types.LONGNVARCHAR:
       case Types.NCLOB:
+      case 1111: // JSON
         return String.class;
         
       default:
+        // System.err.println("Unsupported db type of " + nClassType);
         return null;
     }
   }
