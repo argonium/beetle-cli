@@ -236,6 +236,8 @@ public final class LineConsole
       addUserDatabase(cmds, console);
     } else if (validateCommand(cmds, 3, "delete", "userdb")) {
       deleteUserDatabase(cmds.get(2));
+    } else if (validateCommand(cmds, 2, "save", "session")) {
+      saveSession();
     } else if (validateCommand(cmds, 3, "connect", "userdb")) {
       connectUserDatabase(cmds.get(2));
     } else if (validateCommand(cmds, 2, "meta", "username")) {
@@ -1397,7 +1399,7 @@ public final class LineConsole
         "add dbtype <Name> <JDBC reference> <JDBC driver class name>",
         "export toml <filename>", "export yaml <filename>", "export xml <filename>",
         "export markdown <filename>", "export tsv <filename>",
-        "export java <table name> <package name>",
+        "export java <table name> <package name>", "save session",
         "keep dates", "keep dates on", "keep dates off",
         "print session", "reset session", "run [count]", "import db file <filename>",
         "list tables", "describe table <table name>", "fake <specification>",
