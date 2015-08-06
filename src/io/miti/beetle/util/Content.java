@@ -171,9 +171,9 @@ public final class Content
     try {
       in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
           StandardCharsets.UTF_8));
-      String str;
+      String str = null;
       while ((str = in.readLine()) != null) {
-        sb.append(str).append('\n');
+        sb.append(str.trim()).append(' ');
       }
 
       in.close();
@@ -193,7 +193,7 @@ public final class Content
     }
 
     // Return the builder
-    return sb.toString();
+    return sb.toString().trim();
   }
 
 
