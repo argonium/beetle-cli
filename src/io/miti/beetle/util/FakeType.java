@@ -13,8 +13,10 @@ public enum FakeType {
       case INT: return Long.valueOf((long) Faker.getRandomInteger(100));
       case ID: return Long.valueOf((long) Faker.getId());
       case ICONST: return node.getData();
+      case IRANGE: { LongPoint lp = (LongPoint) node.getData(); return Long.valueOf((long) Faker.getRandomLong(lp.getX(), lp.getY())); }
       case DOUBLE: return Faker.getRandomDouble(0.0, 100.0);
       case DCONST: return node.getData();
+      case DRANGE: { DoublePoint dp = (DoublePoint) node.getData(); return Double.valueOf((double) Faker.getRandomDouble(dp.getX(), dp.getY())); }
       case SCONST: return node.getData();
       case CAR: return Faker.getCar();
       case CITY: return Faker.getCity();
