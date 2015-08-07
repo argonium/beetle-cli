@@ -1,6 +1,7 @@
 package io.miti.beetle.util;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 public class Faker
@@ -389,6 +390,16 @@ public class Faker
   
   public static String getSurname() {
     return FakeCache.getRandomSurname();
+  }
+  
+  public static String getRandomWord(final List<String> words) {
+    if ((words == null) || words.isEmpty()) {
+      return "";
+    }
+    
+    final int size = words.size();
+    final int index = getRandomInteger(size);
+    return words.get(index);
   }
   
   
