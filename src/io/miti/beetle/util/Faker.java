@@ -219,6 +219,26 @@ public class Faker
 
     return i;
   }
+
+
+  /**
+   * Get a random number between min and max, inclusive.
+   * 
+   * @param nMinValue
+   * @param nMaxValue
+   * @return
+   */
+  public static long getRandomLong(final long nMinValue, final long nMaxValue) {
+
+    if (nMaxValue <= nMinValue) {
+      return nMinValue;
+    }
+
+    final double r = (double) (nMaxValue + 1 - nMinValue);
+    final long i = nMinValue + ((long) (rn.nextDouble() * r));
+
+    return i;
+  }
   
   
   /**
