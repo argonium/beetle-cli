@@ -159,7 +159,15 @@ public final class FakeSpecParser
       row.add(func == null ? "" : func.toString());
       
       final Object obj = node.getData();
-      row.add(obj == null ? "" : obj.toString());
+      if ((obj != null) && (obj instanceof LongPoint)) {
+        final LongPoint lp = (LongPoint) obj;
+        row.add(String.format("[%d, %d]", lp.getX(), lp.getY()));
+      } else if ((obj != null) && (obj instanceof DoublePoint)) {
+        final DoublePoint dp = (DoublePoint) obj;
+        row.add(String.format("[%f, %f]", dp.getX(), dp.getY()));
+      } else {
+        row.add(obj == null ? "" : obj.toString());
+      }
       
       list.add(row);
     }
