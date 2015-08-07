@@ -109,6 +109,8 @@ public final class FakeSpecParser
       }
     }
     
+    // TODO Check if this is a list of strings
+    
     // Must be a string
     return defValue;
   }
@@ -159,14 +161,30 @@ public final class FakeSpecParser
       row.add(func == null ? "" : func.toString());
       
       final Object obj = node.getData();
-      if ((obj != null) && (obj instanceof LongPoint)) {
+      if (obj == null) {
+        row.add("");
+      } else if (obj instanceof LongPoint) {
         final LongPoint lp = (LongPoint) obj;
         row.add(String.format("[%d, %d]", lp.getX(), lp.getY()));
-      } else if ((obj != null) && (obj instanceof DoublePoint)) {
+      } else if (obj instanceof DoublePoint) {
         final DoublePoint dp = (DoublePoint) obj;
         row.add(String.format("[%f, %f]", dp.getX(), dp.getY()));
+      } else if (obj instanceof java.util.List){
+        StringBuilder sb = new StringBuilder(20);
+        sb.append("[");
+        @SuppressWarnings("unchecked")
+        final List<String> items = (List<String>) obj;
+        if (items.size() > 0) {
+          sb.append(items.get(0));
+          final int size = items.size();
+          for (int i = 1; i < size; ++i) {
+            sb.append(", ").append(items.get(i));
+          }
+        }
+        sb.append("]");
+        row.add(sb.toString());
       } else {
-        row.add(obj == null ? "" : obj.toString());
+        row.add(obj.toString());
       }
       
       list.add(row);
