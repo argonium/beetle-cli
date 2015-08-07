@@ -3,7 +3,8 @@ package io.miti.beetle.util;
 public enum FakeType {
   BOOL, BCONST, INT, ID, ICONST, DOUBLE, DCONST, SCONST, CAR, CITY, COLOR,
   COUNTRY, DATE, DATETIME, EMAIL, FIRSTNAME, FULLNAME, GENDER, IPADDRESS,
-  MARITALSTATUS, PHONE, SSN, STATE, STREETADDRESS, SURNAME, TIME, WORD, ZIPCODE;
+  MARITALSTATUS, PHONE, SSN, STATE, STREETADDRESS, SURNAME, TIME, WORD, ZIPCODE,
+  IRANGE, DRANGE;
   
   public static Object getValue(final FakeNode node) {
     switch (node.getFunc()) {
@@ -98,6 +99,10 @@ public enum FakeType {
       return WORD;
     } else if (func.equals("zip")) {
       return ZIPCODE;
+    } else if (func.equals("irange")) {
+      return IRANGE;
+    } else if (func.equals("drange")) {
+      return DRANGE;
     }
     
     return null;

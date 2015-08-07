@@ -80,11 +80,33 @@ public final class FakeSpecParser
     if (clazz.equals(Boolean.class)) {
       return Boolean.parseBoolean(defValue);
     } else if (clazz.equals(Long.class)) {
-      final int val = Utility.getStringAsInteger(defValue, 0, 0);
-      return Long.valueOf((long) val);
+      final int index = defValue.indexOf(':');
+      if (index < 0) {
+        final int val = Utility.getStringAsInteger(defValue, 0, 0);
+        return Long.valueOf((long) val);
+      } else if ((index > 0) && (index < (defValue.length() - 1))) {
+        final String word1 = defValue.substring(0, index);
+        final String word2 = defValue.substring(index + 1);
+        final long val1 = Utility.getStringAsInteger(word1, 0, 0);
+        final long val2 = Utility.getStringAsInteger(word2, 100, 100);
+        return new LongPoint(val1, val2);
+      } else {
+        return new LongPoint(0, 100);
+      }
     } else if (clazz.equals(Double.class)) {
-      final double val = Utility.getStringAsDouble(defValue, 0.0, 0.0);
-      return Double.valueOf(val);
+      final int index = defValue.indexOf(':');
+      if (index < 0) {
+        final double val = Utility.getStringAsDouble(defValue, 0.0, 0.0);
+        return Double.valueOf(val);
+      } else if ((index > 0) && (index < (defValue.length() - 1))) {
+        final String word1 = defValue.substring(0, index);
+        final String word2 = defValue.substring(index + 1);
+        final double val1 = Utility.getStringAsDouble(word1, 0.0, 0.0);
+        final double val2 = Utility.getStringAsDouble(word2, 100.0, 100.0);
+        return new DoublePoint(val1, val2);
+      } else {
+        return new DoublePoint(0.0, 100.0);
+      }
     }
     
     // Must be a string
@@ -95,9 +117,9 @@ public final class FakeSpecParser
     
     if (func.equals("bool") || func.equals("bconst")) {
       return Boolean.class;
-    } else if (func.equals("int") || func.equals("id") || func.equals("iconst")) {
+    } else if (func.equals("int") || func.equals("id") || func.equals("iconst") || func.equals("irange")) {
       return Long.class;
-    } else if (func.equals("double") || func.equals("dconst")) {
+    } else if (func.equals("double") || func.equals("dconst") || func.equals("drange")) {
       return Double.class;
     }
     
