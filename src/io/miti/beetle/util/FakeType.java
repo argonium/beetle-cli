@@ -4,7 +4,7 @@ public enum FakeType {
   BOOL, BCONST, INT, ID, ICONST, DOUBLE, DCONST, SCONST, CAR, CITY, COLOR,
   COUNTRY, DATE, DATETIME, EMAIL, FIRSTNAME, FULLNAME, GENDER, IPADDRESS,
   MARITALSTATUS, PHONE, SSN, STATE, STREETADDRESS, SURNAME, TIME, WORD, ZIPCODE,
-  IRANGE, DRANGE;
+  IRANGE, DRANGE, WORDLIST;
   
   public static Object getValue(final FakeNode node) {
     switch (node.getFunc()) {
@@ -38,6 +38,7 @@ public enum FakeType {
       case TIME: return Faker.getTime();
       case WORD: return Faker.getWord(4, 7, false);
       case ZIPCODE: return Faker.getZipCode();
+      case WORDLIST: return "TODO"; // TODO Get one of the words in the list
     }
     
     // Function was not found
@@ -105,6 +106,8 @@ public enum FakeType {
       return IRANGE;
     } else if (func.equals("drange")) {
       return DRANGE;
+    } else if (func.equals("word")) {
+      return WORDLIST;
     }
     
     return null;
