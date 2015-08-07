@@ -1,11 +1,14 @@
 package io.miti.beetle.util;
 
+import java.util.List;
+
 public enum FakeType {
   BOOL, BCONST, INT, ID, ICONST, DOUBLE, DCONST, SCONST, CAR, CITY, COLOR,
   COUNTRY, DATE, DATETIME, EMAIL, FIRSTNAME, FULLNAME, GENDER, IPADDRESS,
   MARITALSTATUS, PHONE, SSN, STATE, STREETADDRESS, SURNAME, TIME, WORD, ZIPCODE,
   IRANGE, DRANGE, WORDLIST;
   
+  @SuppressWarnings("unchecked")
   public static Object getValue(final FakeNode node) {
     switch (node.getFunc()) {
       case BOOL: return Boolean.valueOf(Faker.getBoolean());
@@ -38,7 +41,7 @@ public enum FakeType {
       case TIME: return Faker.getTime();
       case WORD: return Faker.getWord(4, 7, false);
       case ZIPCODE: return Faker.getZipCode();
-      case WORDLIST: return "TODO"; // TODO Get one of the words in the list
+      case WORDLIST: return Faker.getRandomWord((List<String>) node.getData());
     }
     
     // Function was not found
