@@ -16,6 +16,9 @@ public final class FileBuilder implements Closeable
   /** The output filename. */
   private String filename = null;
   
+  /** The end-of-line string. */
+  private static String EOL = "\r\n";
+  
   /** The max size of the buffer before we write it to file. */
   private static int MAX_BUFFER_SIZE = 10000;
   
@@ -88,11 +91,33 @@ public final class FileBuilder implements Closeable
    * @return this
    */
   public FileBuilder setMaxBufferSize(final int maxSize) {
-    if (maxSize < 0) {
-      return this;
+    if (maxSize >= 0) {
+      MAX_BUFFER_SIZE = maxSize;
     }
     
-    MAX_BUFFER_SIZE = maxSize;
+    return this;
+  }
+  
+  
+  /**
+   * Set the EOL string.
+   * 
+   * @param eol the EOL string
+   * @return this
+   */
+  public FileBuilder setEOL(final String eol) {
+    EOL = eol;
+    return this;
+  }
+  
+  
+  /**
+   * Use the native EOL string for this platform.
+   * 
+   * @return this
+   */
+  public FileBuilder useNativeEOL() {
+    EOL = System.lineSeparator();
     return this;
   }
   
@@ -263,6 +288,16 @@ public final class FileBuilder implements Closeable
     sb.append(val);
     writeToFile(false);
     return this;
+  }
+  
+  
+  /**
+   * Append the EOL string to the buffer.
+   * 
+   * @return this
+   */
+  public FileBuilder appendEOL() {
+    return append(EOL);
   }
   
   
