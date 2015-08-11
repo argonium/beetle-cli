@@ -109,7 +109,7 @@ public enum FakeType {
       return IRANGE;
     } else if (func.equals("drange")) {
       return DRANGE;
-    } else if (func.equals("word")) {
+    } else if (func.equals("wordlist")) {
       return WORDLIST;
     }
     
