@@ -1,5 +1,7 @@
 package io.miti.beetle.util;
 
+import io.miti.beetle.console.LineConsole;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -299,20 +301,17 @@ public class Faker
   
   public static String getTime() {
     final Date date = getDateInRange();
-    String str = Utility.getTimeString(date);
-    return str;
+    return (LineConsole.keepDateFormatting() ? Utility.getTimeString(date) : Long.toString(date.getTime()));
   }
   
   public static String getDate() {
     final Date date = getDateInRange();
-    String str = Utility.getDateString(date);
-    return str;
+    return (LineConsole.keepDateFormatting() ? Utility.getDateString(date) : Long.toString(date.getTime()));
   }
   
   public static String getDateTime() {
     final Date date = getDateInRange();
-    String str = Utility.getDateTimeString(date);
-    return str;
+    return (LineConsole.keepDateFormatting() ? Utility.getDateTimeString(date) : Long.toString(date.getTime()));
   }
   
   public static Date getDateInRange() {
