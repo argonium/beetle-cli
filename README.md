@@ -345,3 +345,16 @@ Nothing else is needed to run Beetle.
 
 The first time you run Beetle, it'll create the necessary database
 used by the application to persist information.
+
+## Third Party Libraries
+Beetle uses the following 3rd party libraries and code:
+
+1. [H2](http://h2database.com/) - In-memory database written in Java
+1. [JLine2](https://github.com/jline/jline2) - Java library for handling console input
+1. CSVParser.java - Parse CSV input, copyright Lucent Technologies
+1. XXTEA.java - Encrypt and decrypt using TEA, copyright Ma Bingyao
+
+## License
+The Beetle source code is released under the MIT license.  The 3rd party source
+code referenced in the previous section remains the property of their respective
+copyright holders.
