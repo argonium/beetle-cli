@@ -247,6 +247,7 @@ streetaddress | Street address | 123 Main St.
 surname | Surname | Simmons
 time | Time | 15:37:53
 word | Word (not always pronounceable) | asdkfj
+wordlist:word1:word2:word3... | One of the subsequent words | wordlist:blue:yellow can produce blue or yellow
 zip | ZIP Code | 12345
 
 The format for a specification is:
