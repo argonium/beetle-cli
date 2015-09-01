@@ -107,9 +107,20 @@ public final class FakeSpecParser
       } else {
         return new DoublePoint(0.0, 100.0);
       }
+    } else {
+      // This must be a String.
+      // Check if this is a list of strings
+      final int index = defValue.indexOf(':');
+      if (index > 0) {
+        final StringTokenizer st = new StringTokenizer(defValue, ":");
+        final List<String> words = new ArrayList<String>(5);
+        while (st.hasMoreTokens()) {
+          words.add(st.nextToken());
+        }
+        
+        return words;
+      }
     }
-    
-    // TODO Check if this is a list of strings
     
     // Must be a string
     return defValue;
